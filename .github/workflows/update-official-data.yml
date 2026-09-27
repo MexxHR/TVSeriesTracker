@@ -20,6 +20,9 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
+    env:
+      # First run after deployment stays dry until its report is checked once.
+      DRY_RUN: ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) || vars.OFFICIAL_DATA_LIVE_ENABLED != 'true' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -32,8 +35,6 @@ jobs:
       - name: Fetch, detect, validate and optionally write
         id: update
         continue-on-error: true
-        env:
-          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
         run: |
           if [ "$DRY_RUN" = "true" ]; then
             python official-data/automation/update.py --dry-run
@@ -41,7 +42,7 @@ jobs:
             python official-data/automation/update.py
           fi
       - name: Commit factual changes only
-        if: ${{ steps.update.outcome != 'skipped' && (github.event_name == 'schedule' || !inputs.dry_run) }}
+        if: ${{ steps.update.outcome != 'skipped' && env.DRY_RUN == 'false' }}
         run: |
           if git diff --quiet -- official-data/official_series_data.json && [ ! -f official-data/history/changes.jsonl ]; then
             echo 'No canonical changes'
