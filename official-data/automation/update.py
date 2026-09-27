@@ -6,6 +6,7 @@ import copy
 import datetime as dt
 import html
 from html.parser import HTMLParser
+from http.client import BadStatusLine, IncompleteRead, RemoteDisconnected
 import json
 from pathlib import Path
 import re
@@ -55,21 +56,33 @@ def fetch(url: str, domains: list[str]) -> tuple[str, str]:
     opener = build_opener(SafeRedirect(domains))
     for attempt in range(3):
         try:
-            req = Request(url, headers={"User-Agent": "TVSeriesTrackerOfficialDataBot/2.3.1 (+https://github.com/MexxHR/TVSeriesTracker)", "Accept": "text/html"})
+            req = Request(url, headers={"User-Agent": "TVSeriesTrackerOfficialDataBot/2.3.2 (+https://github.com/MexxHR/TVSeriesTracker)", "Accept": "text/html"})
             with opener.open(req, timeout=12) as response:
                 final = response.geturl()
                 if not allowed(final, domains):
                     raise AutomationError(f"Final URL outside allowlist: {final}")
                 payload = response.read(8_000_001)
                 if len(payload) > 8_000_000:
-                    raise AutomationError(f"Page too large: {final}")
+                    raise AutomationError(f"Response too large (8 MB limit): {final}")
+                if attempt:
+                    print(f"Fetch {url} attempt {attempt + 1}/3: success", file=sys.stderr)
                 return payload.decode("utf-8", errors="replace"), final
         except HTTPError as exc:
-            if exc.code not in (429, 500, 502, 503, 504) or attempt == 2:
+            if exc.code != 429 and not 500 <= exc.code <= 599:
                 raise AutomationError(f"HTTP {exc.code}: {url}") from exc
-        except (URLError, TimeoutError) as exc:
-            if attempt == 2:
-                raise AutomationError(f"Network failure: {url}: {exc}") from exc
+            reason = f"HTTP {exc.code}"
+            cause = exc
+        except (IncompleteRead, RemoteDisconnected, BadStatusLine, URLError,
+                TimeoutError, ConnectionError) as exc:
+            # IncompleteRead.partial is intentionally discarded. Only a full
+            # response can be parsed as official evidence.
+            if isinstance(exc, IncompleteRead) and len(exc.partial) > 8_000_000:
+                raise AutomationError(f"Response too large (8 MB limit): {url}") from exc
+            reason = type(exc).__name__
+            cause = exc
+        print(f"Fetch {url} attempt {attempt + 1}/3: {reason}", file=sys.stderr)
+        if attempt == 2:
+            raise AutomationError(f"Fetch failed after 3 attempts ({reason}): {url}") from cause
         time.sleep(1 + attempt * 2)
     raise AutomationError(f"Fetch failed: {url}")
 

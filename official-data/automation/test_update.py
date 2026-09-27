@@ -1,11 +1,13 @@
 import copy
 import datetime as dt
+from http.client import IncompleteRead
 import json
 from pathlib import Path
 import sys
 import tempfile
 import unittest
 from unittest.mock import patch
+from urllib.error import HTTPError
 
 sys.path.insert(0, str(Path(__file__).parent))
 import update as u
@@ -17,6 +19,111 @@ BASE = {"tmdbId": 153312, "title": "Tulsa King", "nextSeasonNumber": 3, "status"
 
 def article(text, url="https://www.paramountpressexpress.com/release"):
     return {"title": text, "body": text + "\nSeptember 1, 2026", "url": url, "sourceName": "Paramount Press Express"}
+
+
+class Response:
+    def __init__(self, url, content):
+        self.url = url
+        self.content = content
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_):
+        return False
+
+    def geturl(self):
+        return self.url
+
+    def read(self, limit):
+        if isinstance(self.content, BaseException):
+            raise self.content
+        return self.content[:limit]
+
+
+class FetchTests(unittest.TestCase):
+    def setUp(self):
+        self.url = ENTRY["officialUrl"]
+        self.calls = []
+        self.sleeps = []
+        p = patch.object(u.time, "sleep", side_effect=self.sleeps.append)
+        p.start()
+        self.addCleanup(p.stop)
+
+    def serve(self, outcomes):
+        def open_request(request, timeout):
+            self.assertEqual(timeout, 12)
+            url = request.full_url
+            self.calls.append(url)
+            item = outcomes[url].pop(0)
+            if isinstance(item, BaseException):
+                raise item
+            return Response(url, item)
+        class Opener:
+            def open(self, request, timeout):
+                return open_request(request, timeout)
+        p = patch.object(u, "build_opener", return_value=Opener())
+        p.start()
+        self.addCleanup(p.stop)
+
+    def test_incomplete_read_then_success_discards_partial(self):
+        self.serve({self.url: [IncompleteRead(b"<h1>partial", 10), b"<h1>complete</h1>"]})
+        self.assertEqual(u.fetch(self.url, ENTRY["allowedDomains"])[0], "<h1>complete</h1>")
+        self.assertEqual(self.calls, [self.url] * 2)
+        self.assertEqual(self.sleeps, [1])
+
+    def test_incomplete_read_all_attempts_endpoint_failure(self):
+        self.serve({self.url: [IncompleteRead(b"partial", 10) for _ in range(3)]})
+        with self.assertRaisesRegex(u.AutomationError, "after 3 attempts"):
+            u.fetch(self.url, ENTRY["allowedDomains"])
+        self.assertEqual(self.calls, [self.url] * 3)
+        self.assertEqual(self.sleeps, [1, 3])
+
+    def test_primary_incomplete_read_fallback_succeeds(self):
+        entry = next(e for e in json.loads(u.REGISTRY.read_text(encoding="utf-8"))["series"] if e["provider"] == "WBD")
+        fallback = entry["fallbackUrls"][0]
+        self.serve({entry["officialUrl"]: [IncompleteRead(b"partial", 10) for _ in range(3)],
+                    fallback: [b"<html><h1>The White Lotus renewed for season 4</h1></html>"]})
+        # The fallback itself is an official release and is reused as evidence.
+        facts, count = u.collect(entry, None, TODAY, u.fetch)
+        self.assertEqual(count, 1)
+        self.assertTrue(facts)
+        self.assertEqual({f["nextSeasonNumber"] for f in facts}, {4})
+        self.assertEqual(self.calls, [entry["officialUrl"]] * 3 + [fallback])
+
+    def test_http_503_then_success(self):
+        self.serve({self.url: [HTTPError(self.url, 503, "unavailable", {}, None), b"<h1>ok</h1>"]})
+        self.assertEqual(u.fetch(self.url, ENTRY["allowedDomains"])[0], "<h1>ok</h1>")
+        self.assertEqual(self.sleeps, [1])
+
+    def test_http_429_then_success(self):
+        self.serve({self.url: [HTTPError(self.url, 429, "limited", {}, None), b"<h1>ok</h1>"]})
+        self.assertEqual(u.fetch(self.url, ENTRY["allowedDomains"])[0], "<h1>ok</h1>")
+        self.assertEqual(self.calls, [self.url] * 2)
+
+    def test_http_403_uses_fallback_without_retry(self):
+        entry = next(e for e in json.loads(u.REGISTRY.read_text(encoding="utf-8"))["series"] if e["provider"] == "WBD")
+        fallback = entry["fallbackUrls"][0]
+        self.serve({entry["officialUrl"]: [HTTPError(entry["officialUrl"], 403, "forbidden", {}, None)],
+                    fallback: [b"<html><h1>The White Lotus renewed for season 4</h1></html>"]})
+        facts, count = u.collect(entry, None, TODAY, u.fetch)
+        self.assertEqual(count, 1)
+        self.assertTrue(facts)
+        self.assertEqual(self.calls, [entry["officialUrl"], fallback])
+        self.assertEqual(self.sleeps, [])
+
+    def test_response_too_large_is_rejected(self):
+        self.serve({self.url: [b"<h1>valid</h1>" + b"x" * 8_000_000]})
+        with self.assertRaisesRegex(u.AutomationError, "Response too large"):
+            u.fetch(self.url, ENTRY["allowedDomains"])
+        self.assertEqual(self.calls, [self.url])
+        self.assertEqual(self.sleeps, [])
+
+    def test_unexpected_programming_error_propagates(self):
+        self.serve({self.url: [RuntimeError("bug in fetch dependency")]})
+        with self.assertRaisesRegex(RuntimeError, "bug in fetch dependency"):
+            u.fetch(self.url, ENTRY["allowedDomains"])
+        self.assertEqual(self.calls, [self.url])
 
 
 class DetectionTests(unittest.TestCase):
@@ -186,6 +293,24 @@ class PipelineTests(unittest.TestCase):
         result = u.run(False, fail, TODAY)
         self.assertEqual(len(result["failures"]), 12)
         self.assertEqual(self.data.read_bytes(), before)
+
+    def test_exhausted_incomplete_read_isolated_and_preserves_data(self):
+        before = self.data.read_bytes()
+        def collector(entry, old, today):
+            if entry["title"] != "Tulsa King":
+                return [], 1
+            class Opener:
+                def open(self, request, timeout):
+                    return Response(request.full_url, IncompleteRead(b"partial HTML", 100))
+            with patch.object(u, "build_opener", return_value=Opener()), patch.object(u.time, "sleep"):
+                u.fetch(entry["officialUrl"], entry["allowedDomains"])
+        result = u.run(False, collector, TODAY)
+        self.assertEqual(len(result["failures"]), 1)
+        self.assertIn("IncompleteRead", result["failures"][0])
+        self.assertEqual(result["reports"][0]["result"], "failed")
+        self.assertTrue(all(report["result"] == "unchanged" for report in result["reports"][1:]))
+        self.assertEqual(self.data.read_bytes(), before)
+        self.assertFalse(self.audit.exists())
 
     def test_malformed_html_preserves_data(self):
         def malformed(entry, old, today):
