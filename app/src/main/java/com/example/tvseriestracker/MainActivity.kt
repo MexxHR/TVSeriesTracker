@@ -300,6 +300,7 @@ private fun SettingsScreen(model: SeriesViewModel, settings: AppSettings) {
         }
         if (refresh == OfficialRefreshPhase.LOADING) CircularProgressIndicator()
         if (refresh == OfficialRefreshPhase.SUCCESS) Text(stringResource(R.string.official_refresh_success))
+        if (refresh == OfficialRefreshPhase.UP_TO_DATE) Text(stringResource(R.string.official_refresh_up_to_date))
         if (refresh == OfficialRefreshPhase.ERROR) Text(stringResource(R.string.official_refresh_error))
         officialCache.lastSyncedAt?.takeIf { it != java.time.Instant.EPOCH }?.let { synced ->
             Text(stringResource(R.string.official_last_update, formatDate(synced.atZone(java.time.ZoneId.systemDefault()).toLocalDate(), settings.language)))

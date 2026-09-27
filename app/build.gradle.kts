@@ -15,9 +15,10 @@ val tmdbToken = providers.gradleProperty("TMDB_API_TOKEN").orNull
     ?: System.getenv("TMDB_API_TOKEN")
     ?: localProperties.getProperty("TMDB_API_TOKEN", "")
 val encodedTmdbToken = "\"${tmdbToken.replace("\\", "\\\\").replace("\"", "\\\"")}\""
-val officialDataUrl = providers.gradleProperty("OFFICIAL_DATA_URL").orNull
-    ?: System.getenv("OFFICIAL_DATA_URL")
-    ?: localProperties.getProperty("OFFICIAL_DATA_URL", "")
+val officialDataUrl = providers.gradleProperty("OFFICIAL_DATA_URL").orNull?.takeIf(String::isNotBlank)
+    ?: System.getenv("OFFICIAL_DATA_URL")?.takeIf(String::isNotBlank)
+    ?: localProperties.getProperty("OFFICIAL_DATA_URL")?.takeIf(String::isNotBlank)
+    ?: "https://raw.githubusercontent.com/MexxHR/TVSeriesTracker/main/official-data/official_series_data.json"
 val encodedOfficialDataUrl = "\"${officialDataUrl.replace("\\", "\\\\").replace("\"", "\\\"")}\""
 
 android {
@@ -27,8 +28,8 @@ android {
         applicationId = "com.example.tvseriestracker"
         minSdk = 26
         targetSdk = 35
-        versionCode = 4
-        versionName = "2.2.1"
+        versionCode = 6
+        versionName = "2.3"
         buildConfigField("String", "TMDB_API_TOKEN", encodedTmdbToken)
         buildConfigField("String", "OFFICIAL_DATA_URL", encodedOfficialDataUrl)
     }

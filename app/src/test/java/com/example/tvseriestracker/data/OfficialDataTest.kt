@@ -52,6 +52,17 @@ class OfficialDataTest {
         assertEquals(SeriesStatus.FINAL_SEASON, store.snapshot().series.single().status)
     }
 
+    @Test fun equalTimestampIsUpToDateWithoutReplacingCache() = runBlocking {
+        val store = FakeStore()
+        store.replace(OfficialDataParser.parse(json()), Instant.EPOCH)
+        val repository = OfficialDataRepository(store, object : OfficialRemoteSource {
+            override suspend fun fetch() = json(status = "FINAL_SEASON")
+        }, { "" }, { Instant.parse("2026-09-27T12:00:00Z") })
+        assertFalse(repository.refresh())
+        assertEquals(SeriesStatus.RENEWED, store.snapshot().series.single().status)
+        assertEquals(Instant.parse("2026-09-27T12:00:00Z"), store.snapshot().lastSyncedAt)
+    }
+
     @Test fun finalSeasonCanHaveConfirmedDate() {
         val silo = bundled().series.single { it.tmdbId == DemoCatalog.tmdbIds["silo"] }
         assertEquals(SeriesStatus.FINAL_SEASON, silo.status)

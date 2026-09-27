@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 enum class SearchPhase { PROMPT, LOADING, RESULTS, EMPTY, ERROR, MISSING_TOKEN }
-enum class OfficialRefreshPhase { IDLE, LOADING, SUCCESS, ERROR }
+enum class OfficialRefreshPhase { IDLE, LOADING, SUCCESS, UP_TO_DATE, ERROR }
 data class SearchUiState(val query: String = "", val phase: SearchPhase = SearchPhase.PROMPT, val results: List<Series> = emptyList())
 
 class SeriesViewModel(val series: SeriesRepository, val preferences: SettingsRepository,
@@ -103,7 +103,7 @@ class SeriesViewModel(val series: SeriesRepository, val preferences: SettingsRep
     fun setTheme(theme: AppTheme) { viewModelScope.launch { preferences.setTheme(theme) } }
     fun refreshOfficial() { viewModelScope.launch {
         _officialRefresh.value = OfficialRefreshPhase.LOADING
-        try { official.refresh(); _officialRefresh.value = OfficialRefreshPhase.SUCCESS }
+        try { _officialRefresh.value = if (official.refresh()) OfficialRefreshPhase.SUCCESS else OfficialRefreshPhase.UP_TO_DATE }
         catch (exception: CancellationException) { throw exception }
         catch (_: Exception) { _officialRefresh.value = OfficialRefreshPhase.ERROR }
     } }

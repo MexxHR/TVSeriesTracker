@@ -13,5 +13,5 @@
     <string name="language">Jezik</string><string name="croatian">Hrvatski</string><string name="english">English</string><string name="theme">Tema</string><string name="theme_system">Sustav</string><string name="theme_light">Svijetla</string><string name="theme_dark">Tamna</string>
     <string name="year_label">%1$d.</string><string name="poster_placeholder">Poster serije</string><string name="back">Natrag</string>
     <string name="no_verified_official_data">Nema verificiranih službenih podataka.</string><string name="official_verified">✓ Službeno potvrđeno</string>
-    <string name="refresh_official_data">Osvježi službene podatke</string><string name="official_refresh_success">Službeni podaci ažurirani.</string><string name="official_refresh_error">Nije moguće dohvatiti nove podatke. Prikazuju se posljednji spremljeni podaci.</string><string name="official_last_update">Posljednje ažuriranje: %1$s</string>
+    <string name="refresh_official_data">Osvježi službene podatke</string><string name="official_refresh_success">Službeni podaci ažurirani.</string><string name="official_refresh_up_to_date">Službeni podaci već su ažurni.</string><string name="official_refresh_error">Nije moguće dohvatiti nove podatke. Prikazuju se posljednji spremljeni podaci.</string><string name="official_last_update">Posljednje ažuriranje: %1$s</string>
 </resources>

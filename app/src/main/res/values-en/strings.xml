@@ -13,5 +13,5 @@
     <string name="language">Language</string><string name="croatian">Hrvatski</string><string name="english">English</string><string name="theme">Theme</string><string name="theme_system">System</string><string name="theme_light">Light</string><string name="theme_dark">Dark</string>
     <string name="year_label">%1$d</string><string name="poster_placeholder">Series poster</string><string name="back">Back</string>
     <string name="no_verified_official_data">No verified official data.</string><string name="official_verified">✓ Officially confirmed</string>
-    <string name="refresh_official_data">Refresh official data</string><string name="official_refresh_success">Official data updated.</string><string name="official_refresh_error">Could not fetch new data. Showing the last saved data.</string><string name="official_last_update">Last updated: %1$s</string>
+    <string name="refresh_official_data">Refresh official data</string><string name="official_refresh_success">Official data updated.</string><string name="official_refresh_up_to_date">Official data is already up to date.</string><string name="official_refresh_error">Could not fetch new data. Showing the last saved data.</string><string name="official_last_update">Last updated: %1$s</string>
 </resources>

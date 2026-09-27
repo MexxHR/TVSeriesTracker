@@ -1,0 +1,16 @@
+{
+  "series": [
+    {"tmdbId": 153312, "title": "Tulsa King", "provider": "PARAMOUNT", "officialUrl": "https://www.paramountpressexpress.com/paramount-television-studios/shows/tulsa-king/releases/", "allowedDomains": ["paramountpressexpress.com"], "aliases": ["Tulsa King"]},
+    {"tmdbId": 97951, "title": "Mayor of Kingstown", "provider": "PARAMOUNT", "officialUrl": "https://www.paramountpressexpress.com/paramount-television-studios/shows/mayor-of-kingstown/releases/", "allowedDomains": ["paramountpressexpress.com"], "aliases": ["Mayor of Kingstown"]},
+    {"tmdbId": 113962, "title": "Lioness", "provider": "PARAMOUNT", "officialUrl": "https://www.paramountpressexpress.com/paramount-plus/shows/lioness/releases/", "allowedDomains": ["paramountpressexpress.com"], "aliases": ["Lioness", "Special Ops: Lioness"]},
+    {"tmdbId": 247718, "title": "MobLand", "provider": "PARAMOUNT", "officialUrl": "https://www.paramountpressexpress.com/paramount-television-studios/shows/mobland/releases/", "allowedDomains": ["paramountpressexpress.com"], "aliases": ["MobLand"]},
+    {"tmdbId": 157741, "title": "Landman", "provider": "PARAMOUNT", "officialUrl": "https://www.paramountpressexpress.com/paramount-plus/shows/landman/releases/", "allowedDomains": ["paramountpressexpress.com"], "aliases": ["Landman"]},
+    {"tmdbId": 106379, "title": "Fallout", "provider": "AMAZON", "officialUrl": "https://www.aboutamazon.com/news/entertainment/fallout-season-2-season-3-prime-video", "allowedDomains": ["aboutamazon.com"], "aliases": ["Fallout"]},
+    {"tmdbId": 129552, "title": "The Night Agent", "provider": "NETFLIX", "officialUrl": "https://www.netflix.com/tudum/the-night-agent", "allowedDomains": ["netflix.com"], "aliases": ["The Night Agent"]},
+    {"tmdbId": 125988, "title": "Silo", "provider": "APPLE", "officialUrl": "https://www.apple.com/tv-pr/originals/silo/", "allowedDomains": ["apple.com"], "aliases": ["Silo"]},
+    {"tmdbId": 299167, "title": "Dutton Ranch", "provider": "PARAMOUNT", "officialUrl": "https://www.paramountpressexpress.com/paramount-plus/shows/dutton-ranch/releases/", "allowedDomains": ["paramountpressexpress.com"], "aliases": ["Dutton Ranch"]},
+    {"tmdbId": 111803, "title": "The White Lotus", "provider": "WBD", "officialUrl": "https://press.wbd.com/na/property/white-lotus/media-releases", "allowedDomains": ["press.wbd.com"], "aliases": ["The White Lotus"]},
+    {"tmdbId": 236235, "title": "The Gentlemen", "provider": "NETFLIX", "officialUrl": "https://www.netflix.com/tudum/the-gentlemen", "allowedDomains": ["netflix.com"], "aliases": ["The Gentlemen"]},
+    {"tmdbId": 225891, "title": "The Madison", "provider": "PARAMOUNT", "officialUrl": "https://www.paramountpressexpress.com/paramount-plus/shows/the-madison/releases/", "allowedDomains": ["paramountpressexpress.com"], "aliases": ["The Madison"]}
+  ]
+}
