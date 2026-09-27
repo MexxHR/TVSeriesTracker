@@ -22,6 +22,8 @@ AUDIT = ROOT / "official-data" / "history" / "changes.jsonl"
 STATUSES = {"RENEWED", "RELEASE_DATE_CONFIRMED", "FINAL_SEASON", "CANCELED"}
 INITIAL_IDS = {153312, 97951, 113962, 247718, 157741, 106379, 129552, 125988, 299167, 111803, 236235, 225891}
 MONTHS = {name.lower(): i for i, name in enumerate(("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"), 1)}
+MONTHS.update({name[:3]: value for name, value in list(MONTHS.items())})
+MONTH_PATTERN = "|".join(sorted(MONTHS, key=len, reverse=True))
 ORDINALS = {"first": 1, "second": 2, "third": 3, "fourth": 4, "fifth": 5, "sixth": 6, "seventh": 7, "eighth": 8, "ninth": 9, "tenth": 10}
 NUM = r"(?:\d{1,2}|first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)"
 SEASON = rf"(?:season\s+({NUM})|({NUM})\s+season)"
@@ -53,7 +55,7 @@ def fetch(url: str, domains: list[str]) -> tuple[str, str]:
     opener = build_opener(SafeRedirect(domains))
     for attempt in range(3):
         try:
-            req = Request(url, headers={"User-Agent": "TVSeriesTrackerOfficialDataBot/2.3 (+https://github.com/MexxHR/TVSeriesTracker)", "Accept": "text/html"})
+            req = Request(url, headers={"User-Agent": "TVSeriesTrackerOfficialDataBot/2.3.1 (+https://github.com/MexxHR/TVSeriesTracker)", "Accept": "text/html"})
             with opener.open(req, timeout=12) as response:
                 final = response.geturl()
                 if not allowed(final, domains):
@@ -141,6 +143,12 @@ class ParamountAdapter(Adapter):
     def candidates(self, page, base, entry):
         return [urljoin(base, link) for link in page.links if "view=" in link and "/releases/" in urljoin(base, link)]
 
+    def parse(self, raw: str, url: str) -> dict:
+        article = super().parse(raw, url)
+        if urlparse(url).hostname in ("paramountplus.com", "www.paramountplus.com"):
+            article["sourceName"] = "Paramount+"
+        return article
+
 
 class NetflixAdapter(Adapter):
     name, source_name = "NETFLIX", "Netflix Tudum"
@@ -173,6 +181,7 @@ class AmazonAdapter(Adapter):
 
 ADAPTERS = {a.name: a for a in (ParamountAdapter(), NetflixAdapter(), AppleAdapter(), WbdAdapter(), AmazonAdapter())}
 PROVIDER_DOMAINS = {"PARAMOUNT": "paramountpressexpress.com", "NETFLIX": "netflix.com", "APPLE": "apple.com", "WBD": "press.wbd.com", "AMAZON": "aboutamazon.com"}
+EXTRA_DOMAINS = {225891: ["paramountplus.com"]}
 
 
 def number(value: str) -> int:
@@ -188,7 +197,7 @@ def season_in(text: str) -> int | None:
 
 
 def date_in(text: str, announced: dt.date | None) -> tuple[str | None, int | None]:
-    m = re.search(r"\b(" + "|".join(MONTHS) + r")\s+(\d{1,2})(?:st|nd|rd|th)?(?:,?\s+(20\d{2}))?\b", text, re.I)
+    m = re.search(r"\b(" + MONTH_PATTERN + r")\s+(\d{1,2})(?:st|nd|rd|th)?(?:,?\s+(20\d{2}))?\b", text, re.I)
     if m:
         year = int(m.group(3)) if m.group(3) else (announced.year if announced else None)
         if year:
@@ -204,7 +213,7 @@ def date_in(text: str, announced: dt.date | None) -> tuple[str | None, int | Non
 
 
 def announcement_date(body: str) -> dt.date | None:
-    m = re.search(r"\b(" + "|".join(MONTHS) + r")\s+\d{1,2},?\s+20\d{2}\b", body[:1500], re.I)
+    m = re.search(r"\b(" + MONTH_PATTERN + r")\s+\d{1,2},?\s+20\d{2}\b", body[:1500], re.I)
     if not m:
         return None
     d, _ = date_in(m.group(), None)
@@ -262,7 +271,11 @@ def validate_registry(registry: dict):
     if set(ids) != INITIAL_IDS:
         raise AutomationError("V2.3 registry must contain the 12 existing TMDB TV IDs")
     for e in entries:
-        if e.get("provider") not in ADAPTERS or e.get("allowedDomains") != [PROVIDER_DOMAINS.get(e.get("provider"))] or not e.get("title") or not e.get("aliases") or not allowed(e.get("officialUrl", ""), e["allowedDomains"]):
+        expected_domains = [PROVIDER_DOMAINS.get(e.get("provider"))] + EXTRA_DOMAINS.get(e["tmdbId"], [])
+        urls = [e.get("officialUrl", "")] + e.get("fallbackUrls", []) + e.get("evidenceUrls", [])
+        if (e.get("provider") not in ADAPTERS or e.get("allowedDomains") != expected_domains
+                or not e.get("title") or not e.get("aliases")
+                or any(not allowed(url, e["allowedDomains"]) for url in urls)):
             raise AutomationError(f"Invalid registry entry: {e.get('title')}")
 
 
@@ -309,7 +322,7 @@ def merge(old: dict | None, facts: list[dict], today: dt.date) -> tuple[dict | N
     if not facts:
         return old, None
     priority = {"RENEWED": 1, "RELEASE_DATE_CONFIRMED": 2, "FINAL_SEASON": 3, "CANCELED": 4}
-    facts = sorted(facts, key=lambda f: (f["nextSeasonNumber"], priority[f["status"]], f["announcementDate"] or ""), reverse=True)
+    facts = sorted(facts, key=lambda f: (f["nextSeasonNumber"], priority[f["status"]], bool(f["releaseDate"]), f["announcementDate"] or ""), reverse=True)
     if old:
         facts = [f for f in facts if f["nextSeasonNumber"] >= old["nextSeasonNumber"]]
     if not facts:
@@ -329,12 +342,20 @@ def merge(old: dict | None, facts: list[dict], today: dt.date) -> tuple[dict | N
         status = "RENEWED"
     if status == "RENEWED" and release_date:
         status = "RELEASE_DATE_CONFIRMED"
-    source = dated if release_date and dated else same[0]
+    # A single canonical URL must prove the strongest status assertion. Keep
+    # independent date evidence in the audit when a different article proves it.
+    if status in ("FINAL_SEASON", "CANCELED") and old and season == old["nextSeasonNumber"] and old["status"] == status and same[0]["status"] != status:
+        source = old
+    elif status == "RELEASE_DATE_CONFIRMED" and not dated and old and season == old["nextSeasonNumber"] and old["releaseDate"]:
+        source = old
+    else:
+        source = same[0] if status in ("FINAL_SEASON", "CANCELED") else (dated if dated else same[0])
     result = {k: source.get(k) for k in ("tmdbId", "title", "nextSeasonNumber", "sourceName", "sourceUrl", "announcementDate")}
     result.update(status=status, releaseDate=release_date, releaseYear=release_year, lastChecked=today.isoformat())
     if old and all(result.get(k) == old.get(k) for k in ("nextSeasonNumber", "status", "releaseDate", "releaseYear")):
         return old, None
-    return result, {"rule": source["rule"], "provider": source["sourceName"], "sourceUrl": source["sourceUrl"]}
+    supporting = sorted({f["sourceUrl"] for f in same if f["sourceUrl"] != source["sourceUrl"]})
+    return result, {"rule": source.get("rule", "previous-status-evidence"), "provider": source["sourceName"], "sourceUrl": source["sourceUrl"], "supportingSourceUrls": supporting}
 
 
 def validate_facts(facts: list[dict], entry: dict):
@@ -359,26 +380,50 @@ def validate_facts(facts: list[dict], entry: dict):
 
 def collect(entry: dict, current: dict | None, today: dt.date, fetcher=fetch) -> tuple[list[dict], int]:
     adapter = ADAPTERS[entry["provider"]]
-    raw, final = fetcher(entry["officialUrl"], entry["allowedDomains"])
-    page = parse_page(raw)
-    candidates = [entry["officialUrl"]] if entry["provider"] == "AMAZON" else []
-    candidates += adapter.candidates(page, final, entry)
-    if current:
-        candidates.insert(0, current["sourceUrl"])
-    # Bounded: existing evidence and two most recent listing links.
+    domains = entry["allowedDomains"]
+    errors = []
+    failed_urls: set[str] = set()
+    cached: dict[str, tuple[str, str]] = {}
+    discovered: list[str] = []
+
+    # Only WBD has configured endpoint fallbacks. An explicit evidence URL can
+    # still be checked if a listing is unavailable (e.g. local Paramount block).
+    for endpoint in [entry["officialUrl"]] + entry.get("fallbackUrls", []):
+        try:
+            raw, final = fetcher(endpoint, domains)
+            page = parse_page(raw)
+            cached[endpoint] = (raw, final)
+            cached[final] = (raw, final)
+            if entry["provider"] == "AMAZON" or "/media-release/" in urlparse(final).path:
+                discovered.append(final)
+            discovered.extend(adapter.candidates(page, final, entry))
+            break
+        except (AutomationError, ValueError) as exc:
+            failed_urls.add(endpoint)
+            errors.append(f"{endpoint}: {exc}")
+
+    # Collect every selected candidate before resolving conflicts. Configured
+    # evidence is first, followed by existing evidence and up to eight recent
+    # show-listing releases; no candidate stops the scan after its first fact.
+    candidates = entry.get("evidenceUrls", []) + ([current["sourceUrl"]] if current else []) + discovered
     unique = []
     for url in candidates:
-        if allowed(url, entry["allowedDomains"]) and url not in unique:
+        if not allowed(url, domains):
+            raise AutomationError(f"Candidate outside allowlist: {url}")
+        if url not in unique:
             unique.append(url)
     articles = []
-    for url in unique[:3]:
-        if url == final:
-            content, actual = raw, final
-        else:
-            content, actual = fetcher(url, entry["allowedDomains"])
-        articles.append(adapter.parse(content, actual))
+    for url in unique[:10]:
+        if url in failed_urls:
+            continue
+        try:
+            content, actual = cached.get(url) or fetcher(url, domains)
+            articles.append(adapter.parse(content, actual))
+        except (AutomationError, ValueError) as exc:
+            failed_urls.add(url)
+            errors.append(f"{url}: {exc}")
     if not articles:
-        raise AutomationError(f"No release candidates: {entry['title']} ({adapter.name})")
+        raise AutomationError(f"No usable official releases for {entry['title']} ({adapter.name}): {'; '.join(errors)}")
     facts = [fact for article in articles for fact in detect(article, entry, today)]
     return facts, len(articles)
 

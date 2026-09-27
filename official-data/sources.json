@@ -9,8 +9,8 @@
     {"tmdbId": 129552, "title": "The Night Agent", "provider": "NETFLIX", "officialUrl": "https://www.netflix.com/tudum/the-night-agent", "allowedDomains": ["netflix.com"], "aliases": ["The Night Agent"]},
     {"tmdbId": 125988, "title": "Silo", "provider": "APPLE", "officialUrl": "https://www.apple.com/tv-pr/originals/silo/", "allowedDomains": ["apple.com"], "aliases": ["Silo"]},
     {"tmdbId": 299167, "title": "Dutton Ranch", "provider": "PARAMOUNT", "officialUrl": "https://www.paramountpressexpress.com/paramount-plus/shows/dutton-ranch/releases/", "allowedDomains": ["paramountpressexpress.com"], "aliases": ["Dutton Ranch"]},
-    {"tmdbId": 111803, "title": "The White Lotus", "provider": "WBD", "officialUrl": "https://press.wbd.com/na/property/white-lotus/media-releases", "allowedDomains": ["press.wbd.com"], "aliases": ["The White Lotus"]},
+    {"tmdbId": 111803, "title": "The White Lotus", "provider": "WBD", "officialUrl": "https://press.wbd.com/na/property/white-lotus/media-releases", "fallbackUrls": ["https://press.wbd.com/us/media-release/hbo-0/hbo-original-white-lotus-season-4-begins-filming-france", "https://press.wbd.com/ca/media-release/hbo-0/hbo-renews-white-lotus-fourth-season"], "allowedDomains": ["press.wbd.com"], "aliases": ["The White Lotus"]},
     {"tmdbId": 236235, "title": "The Gentlemen", "provider": "NETFLIX", "officialUrl": "https://www.netflix.com/tudum/the-gentlemen", "allowedDomains": ["netflix.com"], "aliases": ["The Gentlemen"]},
-    {"tmdbId": 225891, "title": "The Madison", "provider": "PARAMOUNT", "officialUrl": "https://www.paramountpressexpress.com/paramount-plus/shows/the-madison/releases/", "allowedDomains": ["paramountpressexpress.com"], "aliases": ["The Madison"]}
+    {"tmdbId": 225891, "title": "The Madison", "provider": "PARAMOUNT", "officialUrl": "https://www.paramountpressexpress.com/paramount-plus/shows/the-madison/releases/", "evidenceUrls": ["https://www.paramountplus.com/sneak-peak/the-madison-renewed-season-3/"], "allowedDomains": ["paramountpressexpress.com", "paramountplus.com"], "aliases": ["The Madison"]}
   ]
 }

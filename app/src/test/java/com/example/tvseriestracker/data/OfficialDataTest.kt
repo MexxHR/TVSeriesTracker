@@ -87,7 +87,7 @@ class OfficialDataTest {
     @Test fun bundledVerifiedDatasetPassesValidator() {
         val payload = bundled()
         assertEquals(10, payload.series.size)
-        assertEquals(Instant.parse("2026-09-26T20:00:00Z"), payload.generatedAt)
+        assertEquals(Instant.parse("2026-09-27T07:00:00Z"), payload.generatedAt)
         assertEquals(10, payload.series.map { it.tmdbId }.toSet().size)
     }
 
@@ -110,7 +110,7 @@ class OfficialDataTest {
 
     @Test fun olderBundledDatasetDoesNotOverwriteNewerCache() = runBlocking {
         val store = FakeStore()
-        store.replace(OfficialPayload(Instant.parse("2026-09-27T00:00:00Z"), emptyList()), Instant.EPOCH)
+        store.replace(OfficialPayload(Instant.parse("2026-09-27T08:00:00Z"), emptyList()), Instant.EPOCH)
         val repository = OfficialDataRepository(store, object : OfficialRemoteSource {
             override suspend fun fetch(): String = error("Remote not needed")
         }, { bundledText() })
