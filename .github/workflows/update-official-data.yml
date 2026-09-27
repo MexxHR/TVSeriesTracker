@@ -1,0 +1,63 @@
+name: Update official data
+on:
+  schedule:
+    - cron: '17 7 * * *' # daily, 07:17 UTC
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Fetch and validate without writing or committing'
+        type: boolean
+        required: true
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: official-data-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fixture and safety tests
+        run: python -m unittest discover -s official-data/automation -p 'test_*.py' -v
+      - name: Fetch, detect, validate and optionally write
+        id: update
+        continue-on-error: true
+        env:
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
+        run: |
+          if [ "$DRY_RUN" = "true" ]; then
+            python official-data/automation/update.py --dry-run
+          else
+            python official-data/automation/update.py
+          fi
+      - name: Commit factual changes only
+        if: ${{ steps.update.outcome != 'skipped' && (github.event_name == 'schedule' || !inputs.dry_run) }}
+        run: |
+          if git diff --quiet -- official-data/official_series_data.json && [ ! -f official-data/history/changes.jsonl ]; then
+            echo 'No canonical changes'
+            exit 0
+          fi
+          git add official-data/official_series_data.json official-data/history/changes.jsonl
+          if git diff --cached --quiet; then
+            echo 'No canonical changes'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Update verified official series data'
+          git push
+      - name: Report provider failure
+        if: ${{ steps.update.outcome == 'failure' }}
+        run: |
+          echo 'One or more official providers failed. Existing records for those series were preserved; see the fetch log above.'
+          exit 1
