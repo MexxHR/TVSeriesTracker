@@ -8,9 +8,11 @@ import html
 from html.parser import HTMLParser
 from http.client import BadStatusLine, IncompleteRead, RemoteDisconnected
 import json
+import os
 from pathlib import Path
 import re
 import sys
+import tempfile
 import time
 from urllib.error import HTTPError, URLError
 from urllib.parse import urljoin, urlparse
@@ -33,6 +35,10 @@ SEASON = rf"(?:\bseason\s+({NUM})\b|\b({NUM})\s+season\b)"
 
 class AutomationError(Exception):
     pass
+
+
+class ProviderUnavailable(AutomationError):
+    """An official endpoint could not be reached or returned an access block."""
 
 
 def allowed(url: str, domains: list[str]) -> bool:
@@ -70,7 +76,8 @@ def fetch(url: str, domains: list[str]) -> tuple[str, str]:
                 return payload.decode("utf-8", errors="replace"), final
         except HTTPError as exc:
             if exc.code != 429 and not 500 <= exc.code <= 599:
-                raise AutomationError(f"HTTP {exc.code}: {url}") from exc
+                error_type = ProviderUnavailable if exc.code in (401, 403, 404) else AutomationError
+                raise error_type(f"HTTP {exc.code}: {url}") from exc
             reason = f"HTTP {exc.code}"
             cause = exc
         except (IncompleteRead, RemoteDisconnected, BadStatusLine, URLError,
@@ -83,9 +90,9 @@ def fetch(url: str, domains: list[str]) -> tuple[str, str]:
             cause = exc
         print(f"Fetch {url} attempt {attempt + 1}/3: {reason}", file=sys.stderr)
         if attempt == 2:
-            raise AutomationError(f"Fetch failed after 3 attempts ({reason}): {url}") from cause
+            raise ProviderUnavailable(f"Fetch failed after 3 attempts ({reason}): {url}") from cause
         time.sleep(1 + attempt * 2)
-    raise AutomationError(f"Fetch failed: {url}")
+    raise ProviderUnavailable(f"Fetch failed: {url}")
 
 
 class Page(HTMLParser):
@@ -133,7 +140,7 @@ def parse_page(raw: str) -> Page:
     if not (page.heading.strip() or page.title.strip()):
         raise AutomationError("HTML parser found no title/heading")
     if re.search(r"sorry\s*-\s*not allowed|geographic location is not allowed|\baccess denied\b|\bcaptcha\b", (page.title + page.heading + "".join(page.parts[:30])), re.I):
-        raise AutomationError("Official site returned access block/challenge")
+        raise ProviderUnavailable("Official site returned access block/challenge")
     return page
 
 
@@ -439,6 +446,7 @@ def collect(entry: dict, current: dict | None, today: dt.date, fetcher=fetch) ->
     adapter = ADAPTERS[entry["provider"]]
     domains = entry["allowedDomains"]
     errors = []
+    unavailable_errors = 0
     failed_urls: set[str] = set()
     cached: dict[str, tuple[str, str]] = {}
     discovered: list[str] = []
@@ -458,6 +466,7 @@ def collect(entry: dict, current: dict | None, today: dt.date, fetcher=fetch) ->
         except (AutomationError, ValueError) as exc:
             failed_urls.add(endpoint)
             errors.append(f"{endpoint}: {exc}")
+            unavailable_errors += isinstance(exc, ProviderUnavailable)
 
     # Collect every selected candidate before resolving conflicts. Configured
     # evidence is first, followed by existing evidence and up to eight recent
@@ -479,28 +488,105 @@ def collect(entry: dict, current: dict | None, today: dt.date, fetcher=fetch) ->
         except (AutomationError, ValueError) as exc:
             failed_urls.add(url)
             errors.append(f"{url}: {exc}")
+            unavailable_errors += isinstance(exc, ProviderUnavailable)
     if not articles:
-        raise AutomationError(f"No usable official releases for {entry['title']} ({adapter.name}): {'; '.join(errors)}")
+        reason = f"No usable official releases for {entry['title']} ({adapter.name}): {'; '.join(errors)}"
+        if errors and unavailable_errors == len(errors):
+            raise ProviderUnavailable(reason)
+        raise AutomationError(reason)
     facts = [fact for article in articles for fact in detect(article, entry, today)]
     return facts, len(articles)
 
 
+def audit_bytes() -> bytes:
+    content = AUDIT.read_bytes() if AUDIT.exists() else b""
+    try:
+        for line in content.decode("utf-8").splitlines():
+            if line.strip() and not isinstance(json.loads(line), dict):
+                raise ValueError("Audit entry must be an object")
+    except (UnicodeError, ValueError) as exc:
+        raise AutomationError(f"Audit corruption: {exc}") from exc
+    return content
+
+
+def staged_file(path: Path, content: bytes) -> Path:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile(dir=path.parent, prefix=f".{path.name}.", delete=False) as stream:
+        staged = Path(stream.name)
+        stream.write(content)
+        stream.flush()
+        os.fsync(stream.fileno())
+    return staged
+
+
+def publish(proposed: dict, registry: dict, changes: list[dict], original_data: bytes, old_audit: bytes, old_audit_exists: bool):
+    new_data = (json.dumps(proposed, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
+    new_audit = old_audit + b"".join((json.dumps(change, ensure_ascii=False, separators=(",", ":")) + "\n").encode("utf-8") for change in changes)
+    staged_data = staged_audit = None
+    committed = False
+    replaced = False
+    try:
+        staged_data = staged_file(DATA, new_data)
+        staged_audit = staged_file(AUDIT, new_audit)
+        os.replace(staged_audit, AUDIT)
+        replaced = True
+        staged_audit = None
+        os.replace(staged_data, DATA)
+        staged_data = None
+        written = DATA.read_bytes()
+        if written != new_data or AUDIT.read_bytes() != new_audit:
+            raise AutomationError("Write verification failed")
+        validate_dataset(json.loads(written), registry)
+        audit_bytes()
+        committed = True
+    finally:
+        if replaced and not committed:
+            # Restore both files if either replacement or verification failed.
+            restore_data = staged_file(DATA, original_data)
+            os.replace(restore_data, DATA)
+            if old_audit_exists:
+                restore_audit = staged_file(AUDIT, old_audit)
+                os.replace(restore_audit, AUDIT)
+            elif AUDIT.exists():
+                AUDIT.unlink()
+        for staged in (staged_data, staged_audit):
+            if staged is not None:
+                staged.unlink(missing_ok=True)
+
+
 def run(dry_run: bool, collector=collect, today: dt.date | None = None) -> dict:
     today = today or dt.datetime.now(dt.timezone.utc).date()
-    registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
-    validate_registry(registry)
-    original = json.loads(DATA.read_text(encoding="utf-8"))
-    validate_dataset(original, registry)
+    try:
+        registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
+        validate_registry(registry)
+        original_data = DATA.read_bytes()
+        original = json.loads(original_data)
+        validate_dataset(original, registry)
+        old_audit_exists = AUDIT.exists()
+        old_audit = audit_bytes()
+    except (OSError, UnicodeError, ValueError, AutomationError) as exc:
+        return {"dryRun": dry_run, "publishable": False, "reports": [], "changes": [], "warnings": [],
+                "failures": [f"GLOBAL_SAFETY_FAILURE: {exc}"]}
     current = {r["tmdbId"]: r for r in original["series"]}
     proposed = copy.deepcopy(original)
     changes = []
     failures = []
-    validation_failures = []
+    warnings = []
     reports = []
     for entry in registry["series"]:
         old = current.get(entry["tmdbId"])
         try:
             facts, count = collector(entry, old, today)
+        except ProviderUnavailable as exc:
+            preservation = "existing verified record preserved" if old else "no record created"
+            warnings.append(f"PROVIDER_UNAVAILABLE: {entry['provider']}/{entry['title']}: {exc}; {preservation}")
+            reports.append({"title": entry["title"], "provider": entry["provider"], "result": "unavailable", "reason": str(exc), "preservation": preservation})
+            continue
+        except (AutomationError, ValueError) as exc:
+            failures.append(f"SERIES_VALIDATION_FAILURE: {entry['provider']}/{entry['title']}: {exc}")
+            reports.append({"title": entry["title"], "provider": entry["provider"], "result": "failed", "reason": str(exc)})
+            continue
+        try:
             validate_facts(facts, entry)
             updated, evidence = merge(old, facts, today)
             reports.append({"title": entry["title"], "provider": entry["provider"], "articles": count, "facts": len(facts), "result": "change" if evidence else "unchanged"})
@@ -511,29 +597,29 @@ def run(dry_run: bool, collector=collect, today: dt.date | None = None) -> dict:
                 else:
                     proposed["series"].append(updated)
                 changes.append({"timestamp": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"), "tmdbId": entry["tmdbId"], "title": entry["title"], "old": old, "new": updated, **evidence})
-        except (AutomationError, ValueError, KeyError) as exc:
-            failures.append(f"{entry['provider']}/{entry['title']}: {exc}")
+        except (AutomationError, ValueError) as exc:
+            failures.append(f"SERIES_VALIDATION_FAILURE: {entry['provider']}/{entry['title']}: {exc}")
             reports.append({"title": entry["title"], "provider": entry["provider"], "result": "failed", "reason": str(exc)})
     if len(changes) > 4:
-        validation_failures.append(f"Mass change protection: {len(changes)} factual changes exceeds 4")
+        failures.append(f"GLOBAL_SAFETY_FAILURE: Mass change protection: {len(changes)} factual changes exceeds 4")
     if changes:
         now = dt.datetime.now(dt.timezone.utc).replace(microsecond=0)
         previous = dt.datetime.fromisoformat(original["generatedAt"].replace("Z", "+00:00"))
         if now <= previous:
-            validation_failures.append("generatedAt regression")
+            failures.append("GLOBAL_SAFETY_FAILURE: generatedAt regression")
         else:
             proposed["generatedAt"] = now.isoformat().replace("+00:00", "Z")
     try:
         validate_dataset(proposed, registry, original)
     except AutomationError as exc:
-        validation_failures.append(str(exc))
-    result = {"dryRun": dry_run, "reports": reports, "changes": changes, "failures": failures + validation_failures}
-    if not dry_run and not validation_failures and changes:
-        DATA.write_text(json.dumps(proposed, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-        AUDIT.parent.mkdir(parents=True, exist_ok=True)
-        with AUDIT.open("a", encoding="utf-8") as log:
-            for change in changes:
-                log.write(json.dumps(change, ensure_ascii=False, separators=(",", ":")) + "\n")
+        failures.append(f"GLOBAL_SAFETY_FAILURE: {exc}")
+    result = {"dryRun": dry_run, "publishable": not failures, "reports": reports, "changes": changes, "warnings": warnings, "failures": failures}
+    if not dry_run and result["publishable"] and changes:
+        try:
+            publish(proposed, registry, changes, original_data, old_audit, old_audit_exists)
+        except (OSError, AutomationError, ValueError) as exc:
+            result["failures"].append(f"GLOBAL_SAFETY_FAILURE: publishing failed: {exc}")
+            result["publishable"] = False
     return result
 
 
@@ -543,4 +629,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     output = run(args.dry_run)
     print(json.dumps(output, ensure_ascii=False, indent=2))
-    sys.exit(1 if output["failures"] else 0)
+    for warning in output["warnings"]:
+        print(f"::warning::{warning}", file=sys.stderr)
+    sys.exit(0 if output["publishable"] else 1)

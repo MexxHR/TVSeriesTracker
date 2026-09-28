@@ -112,6 +112,18 @@ class FetchTests(unittest.TestCase):
         self.assertEqual(self.calls, [entry["officialUrl"], fallback])
         self.assertEqual(self.sleeps, [])
 
+    def test_http_403_is_provider_unavailable(self):
+        self.serve({self.url: [HTTPError(self.url, 403, "forbidden", {}, None)]})
+        with self.assertRaises(u.ProviderUnavailable):
+            u.fetch(self.url, ENTRY["allowedDomains"])
+        self.assertEqual(self.calls, [self.url])
+
+    def test_http_400_is_blocking_error(self):
+        self.serve({self.url: [HTTPError(self.url, 400, "bad request", {}, None)]})
+        with self.assertRaises(u.AutomationError) as raised:
+            u.fetch(self.url, ENTRY["allowedDomains"])
+        self.assertNotIsInstance(raised.exception, u.ProviderUnavailable)
+
     def test_response_too_large_is_rejected(self):
         self.serve({self.url: [b"<h1>valid</h1>" + b"x" * 8_000_000]})
         with self.assertRaisesRegex(u.AutomationError, "Response too large"):
@@ -448,6 +460,20 @@ class PipelineTests(unittest.TestCase):
             p.start()
             self.addCleanup(p.stop)
 
+    def partial_collector(self, entry, old, today):
+        if entry["provider"] == "WBD":
+            raise u.ProviderUnavailable("HTTP 403: press.wbd.com")
+        if entry["title"] == "Lioness":
+            renewal = u.detect(article("Lioness renewed for Season 3", "https://www.paramountpressexpress.com/lioness-renewal"), entry, today)
+            premiere = u.detect(article("Lioness Season 3 premieres August 2, 2026", "https://www.paramountpressexpress.com/lioness-premiere"), entry, today)
+            return renewal + premiere, 2
+        if entry["title"] == "The Madison":
+            return u.detect(article("The Madison renewed for Season 3", "https://www.paramountplus.com/season-3"), entry, today), 1
+        return [], 1
+
+    def partial_result(self, dry_run=False):
+        return u.run(dry_run, self.partial_collector, TODAY)
+
     def test_http_failure_preserves_data(self):
         before = self.data.read_bytes()
         def fail(entry, old, today):
@@ -483,9 +509,10 @@ class PipelineTests(unittest.TestCase):
             with patch.object(u, "build_opener", return_value=Opener()), patch.object(u.time, "sleep"):
                 u.fetch(entry["officialUrl"], entry["allowedDomains"])
         result = u.run(False, collector, TODAY)
-        self.assertEqual(len(result["failures"]), 1)
-        self.assertIn("IncompleteRead", result["failures"][0])
-        self.assertEqual(result["reports"][0]["result"], "failed")
+        self.assertTrue(result["publishable"])
+        self.assertEqual(len(result["warnings"]), 1)
+        self.assertIn("IncompleteRead", result["warnings"][0])
+        self.assertEqual(result["reports"][0]["result"], "unavailable")
         self.assertTrue(all(report["result"] == "unchanged" for report in result["reports"][1:]))
         self.assertEqual(self.data.read_bytes(), before)
         self.assertFalse(self.audit.exists())
@@ -530,8 +557,9 @@ class PipelineTests(unittest.TestCase):
         result = u.run(False, collector, TODAY)
         self.assertEqual(len(result["changes"]), 1)
         self.assertEqual(len(result["failures"]), 11)
-        self.assertIn(113962, [r["tmdbId"] for r in json.loads(self.data.read_text())["series"]])
-        self.assertTrue(self.audit.exists())
+        self.assertFalse(result["publishable"])
+        self.assertNotIn(113962, [r["tmdbId"] for r in json.loads(self.data.read_text())["series"]])
+        self.assertFalse(self.audit.exists())
 
     def test_wbd_total_failure_keeps_white_lotus_and_canonical_bytes(self):
         before = self.data.read_bytes()
@@ -542,6 +570,173 @@ class PipelineTests(unittest.TestCase):
         result = u.run(False, collector, TODAY)
         self.assertEqual(len(result["failures"]), 1)
         self.assertIn("WBD/The White Lotus", result["failures"][0])
+        self.assertEqual(self.data.read_bytes(), before)
+        self.assertFalse(self.audit.exists())
+
+    def test_wbd_all_real_http_403_classified_unavailable(self):
+        entry = next(e for e in json.loads(self.registry.read_text())["series"] if e["provider"] == "WBD")
+        old = next(r for r in json.loads(self.data.read_text())["series"] if r["title"] == "The White Lotus")
+        def forbidden(url, domains):
+            raise u.ProviderUnavailable(f"HTTP 403: {url}")
+        with self.assertRaisesRegex(u.ProviderUnavailable, "No usable official releases"):
+            u.collect(entry, old, TODAY, forbidden)
+
+    def test_wbd_403_two_verified_changes_publishable(self):
+        result = self.partial_result(True)
+        self.assertTrue(result["publishable"])
+        self.assertEqual({c["title"] for c in result["changes"]}, {"Lioness", "The Madison"})
+        self.assertEqual(len(result["warnings"]), 1)
+        self.assertIn("WBD/The White Lotus", result["warnings"][0])
+
+    def test_partial_publish_preserves_every_wbd_field(self):
+        before = next(r for r in json.loads(self.data.read_text())["series"] if r["title"] == "The White Lotus")
+        result = self.partial_result()
+        after = next(r for r in json.loads(self.data.read_text())["series"] if r["title"] == "The White Lotus")
+        self.assertTrue(result["publishable"])
+        self.assertEqual(after, before)
+        self.assertEqual(after["lastChecked"], before["lastChecked"])
+
+    def test_unavailable_missing_record_never_creates_unknown(self):
+        result = u.run(False, lambda entry, old, today: (_ for _ in ()).throw(u.ProviderUnavailable("HTTP 403")) if entry["title"] == "Lioness" else ([], 1), TODAY)
+        self.assertTrue(result["publishable"])
+        self.assertEqual(len(result["warnings"]), 1)
+        self.assertIn("no record created", result["warnings"][0])
+        self.assertNotIn(113962, [r["tmdbId"] for r in json.loads(self.data.read_text())["series"]])
+
+    def test_wbd_only_outage_no_write_or_generated_at_change(self):
+        before = self.data.read_bytes()
+        result = u.run(False, lambda entry, old, today: (_ for _ in ()).throw(u.ProviderUnavailable("HTTP 403")) if entry["provider"] == "WBD" else ([], 1), TODAY)
+        self.assertTrue(result["publishable"])
+        self.assertFalse(result["changes"])
+        self.assertEqual(self.data.read_bytes(), before)
+        self.assertFalse(self.audit.exists())
+
+    def test_verified_changes_advance_generated_at(self):
+        before = json.loads(self.data.read_text())["generatedAt"]
+        result = self.partial_result()
+        self.assertTrue(result["publishable"])
+        self.assertGreater(json.loads(self.data.read_text())["generatedAt"], before)
+
+    def test_partial_publish_lioness_exact_fact(self):
+        self.partial_result()
+        lioness = next(r for r in json.loads(self.data.read_text())["series"] if r["title"] == "Lioness")
+        self.assertEqual((lioness["nextSeasonNumber"], lioness["status"], lioness["releaseDate"], lioness["releaseYear"]), (3, "RENEWED", "2026-08-02", 2026))
+
+    def test_partial_publish_madison_exact_fact(self):
+        self.partial_result()
+        madison = next(r for r in json.loads(self.data.read_text())["series"] if r["title"] == "The Madison")
+        self.assertEqual((madison["nextSeasonNumber"], madison["status"], madison["releaseDate"], madison["releaseYear"]), (3, "RENEWED", None, None))
+
+    def test_partial_publish_mobland_unchanged(self):
+        before = next(r for r in json.loads(self.data.read_text())["series"] if r["title"] == "MobLand")
+        self.partial_result()
+        after = next(r for r in json.loads(self.data.read_text())["series"] if r["title"] == "MobLand")
+        self.assertEqual(after, before)
+
+    def test_partial_publish_silo_final_date_unchanged(self):
+        self.partial_result()
+        silo = next(r for r in json.loads(self.data.read_text())["series"] if r["title"] == "Silo")
+        self.assertEqual((silo["nextSeasonNumber"], silo["status"], silo["releaseDate"]), (4, "FINAL_SEASON", "2027-07-09"))
+
+    def test_partial_audit_only_published_facts(self):
+        self.partial_result()
+        entries = [json.loads(line) for line in self.audit.read_text().splitlines()]
+        self.assertEqual({e["title"] for e in entries}, {"Lioness", "The Madison"})
+        self.assertEqual(len(entries), 2)
+
+    def test_dry_run_matches_production_decision_without_writes(self):
+        before = self.data.read_bytes()
+        dry = self.partial_result(True)
+        self.assertEqual(self.data.read_bytes(), before)
+        self.assertFalse(self.audit.exists())
+        live = self.partial_result(False)
+        self.assertEqual(dry["publishable"], live["publishable"])
+        self.assertEqual({c["title"] for c in dry["changes"]}, {c["title"] for c in live["changes"]})
+        self.assertEqual(len(dry["warnings"]), len(live["warnings"]))
+
+    def test_conflicting_dates_block_all_publish(self):
+        before = self.data.read_bytes()
+        def collector(entry, old, today):
+            if entry["title"] == "Lioness":
+                return self.partial_collector(entry, old, today)
+            if entry["title"] == "The Madison":
+                first = u.detect(article("The Madison Season 3 premieres August 2, 2026", "https://www.paramountplus.com/first"), entry, today)
+                second = u.detect(article("The Madison Season 3 premieres August 9, 2026", "https://www.paramountplus.com/second"), entry, today)
+                return first + second, 2
+            return [], 1
+        result = u.run(False, collector, TODAY)
+        self.assertFalse(result["publishable"])
+        self.assertTrue(any("SERIES_VALIDATION_FAILURE" in f for f in result["failures"]))
+        self.assertEqual(self.data.read_bytes(), before)
+        self.assertFalse(self.audit.exists())
+
+    def test_global_schema_failure_blocks_all(self):
+        before = self.data.read_bytes()
+        original_validator = u.validate_dataset
+        calls = 0
+        def validator(*args):
+            nonlocal calls
+            calls += 1
+            if calls == 2:
+                raise u.AutomationError("bad candidate schema")
+            return original_validator(*args)
+        with patch.object(u, "validate_dataset", side_effect=validator):
+            result = self.partial_result()
+        self.assertFalse(result["publishable"])
+        self.assertIn("GLOBAL_SAFETY_FAILURE", result["failures"][0])
+        self.assertEqual(self.data.read_bytes(), before)
+
+    def test_unexpected_programming_error_propagates_without_write(self):
+        before = self.data.read_bytes()
+        with self.assertRaisesRegex(RuntimeError, "programming bug"):
+            u.run(False, lambda entry, old, today: (_ for _ in ()).throw(RuntimeError("programming bug")), TODAY)
+        self.assertEqual(self.data.read_bytes(), before)
+        self.assertFalse(self.audit.exists())
+
+    def test_corrupt_audit_blocks_publish(self):
+        before = self.data.read_bytes()
+        self.audit.write_text("{broken json\n", encoding="utf-8")
+        result = self.partial_result()
+        self.assertFalse(result["publishable"])
+        self.assertIn("Audit corruption", result["failures"][0])
+        self.assertEqual(self.data.read_bytes(), before)
+
+    def test_malformed_production_json_blocks_publish(self):
+        self.data.write_text("{broken json", encoding="utf-8")
+        result = self.partial_result()
+        self.assertFalse(result["publishable"])
+        self.assertIn("GLOBAL_SAFETY_FAILURE", result["failures"][0])
+        self.assertFalse(self.audit.exists())
+
+    def test_post_write_verification_failure_restores_both_files(self):
+        before = self.data.read_bytes()
+        original_validator = u.validate_dataset
+        calls = 0
+        def validator(*args):
+            nonlocal calls
+            calls += 1
+            if calls == 3:
+                raise u.AutomationError("verification failed")
+            return original_validator(*args)
+        with patch.object(u, "validate_dataset", side_effect=validator):
+            result = self.partial_result()
+        self.assertFalse(result["publishable"])
+        self.assertEqual(self.data.read_bytes(), before)
+        self.assertFalse(self.audit.exists())
+
+    def test_replace_failure_restores_canonical_and_audit(self):
+        before = self.data.read_bytes()
+        original_replace = u.os.replace
+        failed = False
+        def replace(source, target):
+            nonlocal failed
+            if target == self.data and not failed:
+                failed = True
+                raise OSError("simulated replacement failure")
+            return original_replace(source, target)
+        with patch.object(u.os, "replace", side_effect=replace):
+            result = self.partial_result()
+        self.assertFalse(result["publishable"])
         self.assertEqual(self.data.read_bytes(), before)
         self.assertFalse(self.audit.exists())
 
