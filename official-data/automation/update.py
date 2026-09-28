@@ -234,18 +234,30 @@ def announcement_date(body: str) -> dt.date | None:
     return dt.date.fromisoformat(d) if d else None
 
 
-def premiere_date_in(sentence: str, announced: dt.date | None) -> tuple[str | None, int | None]:
+def premiere_date_in(sentence: str, announced: dt.date | None) -> tuple[str | None, int | None, int | None]:
     # Read a date only after an explicit premiere/streaming verb in this same
     # series-and-season sentence. Publication and production dates are unrelated.
-    verb = re.search(r"\b(?:premieres?|returns?|debuts?|arrives?|streams?|streaming)\b", sentence, re.I)
-    if not verb:
-        return None, None
-    tail = sentence[verb.start():verb.start() + 110]
-    month = re.search(r"\b(" + MONTH_PATTERN + r")\s+\d{1,2}(?:st|nd|rd|th)?(?:,?\s+20\d{2})?\b", tail, re.I)
-    if month and month.start() <= 85:
-        return date_in(month.group(), announced)
-    year = re.search(r"\b(?:in|on)\s+(20\d{2})\b", tail[:60], re.I)
-    return (None, int(year.group(1))) if year else (None, None)
+    verbs = list(re.finditer(r"\b(?:premieres?|returns?|debuts?|arrives?|streams?|streaming)\b", sentence, re.I))
+    if not verbs:
+        return None, None, None
+    season_refs = list(re.finditer(rf"(?:{SEASON}|\b{NUM}\b\s+and\s+final\s+season\b)", sentence, re.I))
+    for index, verb in enumerate(verbs):
+        next_verb = verbs[index + 1].start() if index + 1 < len(verbs) else len(sentence)
+        tail = sentence[verb.start():min(verb.start() + 110, next_verb)]
+        month = re.search(r"\b(" + MONTH_PATTERN + r")\s+\d{1,2}(?:st|nd|rd|th)?(?:,?\s+20\d{2})?\b", tail, re.I)
+        year = re.search(r"\b(?:in|on)\s+(20\d{2})\b", tail[:60], re.I)
+        if not (month and month.start() <= 85) and not year:
+            continue
+        near = sorted((m for m in season_refs if m.start() < next_verb),
+                      key=lambda m: max(m.start() - verb.end(), verb.start() - m.end(), 0))
+        if not near or max(near[0].start() - verb.end(), verb.start() - near[0].end(), 0) > 85:
+            continue
+        season = season_in(near[0].group())
+        if month and month.start() <= 85:
+            date, release_year = date_in(month.group(), announced)
+            return date, release_year, season
+        return None, int(year.group(1)), season
+    return None, None, None
 
 
 def detect(article: dict, entry: dict, today: dt.date) -> list[dict]:
@@ -271,24 +283,24 @@ def detect(article: dict, entry: dict, today: dt.date) -> list[dict]:
             status, rule = "CANCELED", "explicit-cancellation"
         elif re.search(rf"\b(?:renewed|greenlit|greenlighted|return(?:s|ing)?|coming back)\s+for\s+(?:a\s+)?(?:season\s+{NUM}|{NUM}\s+season)\b", s, re.I):
             status, rule = "RENEWED", "explicit-renewal"
-        date, year = (None, None)
+        date, year, date_season = (None, None, None)
         if status != "CANCELED":
-            date, year = premiere_date_in(s, announced)
+            date, year, date_season = premiere_date_in(s, announced)
             if date and rule == "explicit-renewal" and not re.search(r"\b(?:renewed|greenlit|greenlighted)\b", s, re.I):
                 # "returns for Season Three on August 2" announces a premiere,
                 # not a new lifecycle decision that should own canonical source.
-                status, rule = "RELEASE_DATE_CONFIRMED", "explicit-premiere"
-            if (date or year) and not status:
-                status, rule = "RELEASE_DATE_CONFIRMED" if date else "RENEWED", "explicit-premiere"
-        if not status:
-            continue
-        if status == "RELEASE_DATE_CONFIRMED" and not date:
-            continue
-        facts.append({"tmdbId": entry["tmdbId"], "title": entry["title"], "nextSeasonNumber": season,
-                      "status": status, "releaseDate": date, "releaseYear": year,
-                      "sourceName": article["sourceName"], "sourceUrl": article["url"],
-                      "announcementDate": announced.isoformat() if announced else None, "rule": rule,
-                      "dateRevision": bool(re.search(r"\b(?:rescheduled|postponed|moved|shifted)\b", s, re.I))})
+                status, rule = None, None
+        common = {"tmdbId": entry["tmdbId"], "title": entry["title"],
+                  "sourceName": article["sourceName"], "sourceUrl": article["url"],
+                  "announcementDate": announced.isoformat() if announced else None}
+        if status:
+            facts.append({**common, "nextSeasonNumber": season, "status": status,
+                          "releaseDate": None, "releaseYear": None, "rule": rule})
+        if date_season and (date or year):
+            facts.append({**common, "nextSeasonNumber": date_season,
+                          "status": "RELEASE_DATE_CONFIRMED" if date else "RENEWED",
+                          "releaseDate": date, "releaseYear": year, "rule": "explicit-premiere",
+                          "dateRevision": bool(re.search(r"\b(?:rescheduled|postponed|moved|shifted)\b", s, re.I))})
     return facts
 
 

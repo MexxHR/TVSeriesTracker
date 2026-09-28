@@ -126,6 +126,72 @@ class FetchTests(unittest.TestCase):
         self.assertEqual(self.calls, [self.url])
 
 
+class MobLandTests(unittest.TestCase):
+    def setUp(self):
+        registry = json.loads(u.REGISTRY.read_text(encoding="utf-8"))
+        self.entry = next(e for e in registry["series"] if e["title"] == "MobLand")
+        data = json.loads(u.DATA.read_text(encoding="utf-8"))
+        self.old = next(r for r in data["series"] if r["title"] == "MobLand")
+
+    def official_renewal(self):
+        return {"title": "THE HARRIGANS AREN’T GOING ANYWHERE: MOBLAND RENEWED FOR SEASON THREE ON PARAMOUNT+",
+                "body": "September 3, 2026 – The Harrigan family’s fight for power is far from over. "
+                        "Today, Paramount+ announced that its hit original crime drama MobLand has been renewed for a third season, "
+                        "ahead of the series’ highly-anticipated season two premiere on Friday, September 18.",
+                "url": self.old["sourceUrl"], "sourceName": "Paramount Press Express"}
+
+    def test_real_official_pattern_keeps_s3_without_s2_date(self):
+        facts = u.detect(self.official_renewal(), self.entry, TODAY)
+        u.validate_facts(facts, self.entry)
+        selected, evidence = u.merge(self.old, facts, TODAY)
+        self.assertEqual((selected["nextSeasonNumber"], selected["status"], selected["releaseDate"]),
+                         (3, "RENEWED", None))
+        self.assertIsNone(evidence)
+        self.assertTrue(any(f["nextSeasonNumber"] == 2 and f["releaseDate"] == "2026-09-18" for f in facts))
+        self.assertFalse(any(f["nextSeasonNumber"] == 3 and f["releaseDate"] for f in facts))
+
+    def test_renewal_with_weak_unrelated_date_remains_valid(self):
+        source = self.official_renewal()
+        source["body"] += "\nArticle published September 3, 2026; production began August 1, 2026."
+        facts = u.detect(source, self.entry, TODAY)
+        u.validate_facts(facts, self.entry)
+        selected, evidence = u.merge(self.old, facts, TODAY)
+        self.assertEqual((selected["status"], selected["releaseDate"], evidence), ("RENEWED", None, None))
+
+    def test_earlier_return_verb_does_not_claim_later_season_premiere(self):
+        source = self.official_renewal()
+        source["body"] = "September 3, 2026 - MobLand will return for a third season, ahead of the season two premiere on Friday, September 18."
+        facts = u.detect(source, self.entry, TODAY)
+        u.validate_facts(facts, self.entry)
+        self.assertTrue(any(f["nextSeasonNumber"] == 2 and f["releaseDate"] == "2026-09-18" for f in facts))
+        self.assertFalse(any(f["nextSeasonNumber"] == 3 and f["releaseDate"] for f in facts))
+
+    def test_publication_date_is_not_premiere(self):
+        facts = u.detect({"title": "MobLand renewed for Season Three",
+                          "body": "September 3, 2026 - MobLand renewed for Season Three.",
+                          "url": self.old["sourceUrl"], "sourceName": "Paramount Press Express"}, self.entry, TODAY)
+        self.assertTrue(facts)
+        self.assertFalse(any(f["releaseDate"] for f in facts))
+
+    def test_production_start_date_is_not_premiere(self):
+        facts = u.detect(article("MobLand Season Three production begins September 18, 2026"), self.entry, TODAY)
+        self.assertFalse(any(f["releaseDate"] for f in facts))
+
+    def test_strong_s3_premiere_is_retained(self):
+        facts = u.detect(article("MobLand Season Three premieres October 30, 2026"), self.entry, TODAY)
+        u.validate_facts(facts, self.entry)
+        selected, evidence = u.merge(self.old, facts, TODAY)
+        self.assertEqual((selected["status"], selected["releaseDate"]), ("RENEWED", "2026-10-30"))
+        self.assertEqual(selected["sourceUrl"], self.old["sourceUrl"])
+        self.assertIsNotNone(evidence)
+
+    def test_two_strong_s3_dates_still_conflict(self):
+        first = u.detect(article("MobLand Season Three premieres October 30, 2026"), self.entry, TODAY)
+        second = u.detect(article("MobLand Season Three premieres November 6, 2026"), self.entry, TODAY)
+        with self.assertRaisesRegex(u.AutomationError, "Conflicting release dates"):
+            u.merge(self.old, first + second, TODAY)
+
+
 class DetectionTests(unittest.TestCase):
     def test_lioness_renewal_and_premiere_both_orders(self):
         entry = {"tmdbId": 113962, "title": "Lioness", "aliases": ["Lioness"]}
@@ -388,6 +454,22 @@ class PipelineTests(unittest.TestCase):
             raise u.AutomationError("HTTP 503")
         result = u.run(False, fail, TODAY)
         self.assertEqual(len(result["failures"]), 12)
+        self.assertEqual(self.data.read_bytes(), before)
+
+    def test_mobland_weak_s2_date_does_not_fail_provider(self):
+        before = self.data.read_bytes()
+        def collector(entry, old, today):
+            if entry["title"] != "MobLand":
+                return [], 1
+            source = {"title": "MOBLAND RENEWED FOR SEASON THREE ON PARAMOUNT+",
+                      "body": "September 3, 2026 - MobLand has been renewed for a third season, ahead of the season two premiere on Friday, September 18.",
+                      "url": old["sourceUrl"], "sourceName": "Paramount Press Express"}
+            return u.detect(source, entry, today), 1
+        result = u.run(True, collector, TODAY)
+        mobland = next(r for r in result["reports"] if r["title"] == "MobLand")
+        self.assertEqual(mobland["result"], "unchanged")
+        self.assertFalse(result["failures"])
+        self.assertFalse(result["changes"])
         self.assertEqual(self.data.read_bytes(), before)
 
     def test_exhausted_incomplete_read_isolated_and_preserves_data(self):
