@@ -57,13 +57,13 @@ class SafeRedirect(HTTPRedirectHandler):
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
 
-def fetch(url: str, domains: list[str]) -> tuple[str, str]:
+def fetch(url: str, domains: list[str], headers: dict[str, str] | None = None) -> tuple[str, str]:
     if not allowed(url, domains):
         raise AutomationError(f"Source outside allowlist: {url}")
     opener = build_opener(SafeRedirect(domains))
     for attempt in range(3):
         try:
-            req = Request(url, headers={"User-Agent": "TVSeriesTrackerOfficialDataBot/2.3.2 (+https://github.com/MexxHR/TVSeriesTracker)", "Accept": "text/html"})
+            req = Request(url, headers={"User-Agent": "TVSeriesTrackerOfficialDataBot/2.3.2 (+https://github.com/MexxHR/TVSeriesTracker)", "Accept": "text/html", **(headers or {})})
             with opener.open(req, timeout=12) as response:
                 final = response.geturl()
                 if not allowed(final, domains):
@@ -626,7 +626,18 @@ def run(dry_run: bool, collector=collect, today: dt.date | None = None) -> dict:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--discover", type=int, metavar="TMDB_ID", help="Report official-source discovery without changing production data")
+    parser.add_argument("--metadata-file", type=Path, help="Optional local TMDB metadata fixture for --discover")
     args = parser.parse_args()
+    if args.discover is not None:
+        if args.dry_run:
+            parser.error("--discover is always read-only; do not combine it with --dry-run")
+        from discovery import discover_cli
+        report = discover_cli(args.discover, args.metadata_file)
+        print(json.dumps(report, ensure_ascii=False, indent=2))
+        sys.exit(1 if report["result"] == "metadata_unavailable" else 0)
+    if args.metadata_file:
+        parser.error("--metadata-file requires --discover")
     output = run(args.dry_run)
     print(json.dumps(output, ensure_ascii=False, indent=2))
     for warning in output["warnings"]:

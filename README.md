@@ -1,4 +1,4 @@
-# TV Series Tracker V2.3.5
+# TV Series Tracker V2.4.0
 
 Android aplikacija za praćenje TV serija. TMDB pruža pretragu, postere i osnovne podatke o seriji. Zaseban Official Data JSON daje verificirane službene statuse, datume i izvore. Room čuva watchlist i oba cachea. TMDB status i datumi nikada ne određuju službeni status u aplikaciji. V1 demo statusi više se ne prikazuju kao stvarni statusi.
 
@@ -15,7 +15,7 @@ Kotlin, Jetpack Compose, Material 3, MVVM, Room, Repository, Navigation Compose,
 - hrvatski i engleski jezik te sistemska, svijetla i tamna tema
 - odvojeni Official Data sloj, ručni refresh u Postavkama i automatski pokušaj pri startu kad je zadnji uspješni sync stariji od 24 sata
 
-Canonical i bundled JSON sada sadrže 10 ručno verificiranih zapisa: Tulsa King, Mayor of Kingstown, MobLand, Landman, Fallout, The Night Agent, Silo, Dutton Ranch, The White Lotus i The Gentlemen. Lioness i The Madison namjerno ostaju bez zapisa jer nema provjerene službene odluke za tražene sljedeće sezone. Bez zapisa UI prikazuje “Nema verificiranih službenih podataka”. Spremljeni watchlist, detalji i Official Data cache rade bez interneta; TMDB pretraga zahtijeva mrežu i token. Refresh greška ne briše cache.
+Bundled Android JSON sadrži 10 početnih ručno verificiranih zapisa: Tulsa King, Mayor of Kingstown, MobLand, Landman, Fallout, The Night Agent, Silo, Dutton Ranch, The White Lotus i The Gentlemen. Canonical remote JSON sinkroniziran s produkcijskim V2.3.5 feedom sada ima 12 zapisa: Lioness i The Madison dodani su verificiranim GitHub Actions objavama. Bundled asset ostaje offline fallback. Bez zapisa UI prikazuje “Nema verificiranih službenih podataka”. Spremljeni watchlist, detalji i Official Data cache rade bez interneta; TMDB pretraga zahtijeva mrežu i token. Refresh greška ne briše cache.
 
 Silo je `FINAL_SEASON` s potvrđenim `releaseDate=2027-07-09`. Status se prikazuje kao finalna sezona, a datum ga ne mijenja u `RELEASE_DATE_CONFIRMED`. Uskoro i istoimeni filter gledaju svaki verificirani budući `releaseDate`, ne samo jedan status. Zato ondje ulaze Tulsa King (16. 10. 2026.) i Silo (9. 7. 2027.).
 
@@ -56,6 +56,10 @@ Zadani produkcijski URL za normalni i debug build je `https://raw.githubusercont
 
 Workflow `.github/workflows/update-official-data.yml` provjerava 12 registriranih serija svaki dan u 07:17 UTC. U **Actions → Update official data → Run workflow** može se pokrenuti i ručno; `dry_run=true` je zadana vrijednost. **Prvi GitHub Actions run nakon V2.3.5 neka bude dry-run.** Schedule ostaje u dry-run modu dok nakon pregleda tog rezultata ne postavite Actions variable `OFFICIAL_DATA_LIVE_ENABLED=true`; zatim radi automatski. Registry je `official-data/sources.json`; moduli za Paramount, Netflix, Apple, WBD i Amazon nalaze se u `official-data/automation/update.py`. V2.3.1 dodao je službenu Paramount+ Season 3 objavu za The Madison i izravne WBD press fallbackove. V2.3.2 dodaje ograničen retry za prolazne HTTP greške, uključujući IncompleteRead. V2.3.3 spaja zasebne renewal i premiere činjenice za istu sezonu, prepoznaje oblik Season Three i sprječava čitanje znamenki godine kao broja sezone; WBD ostaje prijavljen kao nedostupan dok se ne potvrdi pouzdan službeni kanal. V2.3.4 razdvaja obnovu MobLand S3 od datuma premijere S2 u istoj rečenici; slab ili nepovezan datum ne ruši verificiranu obnovu. Pri jasnom službenom dokazu workflow validira promjenu, upisuje canonical JSON i JSONL audit te commita samo stvarne promjene. Nedostupan provider prijavljuje upozorenje i ostavlja postojeći zapis (uključujući lastChecked) netaknutim; verified promjene drugih serija mogu se objaviti nakon potpune validacije. Konfliktni dokazi, globalne sigurnosne greške i programske iznimke blokiraju cijeli publish. Dry-run prikazuje publishable bez pisanja; audit sadrži samo stvarno objavljene promjene. Prag zaštite je najviše četiri promijenjene serije u jednom runu. Nisu potrebni AI API, plaćena usluga ni osobni PAT. Detaljna pravila detekcije, prioriteti, ograničenja, dodavanje izvora i lokalni test/dry-run opisani su u [automation README](official-data/automation/README.md).
 
+## V2.4 Phase 1 discovery
+
+Read-only CLI `python official-data/automation/update.py --discover <TMDB_TV_ID>` pronalazi potencijalne izvore na službenim domenama. TMDB služi samo za identitet i usmjeravanje prema provideru; nikad za verificirani status ili datum. Rezultat ne mijenja `sources.json`, canonical JSON, audit ni Android watchlist. Odvojeni ručni GitHub workflow **Discover official source (read-only)** prihvaća TMDB TV ID; dnevni production workflow ostaje nepromijenjen. Detalji routing pravila, pet live proba, ograničenja i siguran model zahtjeva opisani su u [discovery dokumentaciji](official-data/automation/DISCOVERY.md).
+
 ## TMDB setup
 
 1. Napravite [TMDB račun](https://www.themoviedb.org/) i u postavkama računa otvorite API postavke.
@@ -79,9 +83,9 @@ APK nastaje u `app/build/outputs/apk/debug/app-debug.apk`. `./gradlew :app:testD
 
 ## GitHub Actions APK
 
-Pushajte cijeli projekt u GitHub repozitorij i postavite `TMDB_API_TOKEN` secret. `OFFICIAL_DATA_URL` variable potreban je samo ako želite nadjačati zadani URL. U kartici **Actions** odaberite **Android debug APK** i **Run workflow**. Nakon uspješnog builda preuzmite artifact `TV-Series-Tracker-V2.3.5-debug`, raspakirajte ga i instalirajte APK na telefon. Workflow radi i na push u `main` te na pull request.
+Pushajte cijeli projekt u GitHub repozitorij i postavite `TMDB_API_TOKEN` secret. `OFFICIAL_DATA_URL` variable potreban je samo ako želite nadjačati zadani URL. U kartici **Actions** odaberite **Android debug APK** i **Run workflow**. Nakon uspješnog builda preuzmite artifact `TV-Series-Tracker-V2.4.0-debug`, raspakirajte ga i instalirajte APK na telefon. Workflow radi i na push u `main` te na pull request.
 
-**Nadogradnja bez brisanja podataka:** Android zahtijeva isti potpis za V2.3 i V2.3.5 APK. GitHub Actions na novom runneru inače generira novi debug ključ; za Actions APK koji mora ažurirati postojeću instalaciju dodajte repository secret `ANDROID_DEBUG_KEYSTORE_BASE64` sa Base64 sadržajem **istog** `debug.keystore` kojim je potpisan instalirani APK. Workflow ga koristi samo ako je secret postavljen.
+**Nadogradnja bez brisanja podataka:** Android zahtijeva isti potpis za V2.3.5 i V2.4.0 APK. GitHub Actions na novom runneru inače generira novi debug ključ; za Actions APK koji mora ažurirati postojeću instalaciju dodajte repository secret `ANDROID_DEBUG_KEYSTORE_BASE64` sa Base64 sadržajem **istog** `debug.keystore` kojim je potpisan instalirani APK. Workflow ga koristi samo ako je secret postavljen.
 
 ## Struktura
 
@@ -97,7 +101,7 @@ Pushajte cijeli projekt u GitHub repozitorij i postavite `TMDB_API_TOKEN` secret
 
 Migracija 1 → 2 zadržava `tracked_series.id`, dodaje nullable `tmdbId` i novu tablicu `series_metadata`. Migracija 2 → 3 samo stvara `official_series_data` i `official_sync_state`; ne mijenja watchlist, TMDB cache ni DataStore. Nema `fallbackToDestructiveMigration` i migracija ne pokreće početno seedanje. Metapodaci iz TMDB-a nikada ne prepisuju službeni status, datum objave ni izvor.
 
-V2.3.5 ne mijenja Room shemu (ostaje verzija 3) ni postojeći verified dataset. Automatizacija je opisana u `official-data/automation/README.md`.
+V2.4.0 ne mijenja Room shemu (ostaje verzija 3) ni postojeći verified dataset. Automatizacija je opisana u `official-data/automation/README.md`.
 
 ## Planirano
 

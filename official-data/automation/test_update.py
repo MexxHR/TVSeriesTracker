@@ -453,7 +453,9 @@ class PipelineTests(unittest.TestCase):
         self.audit = root / "audit.jsonl"
         real = json.loads(u.REGISTRY.read_text(encoding="utf-8"))
         self.registry.write_text(json.dumps(real), encoding="utf-8")
-        original = json.loads(u.DATA.read_text(encoding="utf-8"))
+        # Keep pipeline expectations stable after live automation publishes new
+        # canonical facts in the repository.
+        original = json.loads((Path(__file__).parent / "fixtures" / "v235_canonical.json").read_text(encoding="utf-8"))
         self.data.write_text(json.dumps(original), encoding="utf-8")
         self.patches = [patch.object(u, "DATA", self.data), patch.object(u, "REGISTRY", self.registry), patch.object(u, "AUDIT", self.audit)]
         for p in self.patches:

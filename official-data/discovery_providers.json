@@ -1,0 +1,43 @@
+{
+  "PARAMOUNT": {
+    "routingNames": ["Paramount+", "Paramount Plus", "Paramount Network", "CBS", "Showtime"],
+    "officialDomains": ["paramountpressexpress.com", "paramountplus.com"],
+    "candidateDomains": ["paramountpressexpress.com"],
+    "seeds": [
+      "https://www.paramountpressexpress.com/paramount-plus/shows/{slug}/releases/",
+      "https://www.paramountpressexpress.com/paramount-television-studios/shows/{slug}/releases/"
+    ],
+    "mechanism": "official show release listing"
+  },
+  "NETFLIX": {
+    "routingNames": ["Netflix"],
+    "officialDomains": ["netflix.com"],
+    "candidateDomains": ["netflix.com"],
+    "seeds": ["https://www.netflix.com/tudum/{slug}"],
+    "mechanism": "official Tudum show news index"
+  },
+  "APPLE": {
+    "routingNames": ["Apple TV", "Apple TV+", "Apple TV Plus", "Apple Studios"],
+    "officialDomains": ["apple.com"],
+    "candidateDomains": ["apple.com"],
+    "seeds": ["https://www.apple.com/tv-pr/originals/{slug}/news/", "https://www.apple.com/tv-pr/originals/{slug}/"],
+    "mechanism": "official Apple TV Press show news index"
+  },
+  "AMAZON": {
+    "routingNames": ["Prime Video", "Amazon Prime Video", "Amazon Studios", "Amazon MGM Studios"],
+    "officialDomains": ["aboutamazon.com", "amazon.com"],
+    "candidateDomains": ["aboutamazon.com"],
+    "seeds": ["https://www.aboutamazon.com/entertainment-news"],
+    "mechanism": "official About Amazon entertainment index links"
+  },
+  "WBD": {
+    "routingNames": ["HBO", "HBO Max", "Max", "Warner Bros. Discovery"],
+    "officialDomains": ["press.wbd.com", "hbo.com", "max.com"],
+    "candidateDomains": ["press.wbd.com"],
+    "seeds": [
+      "https://press.wbd.com/us/property/{slug}/media-releases",
+      "https://press.wbd.com/na/property/{slug}/media-releases"
+    ],
+    "mechanism": "official WBD property media-release listing"
+  }
+}
