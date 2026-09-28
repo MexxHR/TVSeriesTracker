@@ -267,7 +267,7 @@ def premiere_date_in(sentence: str, announced: dt.date | None) -> tuple[str | No
     return None, None, None
 
 
-def detect(article: dict, entry: dict, today: dt.date) -> list[dict]:
+def detect(article: dict, entry: dict, today: dt.date, extended_final: bool = False) -> list[dict]:
     # A sentence/title must itself identify the series and the season statement.
     heading = article["title"]
     body = article["body"][:25000]
@@ -284,7 +284,8 @@ def detect(article: dict, entry: dict, today: dt.date) -> list[dict]:
             continue
         status = None
         rule = None
-        if re.search(rf"\b(?:{NUM}\s+and\s+final\s+season|season\s+{NUM}\s+.{0,18}final|final\s+season\s+{NUM})\b", s, re.I):
+        if (re.search(rf"\b(?:{NUM}\s+and\s+final\s+season|season\s+{NUM}\s+.{0,18}final|final\s+season\s+{NUM})\b", s, re.I)
+                or (extended_final and re.search(rf"\bseason\s+{NUM}\s+.{{0,18}}\bfinal\s+season\b", s, re.I))):
             status, rule = "FINAL_SEASON", "explicit-final-season"
         elif not re.search(r"\b(?:not|never|denies?|rumou?rs?|false)\b.{0,20}\b(?:cancelled|canceled)\b", s, re.I) and re.search(rf"\b(?:season\s+{NUM}|{NUM}\s+season)\b.{{0,35}}\b(?:cancelled|canceled|will not (?:return|continue))\b", s, re.I):
             status, rule = "CANCELED", "explicit-cancellation"
@@ -627,8 +628,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--discover", type=int, metavar="TMDB_ID", help="Report official-source discovery without changing production data")
-    parser.add_argument("--metadata-file", type=Path, help="Optional local TMDB metadata fixture for --discover")
+    parser.add_argument("--process-discovered", type=int, metavar="TMDB_ID", help="Process eligible discovery sources into the monitored registry only")
+    parser.add_argument("--metadata-file", type=Path, help="Optional local TMDB metadata fixture for discovery or monitored processing")
     args = parser.parse_args()
+    if args.discover is not None and args.process_discovered is not None:
+        parser.error("Choose --discover or --process-discovered")
     if args.discover is not None:
         if args.dry_run:
             parser.error("--discover is always read-only; do not combine it with --dry-run")
@@ -636,8 +640,18 @@ if __name__ == "__main__":
         report = discover_cli(args.discover, args.metadata_file)
         print(json.dumps(report, ensure_ascii=False, indent=2))
         sys.exit(1 if report["result"] == "metadata_unavailable" else 0)
+    if args.process_discovered is not None:
+        from monitored import process
+        try:
+            metadata = json.loads(args.metadata_file.read_text(encoding="utf-8")) if args.metadata_file else None
+            report = process(args.process_discovered, dry_run=args.dry_run, metadata=metadata)
+        except (OSError, UnicodeError, ValueError, AutomationError) as exc:
+            report = {"tmdbId": args.process_discovered, "pipelineState": "VALIDATION_FAILED",
+                      "validationReason": type(exc).__name__, "dryRun": args.dry_run, "registryChange": "none"}
+        print(json.dumps(report, ensure_ascii=False, indent=2))
+        sys.exit(1 if report["pipelineState"] in ("VALIDATION_FAILED", "METADATA_UNAVAILABLE") else 0)
     if args.metadata_file:
-        parser.error("--metadata-file requires --discover")
+        parser.error("--metadata-file requires --discover or --process-discovered")
     output = run(args.dry_run)
     print(json.dumps(output, ensure_ascii=False, indent=2))
     for warning in output["warnings"]:
