@@ -42,7 +42,7 @@ jobs:
             python official-data/automation/update.py
           fi
       - name: Commit factual changes only
-        if: ${{ steps.update.outcome != 'skipped' && env.DRY_RUN == 'false' }}
+        if: ${{ steps.update.outcome == 'success' && env.DRY_RUN == 'false' }}
         run: |
           if git diff --quiet -- official-data/official_series_data.json && [ ! -f official-data/history/changes.jsonl ]; then
             echo 'No canonical changes'
@@ -57,8 +57,8 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git commit -m 'Update verified official series data'
           git push
-      - name: Report provider failure
+      - name: Report blocking update failure
         if: ${{ steps.update.outcome == 'failure' }}
         run: |
-          echo 'One or more official providers failed. Existing records for those series were preserved; see the fetch log above.'
+          echo 'Official Data update was blocked by a validation, global safety, or programming failure; see the report above.'
           exit 1
