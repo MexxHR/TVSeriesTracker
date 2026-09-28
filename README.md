@@ -60,14 +60,35 @@ Workflow `.github/workflows/update-official-data.yml` provjerava 12 registrirani
 
 Read-only CLI `python official-data/automation/update.py --discover <TMDB_TV_ID>` pronalazi potencijalne izvore na službenim domenama. TMDB služi samo za identitet i usmjeravanje prema provideru; nikad za verificirani status ili datum. Rezultat ne mijenja `sources.json`, canonical JSON, audit ni Android watchlist. Odvojeni ručni GitHub workflow **Discover official source (read-only)** prihvaća TMDB TV ID; dnevni production workflow ostaje nepromijenjen. Detalji routing pravila, pet live proba, ograničenja i siguran model zahtjeva opisani su u [discovery dokumentaciji](official-data/automation/DISCOVERY.md).
 
-## TMDB setup
+## Phase 2B.1: zahtjev za monitored obradu
 
-1. Napravite [TMDB račun](https://www.themoviedb.org/) i u postavkama računa otvorite API postavke.
-2. Preuzmite **API Read Access Token** (Bearer token).
-3. U lokalnu datoteku `local.properties` dodajte `TMDB_API_TOKEN=VAŠ_TOKEN`. Datoteka je u `.gitignore` i nije dio GitHub repozitorija. Ne stavljajte token u Kotlin datoteke.
-4. Za GitHub Actions otvorite **Settings → Secrets and variables → Actions → New repository secret**, nazovite ga `TMDB_API_TOKEN` i unesite isti token.
+Nakon uspješnog lokalnog dodavanja TMDB serije WorkManager sprema jedinstveni
+zahtjev i, kad je mreža dostupna, šalje samo TMDB ID na javni backend
+`POST /v1/series-requests`. Neuspjeh tog transporta ne uklanja seriju iz
+watchlista. `queued` i `already_queued` nisu verified statusi. Backend pokreće
+strogo ograničeni workflow `process-series-request.yml`, koji piše samo u
+monitored staging datoteke. Production Official Data sync i UI ostaju odvojeni.
 
-Build bez tokena uspijeva, ali pretraga prikazuje poruku da TMDB token nije postavljen. Token se ugrađuje u privatni APK tijekom gradnje i tehnički se može izdvojiti iz APK-a. Za javnu distribuciju treba premjestiti TMDB pozive iza vlastitog poslužitelja.
+Backend još treba **deployati** iza HTTPS-a s trajnom SQLite pohranom.
+Postavite server-side `GITHUB_TOKEN` (repository Actions:write),
+`TARGET_REPOSITORY`, `TMDB_API_TOKEN`, `REQUEST_DB_PATH` i
+`CLIENT_IP_HMAC_KEY`. Android build dobiva samo javni
+`SERIES_REQUEST_API_BASE_URL=https://...` kao Gradle property, environment
+varijablu ili lokalnu postavku. Ako URL nije konfiguriran, watchlist i
+postojeći offline podaci rade, a nova pretraga/monitoring ostaju nedostupni.
+Android više ne ugrađuje TMDB token. Backend služi fiksne read-only TMDB
+metadata rute za search/details; TMDB i dalje nije official lifecycle izvor.
+Deployment, trust granice, limiti, privatnost i retry pravila opisani su u
+[Phase 2B arhitekturi](official-data/automation/PHASE_2B_ARCHITECTURE.md).
+
+Lokalni backend fake dispatch test:
+
+```bash
+python -m unittest discover -s backend -p 'test_*.py' -q
+python backend/dev_server.py
+```
+
+`dev_server.py` sluša samo na loopback adresi i ne pokreće GitHub Actions.
 
 Ova aplikacija prikazuje TMDB atribuciju u Postavkama: **“This product uses the TMDB API but is not endorsed or certified by TMDB.”** Koristi [TMDB službeni odobreni logo](https://www.themoviedb.org/about/logos-attribution), neizmijenjen u `app/src/main/res/raw/tmdb_logo.svg`. [TMDB pravila atribucije](https://developer.themoviedb.org/docs/faq) zahtijevaju logo i navedenu obavijest u odjeljku About/Credits.
 
@@ -83,9 +104,9 @@ APK nastaje u `app/build/outputs/apk/debug/app-debug.apk`. `./gradlew :app:testD
 
 ## GitHub Actions APK
 
-Pushajte cijeli projekt u GitHub repozitorij i postavite `TMDB_API_TOKEN` secret. `OFFICIAL_DATA_URL` variable potreban je samo ako želite nadjačati zadani URL. U kartici **Actions** odaberite **Android debug APK** i **Run workflow**. Nakon uspješnog builda preuzmite artifact `TV-Series-Tracker-V2.4.0-debug`, raspakirajte ga i instalirajte APK na telefon. Workflow radi i na push u `main` te na pull request.
+Pushajte cijeli projekt u GitHub repozitorij. `OFFICIAL_DATA_URL` variable potreban je samo ako želite nadjačati zadani URL. `SERIES_REQUEST_API_BASE_URL` je javna build konfiguracija za backend; backend secrets ne idu u Android build. U kartici **Actions** odaberite **Android debug APK** i **Run workflow**. Nakon uspješnog builda preuzmite artifact `TV-Series-Tracker-V2.5.0-debug`, raspakirajte ga i instalirajte APK na telefon. Workflow radi i na push u `main` te na pull request.
 
-**Nadogradnja bez brisanja podataka:** Android zahtijeva isti potpis za V2.3.5 i V2.4.0 APK. GitHub Actions na novom runneru inače generira novi debug ključ; za Actions APK koji mora ažurirati postojeću instalaciju dodajte repository secret `ANDROID_DEBUG_KEYSTORE_BASE64` sa Base64 sadržajem **istog** `debug.keystore` kojim je potpisan instalirani APK. Workflow ga koristi samo ako je secret postavljen.
+**Nadogradnja bez brisanja podataka:** Android zahtijeva isti potpis za prethodni i V2.5.0 APK. GitHub Actions na novom runneru inače generira novi debug ključ; za Actions APK koji mora ažurirati postojeću instalaciju dodajte repository secret `ANDROID_DEBUG_KEYSTORE_BASE64` sa Base64 sadržajem **istog** `debug.keystore` kojim je potpisan instalirani APK. Workflow ga koristi samo ako je secret postavljen.
 
 ## Struktura
 

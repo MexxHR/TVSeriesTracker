@@ -9,7 +9,9 @@ import com.example.tvseriestracker.data.OfficialDataRepository
 import com.example.tvseriestracker.data.Series
 import com.example.tvseriestracker.data.SeriesRepository
 import com.example.tvseriestracker.data.SettingsRepository
-import com.example.tvseriestracker.data.remote.MissingTmdbTokenException
+import com.example.tvseriestracker.data.trackAndQueueMonitoring
+import com.example.tvseriestracker.data.remote.MissingTmdbServiceException
+import com.example.tvseriestracker.data.remote.MonitoringRequestQueue
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -17,12 +19,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-enum class SearchPhase { PROMPT, LOADING, RESULTS, EMPTY, ERROR, MISSING_TOKEN }
+enum class SearchPhase { PROMPT, LOADING, RESULTS, EMPTY, ERROR, SERVICE_UNAVAILABLE }
 enum class OfficialRefreshPhase { IDLE, LOADING, SUCCESS, UP_TO_DATE, ERROR }
 data class SearchUiState(val query: String = "", val phase: SearchPhase = SearchPhase.PROMPT, val results: List<Series> = emptyList())
 
 class SeriesViewModel(val series: SeriesRepository, val preferences: SettingsRepository,
-    val official: OfficialDataRepository) : ViewModel() {
+    val official: OfficialDataRepository, private val monitoringQueue: MonitoringRequestQueue) : ViewModel() {
     private val _officialRefresh = MutableStateFlow(OfficialRefreshPhase.IDLE)
     val officialRefresh = _officialRefresh.asStateFlow()
     val officialCache = official.cache
@@ -66,8 +68,8 @@ class SeriesViewModel(val series: SeriesRepository, val preferences: SettingsRep
             _searchState.value = SearchUiState(query, if (results.isEmpty()) SearchPhase.EMPTY else SearchPhase.RESULTS, results)
         } catch (exception: CancellationException) {
             throw exception
-        } catch (_: MissingTmdbTokenException) {
-            _searchState.value = SearchUiState(query, SearchPhase.MISSING_TOKEN)
+        } catch (_: MissingTmdbServiceException) {
+            _searchState.value = SearchUiState(query, SearchPhase.SERVICE_UNAVAILABLE)
         } catch (_: Exception) {
             _searchState.value = SearchUiState(query, SearchPhase.ERROR)
         }
@@ -79,7 +81,7 @@ class SeriesViewModel(val series: SeriesRepository, val preferences: SettingsRep
         _addErrorId.value = null
         viewModelScope.launch {
             try {
-                series.track(item, language)
+                trackAndQueueMonitoring(series, monitoringQueue, item, language)
                 _searchState.value = _searchState.value.copy(results = _searchState.value.results.map {
                     if (it.id == item.id) it.copy(isTracked = true) else it
                 })
@@ -110,7 +112,7 @@ class SeriesViewModel(val series: SeriesRepository, val preferences: SettingsRep
 }
 
 class SeriesViewModelFactory(private val series: SeriesRepository, private val preferences: SettingsRepository,
-    private val official: OfficialDataRepository) : ViewModelProvider.Factory {
+    private val official: OfficialDataRepository, private val monitoringQueue: MonitoringRequestQueue) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T = SeriesViewModel(series, preferences, official) as T
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = SeriesViewModel(series, preferences, official, monitoringQueue) as T
 }

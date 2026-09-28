@@ -41,6 +41,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.tvseriestracker.data.*
 import com.example.tvseriestracker.data.remote.TmdbRemoteDataSource
+import com.example.tvseriestracker.data.remote.WorkManagerMonitoringRequestQueue
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
@@ -56,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         val official = OfficialDataRepository(RoomOfficialDataStore(database.trackingDao()),
             HttpOfficialRemoteSource(), bundledOfficialData(applicationContext))
         val factory = SeriesViewModelFactory(DefaultSeriesRepository(database.trackingDao(), TmdbRemoteDataSource(), official),
-            SettingsRepository(applicationContext), official)
+            SettingsRepository(applicationContext), official, WorkManagerMonitoringRequestQueue(applicationContext))
         setContent {
             val model: SeriesViewModel = viewModel(factory = factory)
             // Wait for DataStore before applying a locale. A temporary HR default here
@@ -196,8 +197,8 @@ private fun AddScreen(model: SeriesViewModel, settings: AppSettings) {
             SearchPhase.PROMPT -> EmptyState(R.string.search_prompt)
             SearchPhase.LOADING -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
             SearchPhase.EMPTY -> EmptyState(R.string.no_search_results)
-            SearchPhase.MISSING_TOKEN, SearchPhase.ERROR -> {
-                Text(stringResource(if (search.phase == SearchPhase.MISSING_TOKEN) R.string.token_missing else R.string.search_error))
+            SearchPhase.SERVICE_UNAVAILABLE, SearchPhase.ERROR -> {
+                Text(stringResource(if (search.phase == SearchPhase.SERVICE_UNAVAILABLE) R.string.search_service_unavailable else R.string.search_error))
                 Spacer(Modifier.height(8.dp))
                 OutlinedButton(onClick = { model.retrySearch(settings.language) }) { Text(stringResource(R.string.retry)) }
             }

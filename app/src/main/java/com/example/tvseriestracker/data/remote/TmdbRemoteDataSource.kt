@@ -6,7 +6,6 @@ import java.io.IOException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -26,46 +25,46 @@ data class TvSeriesDto(
 data class TvNetworkDto(val name: String?)
 
 private interface TmdbApi {
-    @GET("search/tv")
+    @GET("v1/tmdb/search")
     suspend fun search(
-        @Header("Authorization") authorization: String,
         @Query("query") query: String,
-        @Query("language") language: String,
-        @Query("include_adult") includeAdult: Boolean = false
+        @Query("language") language: String
     ): TvSearchResponse
 
-    @GET("tv/{id}")
+    @GET("v1/tmdb/series/{id}")
     suspend fun details(
-        @Header("Authorization") authorization: String,
         @Path("id") id: Int,
         @Query("language") language: String
     ): TvSeriesDto
 }
 
-class MissingTmdbTokenException : IOException("TMDB_API_TOKEN is not configured")
+class MissingTmdbServiceException : IOException("TMDB metadata service is not configured")
 
 interface SeriesRemoteDataSource {
     suspend fun search(query: String, language: String): List<TvSeriesDto>
     suspend fun details(tmdbId: Int, language: String): TvSeriesDto
 }
 
-class TmdbRemoteDataSource(private val token: String = BuildConfig.TMDB_API_TOKEN) : SeriesRemoteDataSource {
+class TmdbRemoteDataSource(private val baseUrl: String = BuildConfig.SERIES_REQUEST_API_BASE_URL) : SeriesRemoteDataSource {
     private val api: TmdbApi by lazy {
         Retrofit.Builder()
-            .baseUrl("https://api.themoviedb.org/3/")
+            .baseUrl(baseUrl.trimEnd('/') + "/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(TmdbApi::class.java)
     }
 
-    private fun authorization(): String {
-        if (token.isBlank()) throw MissingTmdbTokenException()
-        return "Bearer $token"
+    private fun configured() {
+        if (baseUrl.isBlank() || !baseUrl.startsWith("https://")) throw MissingTmdbServiceException()
     }
 
-    override suspend fun search(query: String, language: String): List<TvSeriesDto> =
-        api.search(authorization(), query, language).results.orEmpty()
+    override suspend fun search(query: String, language: String): List<TvSeriesDto> {
+        configured()
+        return api.search(query, language).results.orEmpty()
+    }
 
-    override suspend fun details(tmdbId: Int, language: String): TvSeriesDto =
-        api.details(authorization(), tmdbId, language)
+    override suspend fun details(tmdbId: Int, language: String): TvSeriesDto {
+        configured()
+        return api.details(tmdbId, language)
+    }
 }
