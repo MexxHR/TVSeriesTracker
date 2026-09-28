@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-27T07:00:00Z",
+  "generatedAt": "2026-09-28T09:43:42Z",
   "series": [
     {
       "tmdbId": 153312,
@@ -121,6 +121,30 @@
       "sourceUrl": "https://www.netflix.com/tudum/articles/the-gentlemen-season-3-release-date-cast-news",
       "announcementDate": "2026-09-10",
       "lastChecked": "2026-09-26"
+    },
+    {
+      "tmdbId": 113962,
+      "title": "Lioness",
+      "nextSeasonNumber": 3,
+      "sourceName": "Paramount Press Express",
+      "sourceUrl": "https://www.paramountpressexpress.com/paramount-plus/shows/lioness/releases/?view=111834-paramount-mega-hit-series-lioness-roars-its-way-into-a-third-season",
+      "announcementDate": "2025-10-01",
+      "status": "RENEWED",
+      "releaseDate": "2026-08-02",
+      "releaseYear": 2026,
+      "lastChecked": "2026-09-28"
+    },
+    {
+      "tmdbId": 225891,
+      "title": "The Madison",
+      "nextSeasonNumber": 3,
+      "sourceName": "Paramount+",
+      "sourceUrl": "https://www.paramountplus.com/sneak-peak/the-madison-renewed-season-3/",
+      "announcementDate": "2026-04-15",
+      "status": "RENEWED",
+      "releaseDate": null,
+      "releaseYear": null,
+      "lastChecked": "2026-09-28"
     }
   ]
 }
