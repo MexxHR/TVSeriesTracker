@@ -204,6 +204,149 @@ class DiscoveryTests(unittest.TestCase):
         self.discover({self.index: "<h1>One Piece</h1><p>News</p>"})
         self.assertEqual(before, [path.read_bytes() if path.exists() else None for path in paths])
 
+    def test_apple_severance_like_index_stays_strong(self):
+        meta = {"tmdbId": 95396, "title": "Severance", "networks": [{"name": "Apple TV"}], "homepage": "https://tv.apple.com/show/severance/umc.cmc.1srk2goyh2q2zdxcx5"}
+        url = "https://www.apple.com/tv-pr/originals/severance/news/"
+        html = '<h1>Severance</h1><p>News</p><a href="https://tv.apple.com/show/severance/umc.cmc.1srk2goyh2q2zdxcx5">Show</a>'
+        report = self.discover({url: html}, meta)
+        self.assertEqual(report["evidenceLevel"], "STRONG")
+        self.assertTrue(report["candidates"][0]["factualParserEligible"])
+
+    def test_netflix_index_classified_separately(self):
+        report = self.discover({self.index: "<h1>One Piece</h1><p>News</p>"})
+        self.assertEqual(report["candidates"][0]["pageType"], "show_news_index")
+        self.assertFalse(report["candidates"][0]["factualParserEligible"])
+
+    def test_netflix_editorial_article_with_show_id_is_eligible(self):
+        article = "https://www.netflix.com/tudum/articles/one-piece-renewed-season-3"
+        index = f'<h1>One Piece</h1><p>News</p><a href="{article}">Story</a>'
+        body = '<h1>One Piece Season 3 Renewed</h1><p>News</p><p>By Jane Smith</p><a href="https://www.netflix.com/title/80217863">Show</a>'
+        report = self.discover({self.index: index, article: body})
+        candidate = next(c for c in report["candidates"] if c["candidateUrl"] == article)
+        self.assertEqual((candidate["pageType"], candidate["evidenceLevel"]), ("official_article", "STRONG"))
+        self.assertTrue(candidate["factualParserEligible"])
+
+    def test_netflix_editorial_without_show_id_not_eligible(self):
+        article = "https://www.netflix.com/tudum/articles/one-piece-renewed-season-3"
+        report = self.discover({self.index: f'<h1>One Piece</h1><p>News</p><a href="{article}">Story</a>',
+                                article: '<h1>One Piece Season 3 Renewed</h1><p>News By Jane Smith</p>'})
+        candidate = next(c for c in report["candidates"] if c["candidateUrl"] == article)
+        self.assertEqual(candidate["evidenceLevel"], "SUPPORTED")
+        self.assertIn("homepage_id_not_matched", candidate["reasons"])
+
+    def test_netflix_article_url_matching_but_body_wrong_show_rejected(self):
+        article = "https://www.netflix.com/tudum/articles/one-piece-season-3"
+        report = self.discover({self.index: f'<h1>One Piece</h1><p>News</p><a href="{article}">Story</a>',
+                                article: '<h1>Wednesday Season 3 News</h1><p>By Jane Smith</p>'})
+        self.assertNotIn(article, report["candidateUrls"])
+        self.assertIn("series_identity_not_confirmed", report["rejectedCandidates"][-1]["reasons"])
+
+    def test_netflix_near_title_article_rejected(self):
+        article = "https://www.netflix.com/tudum/articles/one-piece-season-3"
+        report = self.discover({self.index: f'<h1>One Piece</h1><p>News</p><a href="{article}">Story</a>',
+                                article: '<h1>The One Piece Season 3 News</h1><p>By Jane Smith</p>'})
+        self.assertNotIn(article, report["candidateUrls"])
+
+    def test_netflix_generic_article_not_eligible(self):
+        article = "https://www.netflix.com/tudum/articles/one-piece-season-3"
+        report = self.discover({self.index: f'<h1>One Piece</h1><p>News</p><a href="{article}">Story</a>',
+                                article: '<h1>One Piece Season 3 News</h1><p>General information</p>'})
+        candidate = next(c for c in report["candidates"] if c["candidateUrl"] == article)
+        self.assertIn("article_structure_not_confirmed", candidate["reasons"])
+
+    def test_paramount_branded_listing_identity(self):
+        url = "https://www.paramountpressexpress.com/paramount-plus/shows/1923/releases/"
+        meta = {"tmdbId": 157744, "title": "1923", "networks": [{"name": "Paramount+"}]}
+        report = self.discover({url: '<title>Paramount Press Express | Paramount+ | 1923 | Releases</title><h2>1923</h2><p>Releases</p><a href="?view=123">Release</a>'}, meta)
+        self.assertEqual(report["evidenceLevel"], "SUPPORTED")
+        self.assertTrue(report["candidates"][0]["identityValidated"])
+
+    def test_paramount_listing_with_individual_release(self):
+        url = "https://www.paramountpressexpress.com/paramount-plus/shows/1923/releases/"
+        article = url + "?view=12345"
+        meta = {"tmdbId": 157744, "title": "1923", "networks": [{"name": "Paramount+"}]}
+        listing = f'<title>Paramount Press Express | Paramount+ | 1923 | Releases</title><p>Releases</p><a href="{article}">Release</a>'
+        report = self.discover({url: listing, article: '<h1>Paramount+ Announces 1923 Season Two</h1><p>Release</p>'}, meta)
+        self.assertIn(article, report["candidateUrls"])
+        self.assertEqual(report["candidates"][-1]["pageType"], "individual_release")
+
+    def test_paramount_empty_listing_diagnostic(self):
+        url = "https://www.paramountpressexpress.com/paramount-plus/shows/1923/releases/"
+        meta = {"tmdbId": 157744, "title": "1923", "networks": [{"name": "Paramount+"}]}
+        report = self.discover({url: '<title>Paramount Press Express | 1923 | Releases</title><p>No entries</p>'}, meta)
+        self.assertEqual(report["result"], "insufficient_evidence")
+        self.assertIn("release_structure_not_detected", report["rejectedCandidates"][0]["reasons"])
+
+    def test_paramount_changed_markup_rejected(self):
+        url = "https://www.paramountpressexpress.com/paramount-plus/shows/1923/releases/"
+        meta = {"tmdbId": 157744, "title": "1923", "networks": [{"name": "Paramount+"}]}
+        report = self.discover({url: '<title>Pressroom</title><p>Releases</p>'}, meta)
+        self.assertIn("series_identity_not_confirmed", report["rejectedCandidates"][0]["reasons"])
+
+    def test_paramount_wrong_show_title_rejected(self):
+        url = "https://www.paramountpressexpress.com/paramount-plus/shows/1923/releases/"
+        meta = {"tmdbId": 157744, "title": "1923", "networks": [{"name": "Paramount+"}]}
+        report = self.discover({url: '<title>Paramount Press Express | 1883 | Releases</title><p>Releases</p>'}, meta)
+        self.assertEqual(report["candidateUrls"], [])
+
+    def test_paramount_redirect_outside_rejected(self):
+        url = "https://www.paramountpressexpress.com/paramount-plus/shows/1923/releases/"
+        meta = {"tmdbId": 157744, "title": "1923", "networks": [{"name": "Paramount+"}]}
+        report = self.discover({url: ('<h1>1923</h1>', 'https://paramountpressexpress.com.fake.example/')}, meta)
+        self.assertIn("redirect_outside_allowlist", report["rejectedCandidates"][0]["reasons"])
+
+    def test_amazon_editorial_article_remains_supported(self):
+        meta = {"tmdbId": 213306, "title": "Cross", "networks": [{"name": "Prime Video"}]}
+        index = "https://www.aboutamazon.com/entertainment-news"
+        article = "https://www.aboutamazon.com/news/entertainment/cross-season-3"
+        report = self.discover({index: f'<h1>Entertainment News</h1><a href="{article}">Cross</a>',
+                                article: '<h1>Cross Season 3 News</h1><p>Prime Video series</p>'}, meta)
+        self.assertEqual(report["candidates"][0]["pageType"], "official_article")
+        self.assertFalse(report["candidates"][0]["factualParserEligible"])
+
+    def test_amazon_generic_index_rejected(self):
+        meta = {"tmdbId": 213306, "title": "Cross", "networks": [{"name": "Prime Video"}]}
+        report = self.discover({"https://www.aboutamazon.com/entertainment-news": '<h1>Entertainment News</h1>'}, meta)
+        self.assertEqual(report["candidateUrls"], [])
+
+    def test_amazon_wrong_article_rejected(self):
+        meta = {"tmdbId": 213306, "title": "Cross", "networks": [{"name": "Prime Video"}]}
+        index = "https://www.aboutamazon.com/entertainment-news"
+        article = "https://www.aboutamazon.com/news/entertainment/cross-season-3"
+        report = self.discover({index: f'<h1>News</h1><a href="{article}">Cross</a>', article: '<h1>Fallout Season 3 News</h1>'}, meta)
+        self.assertNotIn(article, report["candidateUrls"])
+
+    def test_amazon_ambiguous_cross_heading_rejected(self):
+        meta = {"tmdbId": 213306, "title": "Cross", "networks": [{"name": "Prime Video"}]}
+        index = "https://www.aboutamazon.com/entertainment-news"
+        article = "https://www.aboutamazon.com/news/entertainment/cross-season-3"
+        report = self.discover({index: f'<h1>News</h1><a href="{article}">Cross</a>', article: '<h1>Cross Country Season 3 News</h1>'}, meta)
+        self.assertNotIn(article, report["candidateUrls"])
+
+    def test_wbd_403_has_status_and_url(self):
+        meta = {"tmdbId": 100088, "title": "The Last of Us", "networks": [{"name": "HBO"}]}
+        url = "https://press.wbd.com/us/property/the-last-of-us/media-releases"
+        report = self.discover({url: u.ProviderUnavailable("HTTP 403")}, meta)
+        self.assertEqual(report["result"], "provider_unavailable")
+        self.assertEqual(report["rejectedCandidates"][0]["detail"], "HTTP 403")
+
+    def test_fake_suffix_domain_not_allowed(self):
+        self.assertFalse(u.allowed("https://netflix.com.evil.example/tudum/one-piece", ["netflix.com"]))
+
+    def test_malformed_final_url_rejected(self):
+        report = self.discover({self.index: ('<h1>One Piece</h1>', 'not-a-url')})
+        self.assertIn("redirect_outside_allowlist", report["rejectedCandidates"][0]["reasons"])
+
+    def test_oversized_response_error_is_sanitized(self):
+        report = self.discover({self.index: u.AutomationError("Response too large (8 MB limit): secret=do-not-print")})
+        self.assertEqual(report["rejectedCandidates"][0]["detail"], "response_too_large")
+        self.assertNotIn("do-not-print", json.dumps(report))
+
+    def test_http_error_diagnostic_is_sanitized(self):
+        report = self.discover({self.index: u.ProviderUnavailable("HTTP 503: secret=do-not-print")})
+        self.assertEqual(report["rejectedCandidates"][0]["detail"], "HTTP 503")
+        self.assertNotIn("do-not-print", json.dumps(report))
+
 
 if __name__ == "__main__":
     unittest.main()

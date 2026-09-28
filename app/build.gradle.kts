@@ -28,8 +28,8 @@ android {
         applicationId = "com.example.tvseriestracker"
         minSdk = 26
         targetSdk = 35
-        versionCode = 12
-        versionName = "2.4.0"
+        versionCode = 13
+        versionName = "2.4.1"
         buildConfigField("String", "TMDB_API_TOKEN", encodedTmdbToken)
         buildConfigField("String", "OFFICIAL_DATA_URL", encodedOfficialDataUrl)
     }

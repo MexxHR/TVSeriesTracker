@@ -114,7 +114,8 @@ def release_structure(url: str, page: update.Page, provider: str) -> bool:
     path = urlparse(url).path.lower()
     body = normalize("".join(page.parts[:200]))
     if provider == "PARAMOUNT":
-        return "/shows/" in path and "/releases" in path and "release" in body
+        return ("/shows/" in path and "/releases" in path and "release" in body and
+                any(paramount_release_link(urljoin(url, link), url) for link in page.links))
     if provider == "NETFLIX":
         return path.startswith("/tudum/") and ("news" in body or "featured" in body)
     if provider == "APPLE":
@@ -142,6 +143,43 @@ def article_identity(page: update.Page, names: list[str]) -> bool:
     return any(heading.startswith(normalize(name) + " " + cue + " ") for name in names for cue in permitted)
 
 
+def paramount_listing_identity(url: str, page: update.Page, names: list[str]) -> bool:
+    """Press Express uses a branded document title, often without a sole H1."""
+    path = urlparse(url).path.rstrip("/").lower()
+    if not any(path.endswith(f"/shows/{slug(name)}/releases") for name in names):
+        return False
+    title = normalize(page.title)
+    heading = normalize(page.heading)
+    return any((f" {normalize(name)} releases" in f" {title}" or heading == normalize(name)) for name in names)
+
+
+def paramount_release_link(url: str, listing: str) -> bool:
+    # Reuse the production adapter's view= release-link format, bound to this show.
+    parsed, parent = urlparse(url), urlparse(listing)
+    return (parsed.scheme == "https" and parsed.hostname == parent.hostname and
+            parsed.path.rstrip("/") == parent.path.rstrip("/") and
+            bool(re.search(r"(?:^|&)view=", parsed.query)))
+
+
+def article_page_type(page: update.Page, provider: str) -> bool:
+    body = normalize("".join(page.parts[:100]))
+    if provider == "NETFLIX":
+        return "news" in body and bool(re.search(r"\bby [a-z]+ [a-z]+\b", body))
+    if provider == "AMAZON":
+        return "prime video" in body and bool(re.search(r"\bseason\b|\bseries\b", body))
+    return False
+
+
+def safe_failure(exc: Exception) -> str:
+    # Never echo exception bodies from a provider or a URL query in the report.
+    match = re.search(r"\bHTTP (\d{3})\b", str(exc))
+    if match:
+        return f"HTTP {match.group(1)}"
+    if "too large" in str(exc).lower():
+        return "response_too_large"
+    return type(exc).__name__
+
+
 def discover(metadata: dict, registry: dict, fetcher=update.fetch, specs: dict | None = None) -> dict:
     specs = specs or provider_specs()
     tmdb_id = metadata.get("tmdbId")
@@ -149,7 +187,8 @@ def discover(metadata: dict, registry: dict, fetcher=update.fetch, specs: dict |
     if not isinstance(tmdb_id, int) or tmdb_id <= 0 or not isinstance(title, str) or not title.strip():
         raise ValueError("Discovery requires positive tmdbId and nonempty title")
     report = {"tmdbId": tmdb_id, "title": title, "provider": None, "result": "insufficient_evidence",
-              "evidenceLevel": "INSUFFICIENT", "candidateUrls": [], "candidates": [], "warnings": [], "attemptedOfficialUrls": []}
+              "evidenceLevel": "INSUFFICIENT", "candidateUrls": [], "candidates": [], "rejectedCandidates": [],
+              "warnings": [], "attemptedOfficialUrls": []}
     trusted = next((entry for entry in registry["series"] if entry["tmdbId"] == tmdb_id), None)
     if trusted:
         report.update(provider=trusted["provider"], result="trusted_registry", trustedSource=trusted["officialUrl"])
@@ -166,55 +205,90 @@ def discover(metadata: dict, registry: dict, fetcher=update.fetch, specs: dict |
     slugs = list(dict.fromkeys([slug(name) for name in names] + [slug(name).removeprefix("the-") for name in names if slug(name).startswith("the-")]))
     seed_urls = list(dict.fromkeys(template.format(slug=part) for template in spec["seeds"] for part in slugs))[:MAX_SEEDS]
     report["attemptedOfficialUrls"] = seed_urls
-    pending = [(url, spec["mechanism"]) for url in seed_urls]
+    pending = [(url, spec["mechanism"], None) for url in seed_urls]
     seen = set()
     fetched_links = 0
     while pending and len(seen) < MAX_SEEDS + MAX_LINKS:
-        url, method = pending.pop(0)
+        url, method, parent = pending.pop(0)
         if url in seen:
             continue
         seen.add(url)
         if not update.allowed(url, domains):
-            report["warnings"].append(f"Rejected non-official candidate URL: {url}")
+            report["rejectedCandidates"].append({"url": url, "reasons": ["domain_not_allowlisted"]})
             continue
         try:
             raw, final = fetcher(url, domains)
             if not update.allowed(final, domains):
+                report["rejectedCandidates"].append({"url": url, "reasons": ["redirect_outside_allowlist"]})
                 report["warnings"].append(f"Rejected redirect outside official domain: {url}")
                 continue
             page = update.parse_page(raw)
         except (update.ProviderUnavailable, update.AutomationError, ValueError) as exc:
-            report["warnings"].append(f"{provider} {url}: {exc}")
-            if isinstance(exc, update.ProviderUnavailable) and "HTTP 404" not in str(exc):
+            reason = safe_failure(exc)
+            report["warnings"].append(f"{provider} {url}: {reason}")
+            report["rejectedCandidates"].append({"url": url, "reasons": ["fetch_or_parse_failed"], "detail": reason})
+            if isinstance(exc, update.ProviderUnavailable) and reason != "HTTP 404":
                 report.setdefault("unavailableUrls", []).append(url)
             continue
         is_article = method == "official article link"
-        identity = branded_index_identity(page, names, provider) or (is_article and article_identity(page, names))
+        is_release = method == "official individual release"
+        identity = (branded_index_identity(page, names, provider) or
+                    (provider == "PARAMOUNT" and not is_release and paramount_listing_identity(final, page, names)) or
+                    (is_article and article_identity(page, names)) or
+                    (is_release and parent is not None and paramount_release_link(final, parent) and
+                     any(re.search(rf"(?<![a-z0-9]){re.escape(normalize(name))}(?![a-z0-9])", normalize(page.heading)) for name in names)))
         structure = release_structure(final, page, provider)
         homepage_match = homepage_identity(page, metadata.get("homepage") or "", spec["officialDomains"])
-        if not is_article and identity and structure and homepage_match and any(s.startswith("networks:") for s in signals):
+        network_routed = any(s.startswith("networks:") for s in signals)
+        page_type = ("official_article" if is_article else "individual_release" if is_release else
+                     "show_release_listing" if provider == "PARAMOUNT" and structure else
+                     "show_news_index" if provider in ("APPLE", "NETFLIX", "WBD") else "generic_index")
+        editorial = is_article and article_page_type(page, provider)
+        conflict = any(term in normalize(page.heading) for term in ("spinoff", "spin off", "remake"))
+        eligible = bool(identity and network_routed and not conflict and (
+            (not is_article and not is_release and structure and homepage_match and page_type != "generic_index") or
+            (provider == "NETFLIX" and editorial and homepage_match) or
+            (is_release and parent and paramount_release_link(final, parent) and editorial is False)))
+        if eligible:
             level = "STRONG"
         elif not is_article and identity and structure:
             level = "SUPPORTED"
-        elif is_article and identity and not any(term in normalize(page.heading) for term in ("spinoff", "spin off", "remake")):
+        elif (is_article or is_release) and identity and not conflict:
             level = "SUPPORTED"
         else:
             level = "INSUFFICIENT"
+        reasons = []
+        if not identity: reasons.append("series_identity_not_confirmed")
+        if conflict: reasons.append("conflicting_identity_signal")
+        if not structure and not editorial and not is_release: reasons.append("release_structure_not_detected")
+        if not homepage_match: reasons.append("homepage_id_not_matched")
+        if not network_routed: reasons.append("network_routing_not_confirmed")
+        if is_article and not editorial: reasons.append("article_structure_not_confirmed")
+        if page_type == "generic_index": reasons.append("generic_index_not_parser_eligible")
         candidate = {"candidateUrl": final, "candidateDomain": urlparse(final).hostname,
-                     "discoveryMethod": method, "evidenceLevel": level, "identityValidated": identity,
+                     "discoveryMethod": method, "pageType": page_type, "providerRoutingConfidence": "NETWORK" if network_routed else "HOMEPAGE_OR_COMPANY",
+                     "sourceIdentityConfidence": "CONFIRMED" if identity else "INSUFFICIENT", "evidenceLevel": level, "identityValidated": identity,
                      "releaseStructure": structure, "homepageIdMatched": homepage_match,
-                     "factualParserEligible": level == "STRONG"}
+                     "factualParserEligible": eligible, "reasons": reasons}
         if level != "INSUFFICIENT" and final not in report["candidateUrls"]:
             report["candidateUrls"].append(final)
             report["candidates"].append(candidate)
+        elif level == "INSUFFICIENT":
+            report["rejectedCandidates"].append({"url": final, "reasons": reasons or ["insufficient_evidence"]})
+        if provider == "PARAMOUNT" and identity and structure and not is_release:
+            for link in update.ParamountAdapter().candidates(page, final, {}):
+                if fetched_links >= MAX_LINKS: break
+                if update.allowed(link, domains) and paramount_release_link(link, final) and link not in seen and not any(p[0] == link for p in pending):
+                    pending.append((link, "official individual release", final))
+                    fetched_links += 1
         # Link discovery is bounded and restricted to original provider pages.
         for link in page.links:
             if fetched_links >= MAX_LINKS:
                 break
             linked = urljoin(final, link)
-            if (linked not in seen and not any(pending_url == linked for pending_url, _ in pending)
+            if (linked not in seen and not any(pending_url == linked for pending_url, _, _ in pending)
                     and update.allowed(linked, domains) and article_link(linked, provider, names)):
-                pending.append((linked, "official article link"))
+                pending.append((linked, "official article link", final))
                 fetched_links += 1
     if report["candidateUrls"]:
         report["result"] = "candidate_found"
