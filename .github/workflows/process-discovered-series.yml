@@ -1,0 +1,72 @@
+name: Process discovered series (monitored only)
+
+on:
+  workflow_dispatch:
+    inputs:
+      tmdb_id:
+        description: 'TMDB TV ID'
+        required: true
+        type: number
+      dry_run:
+        description: 'Preview only; never write the monitored registry'
+        required: true
+        default: true
+        type: boolean
+
+concurrency:
+  group: monitored-series-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  preview:
+    if: inputs.dry_run == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Regression tests
+        run: python -m unittest discover -s official-data/automation -p 'test_*.py' -q
+      - name: Process eligible official sources (dry run)
+        env:
+          TMDB_API_TOKEN: ${{ secrets.TMDB_API_TOKEN }}
+          TMDB_ID: ${{ inputs.tmdb_id }}
+        run: python official-data/automation/update.py --process-discovered "$TMDB_ID" --dry-run
+
+  monitored_update:
+    if: inputs.dry_run == false
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Require main branch for staging writes
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: test "$BRANCH" = main
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Regression tests
+        run: python -m unittest discover -s official-data/automation -p 'test_*.py' -q
+      - name: Process eligible official sources (monitored registry only)
+        env:
+          TMDB_API_TOKEN: ${{ secrets.TMDB_API_TOKEN }}
+          TMDB_ID: ${{ inputs.tmdb_id }}
+        run: python official-data/automation/update.py --process-discovered "$TMDB_ID"
+      - name: Commit staging registry and audit only when changed
+        run: |
+          git add -- official-data/monitored_series.json official-data/history/monitored_changes.jsonl
+          if git diff --cached --quiet; then
+            echo 'Monitored registry unchanged.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Update monitored series registry'
+          git push
