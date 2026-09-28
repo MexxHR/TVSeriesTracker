@@ -26,8 +26,9 @@ MONTHS = {name.lower(): i for i, name in enumerate(("January", "February", "Marc
 MONTHS.update({name[:3]: value for name, value in list(MONTHS.items())})
 MONTH_PATTERN = "|".join(sorted(MONTHS, key=len, reverse=True))
 ORDINALS = {"first": 1, "second": 2, "third": 3, "fourth": 4, "fifth": 5, "sixth": 6, "seventh": 7, "eighth": 8, "ninth": 9, "tenth": 10}
-NUM = r"(?:\d{1,2}|first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)"
-SEASON = rf"(?:season\s+({NUM})|({NUM})\s+season)"
+CARDINALS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10}
+NUM = r"(?:\d{1,2}|first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth|one|two|three|four|five|six|seven|eight|nine|ten)"
+SEASON = rf"(?:\bseason\s+({NUM})\b|\b({NUM})\s+season\b)"
 
 
 class AutomationError(Exception):
@@ -198,11 +199,11 @@ EXTRA_DOMAINS = {225891: ["paramountplus.com"]}
 
 
 def number(value: str) -> int:
-    return int(value) if value.isdigit() else ORDINALS[value.lower()]
+    return int(value) if value.isdigit() else (ORDINALS | CARDINALS)[value.lower()]
 
 
 def season_in(text: str) -> int | None:
-    m = re.search(rf"\b({NUM})\s+and\s+final\s+season\b", text, re.I)
+    m = re.search(rf"\b({NUM})\b\s+and\s+final\s+season\b", text, re.I)
     if m:
         return number(m.group(1))
     m = re.search(SEASON, text, re.I)
@@ -233,6 +234,20 @@ def announcement_date(body: str) -> dt.date | None:
     return dt.date.fromisoformat(d) if d else None
 
 
+def premiere_date_in(sentence: str, announced: dt.date | None) -> tuple[str | None, int | None]:
+    # Read a date only after an explicit premiere/streaming verb in this same
+    # series-and-season sentence. Publication and production dates are unrelated.
+    verb = re.search(r"\b(?:premieres?|returns?|debuts?|arrives?|streams?|streaming)\b", sentence, re.I)
+    if not verb:
+        return None, None
+    tail = sentence[verb.start():verb.start() + 110]
+    month = re.search(r"\b(" + MONTH_PATTERN + r")\s+\d{1,2}(?:st|nd|rd|th)?(?:,?\s+20\d{2})?\b", tail, re.I)
+    if month and month.start() <= 85:
+        return date_in(month.group(), announced)
+    year = re.search(r"\b(?:in|on)\s+(20\d{2})\b", tail[:60], re.I)
+    return (None, int(year.group(1))) if year else (None, None)
+
+
 def detect(article: dict, entry: dict, today: dt.date) -> list[dict]:
     # A sentence/title must itself identify the series and the season statement.
     heading = article["title"]
@@ -257,10 +272,12 @@ def detect(article: dict, entry: dict, today: dt.date) -> list[dict]:
         elif re.search(rf"\b(?:renewed|greenlit|greenlighted|return(?:s|ing)?|coming back)\s+for\s+(?:a\s+)?(?:season\s+{NUM}|{NUM}\s+season)\b", s, re.I):
             status, rule = "RENEWED", "explicit-renewal"
         date, year = (None, None)
-        if re.search(r"\b(?:premieres?|returns?|debuts?|arrives?|release date|coming)\b", s, re.I):
-            date, year = date_in(s, announced)
-            if date and dt.date.fromisoformat(date) < today:
-                date, year = None, None
+        if status != "CANCELED":
+            date, year = premiere_date_in(s, announced)
+            if date and rule == "explicit-renewal" and not re.search(r"\b(?:renewed|greenlit|greenlighted)\b", s, re.I):
+                # "returns for Season Three on August 2" announces a premiere,
+                # not a new lifecycle decision that should own canonical source.
+                status, rule = "RELEASE_DATE_CONFIRMED", "explicit-premiere"
             if (date or year) and not status:
                 status, rule = "RELEASE_DATE_CONFIRMED" if date else "RENEWED", "explicit-premiere"
         if not status:
@@ -270,7 +287,8 @@ def detect(article: dict, entry: dict, today: dt.date) -> list[dict]:
         facts.append({"tmdbId": entry["tmdbId"], "title": entry["title"], "nextSeasonNumber": season,
                       "status": status, "releaseDate": date, "releaseYear": year,
                       "sourceName": article["sourceName"], "sourceUrl": article["url"],
-                      "announcementDate": announced.isoformat() if announced else None, "rule": rule})
+                      "announcementDate": announced.isoformat() if announced else None, "rule": rule,
+                      "dateRevision": bool(re.search(r"\b(?:rescheduled|postponed|moved|shifted)\b", s, re.I))})
     return facts
 
 
@@ -334,7 +352,7 @@ def validate_dataset(data: dict, registry: dict, old: dict | None = None):
 def merge(old: dict | None, facts: list[dict], today: dt.date) -> tuple[dict | None, dict | None]:
     if not facts:
         return old, None
-    priority = {"RENEWED": 1, "RELEASE_DATE_CONFIRMED": 2, "FINAL_SEASON": 3, "CANCELED": 4}
+    priority = {"RELEASE_DATE_CONFIRMED": 0, "RENEWED": 1, "FINAL_SEASON": 3, "CANCELED": 4}
     facts = sorted(facts, key=lambda f: (f["nextSeasonNumber"], priority[f["status"]], bool(f["releaseDate"]), f["announcementDate"] or ""), reverse=True)
     if old:
         facts = [f for f in facts if f["nextSeasonNumber"] >= old["nextSeasonNumber"]]
@@ -342,27 +360,41 @@ def merge(old: dict | None, facts: list[dict], today: dt.date) -> tuple[dict | N
         return old, None
     season = facts[0]["nextSeasonNumber"]
     same = [f for f in facts if f["nextSeasonNumber"] == season]
+    lifecycle = next((f for f in same if f["rule"] != "explicit-premiere"), None)
     if old and season == old["nextSeasonNumber"]:
         # Existing final/cancelled state is sticky; same-season date is independent.
-        status = old["status"] if old["status"] in ("FINAL_SEASON", "CANCELED") else facts[0]["status"]
+        status = old["status"] if old["status"] in ("FINAL_SEASON", "CANCELED") else (lifecycle["status"] if lifecycle else old["status"])
     else:
-        status = same[0]["status"]
-    dated = next((f for f in same if f["releaseDate"]), None)
+        status = lifecycle["status"] if lifecycle else same[0]["status"]
+    date_evidence = [f for f in same if f["releaseDate"]]
+    if old and season == old["nextSeasonNumber"] and old["releaseDate"]:
+        date_evidence.append(old)
+    dates = {f["releaseDate"] for f in date_evidence}
+    if len(dates) > 1:
+        revisions = [f for f in same if f["releaseDate"] and f.get("dateRevision") and f["announcementDate"]]
+        latest = max(revisions, key=lambda f: f["announcementDate"]) if revisions else None
+        if not latest or any(f["releaseDate"] != latest["releaseDate"] and
+                             (not f["announcementDate"] or f["announcementDate"] >= latest["announcementDate"])
+                             for f in date_evidence):
+            raise AutomationError(f"Conflicting release dates for {same[0]['title']} season {season}: {sorted(dates)}")
+        dated = latest
+    else:
+        dated = next((f for f in same if f["releaseDate"]), None)
     year_only = next((f for f in same if f["releaseYear"]), None)
     release_date = dated["releaseDate"] if dated else (old["releaseDate"] if old and season == old["nextSeasonNumber"] else None)
     release_year = int(release_date[:4]) if release_date else (year_only["releaseYear"] if year_only else (old["releaseYear"] if old and season == old["nextSeasonNumber"] else None))
+    if status == "CANCELED":
+        release_date = release_year = None
     if status == "RELEASE_DATE_CONFIRMED" and not release_date:
         status = "RENEWED"
-    if status == "RENEWED" and release_date:
-        status = "RELEASE_DATE_CONFIRMED"
     # A single canonical URL must prove the strongest status assertion. Keep
     # independent date evidence in the audit when a different article proves it.
-    if status in ("FINAL_SEASON", "CANCELED") and old and season == old["nextSeasonNumber"] and old["status"] == status and same[0]["status"] != status:
+    if status in ("FINAL_SEASON", "CANCELED") and old and season == old["nextSeasonNumber"] and old["status"] == status and (not lifecycle or lifecycle["status"] != status):
         source = old
-    elif status == "RELEASE_DATE_CONFIRMED" and not dated and old and season == old["nextSeasonNumber"] and old["releaseDate"]:
+    elif not lifecycle and old and season == old["nextSeasonNumber"] and old["status"] == status:
         source = old
     else:
-        source = same[0] if status in ("FINAL_SEASON", "CANCELED") else (dated if dated else same[0])
+        source = lifecycle if lifecycle else (dated if dated else same[0])
     result = {k: source.get(k) for k in ("tmdbId", "title", "nextSeasonNumber", "sourceName", "sourceUrl", "announcementDate")}
     result.update(status=status, releaseDate=release_date, releaseYear=release_year, lastChecked=today.isoformat())
     if old and all(result.get(k) == old.get(k) for k in ("nextSeasonNumber", "status", "releaseDate", "releaseYear")):

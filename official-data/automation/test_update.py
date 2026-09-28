@@ -127,6 +127,102 @@ class FetchTests(unittest.TestCase):
 
 
 class DetectionTests(unittest.TestCase):
+    def test_lioness_renewal_and_premiere_both_orders(self):
+        entry = {"tmdbId": 113962, "title": "Lioness", "aliases": ["Lioness"]}
+        renewal_url = "https://www.paramountpressexpress.com/lioness-renewal"
+        premiere_url = "https://www.paramountpressexpress.com/lioness-premiere"
+        renewal = u.detect({"title": "Lioness renewed for a third season", "body": "October 1, 2025 - Lioness renewed for a third season.",
+                            "url": renewal_url, "sourceName": "Paramount Press Express"}, entry, TODAY)
+        premiere = u.detect({"title": "Lioness Season Three: Mission Accepted - returns August 2", "body": "June 4, 2026 - Lioness returns for Season Three on Sunday, August 2.",
+                             "url": premiere_url, "sourceName": "Paramount Press Express"}, entry, TODAY)
+        for facts in (renewal + premiere, premiere + renewal):
+            with self.subTest(first=facts[0]["sourceUrl"]):
+                selected, evidence = u.merge(None, facts, TODAY)
+                self.assertEqual((selected["nextSeasonNumber"], selected["status"], selected["releaseDate"], selected["releaseYear"]),
+                                 (3, "RENEWED", "2026-08-02", 2026))
+                self.assertEqual(selected["sourceUrl"], renewal_url)
+                self.assertIn(premiere_url, evidence["supportingSourceUrls"])
+
+    def test_production_date_is_not_premiere(self):
+        facts = u.detect(article("Lioness Season 3 production begins August 2, 2026"),
+                         {"tmdbId": 113962, "title": "Lioness", "aliases": ["Lioness"]}, TODAY)
+        self.assertFalse(any(f["releaseDate"] for f in facts))
+
+    def test_publication_date_is_not_premiere(self):
+        facts = u.detect({"title": "Lioness renewed for Season 3", "body": "August 2, 2026 - Lioness renewed for Season 3.",
+                          "url": "https://www.paramountpressexpress.com/release", "sourceName": "Paramount Press Express"},
+                         {"tmdbId": 113962, "title": "Lioness", "aliases": ["Lioness"]}, TODAY)
+        self.assertTrue(facts)
+        self.assertFalse(any(f["releaseDate"] for f in facts))
+
+    def test_previous_season_premiere_does_not_date_new_season(self):
+        entry = {"tmdbId": 113962, "title": "Lioness", "aliases": ["Lioness"]}
+        facts = u.detect(article("Lioness renewed for Season 3"), entry, TODAY)
+        facts += u.detect(article("Lioness Season 2 premiered August 2, 2025"), entry, TODAY)
+        selected, _ = u.merge(None, facts, TODAY)
+        self.assertEqual(selected["nextSeasonNumber"], 3)
+        self.assertIsNone(selected["releaseDate"])
+
+    def test_year_only_premiere(self):
+        entry = {"tmdbId": 113962, "title": "Lioness", "aliases": ["Lioness"]}
+        facts = u.detect(article("Lioness Season 3 premieres in 2027"), entry, TODAY)
+        selected, _ = u.merge(None, facts, TODAY)
+        self.assertEqual((selected["releaseDate"], selected["releaseYear"]), (None, 2027))
+
+    def test_conflicting_premiere_dates_fail_safe(self):
+        entry = {"tmdbId": 113962, "title": "Lioness", "aliases": ["Lioness"]}
+        first = u.detect(article("Lioness Season 3 premieres August 2, 2026", "https://www.paramountpressexpress.com/first"), entry, TODAY)
+        second = u.detect(article("Lioness Season 3 premieres August 9, 2026", "https://www.paramountpressexpress.com/second"), entry, TODAY)
+        with self.assertRaisesRegex(u.AutomationError, "Conflicting release dates"):
+            u.merge(None, first + second, TODAY)
+
+    def test_new_date_conflicting_with_verified_record_fails_safe(self):
+        entry = {"tmdbId": 153312, "title": "Tulsa King", "aliases": ["Tulsa King"]}
+        old = copy.deepcopy(BASE)
+        old.update(releaseDate="2026-10-16", releaseYear=2026)
+        new = u.detect(article("Tulsa King Season 3 premieres October 23, 2026"), entry, TODAY)
+        with self.assertRaisesRegex(u.AutomationError, "Conflicting release dates"):
+            u.merge(old, new, TODAY)
+
+    def test_explicit_reschedule_overrides_older_date(self):
+        entry = {"tmdbId": 113962, "title": "Lioness", "aliases": ["Lioness"]}
+        first = u.detect({"title": "Lioness Season 3 premieres August 2, 2026", "body": "June 4, 2026 - Lioness Season 3 premieres August 2, 2026.",
+                          "url": "https://www.paramountpressexpress.com/first", "sourceName": "Paramount Press Express"}, entry, TODAY)
+        revised = u.detect({"title": "Lioness Season 3 premiere moved to August 9, 2026", "body": "July 4, 2026 - Lioness Season 3 premiere moved to August 9, 2026.",
+                            "url": "https://www.paramountpressexpress.com/revised", "sourceName": "Paramount Press Express"}, entry, TODAY)
+        selected, _ = u.merge(None, first + revised, TODAY)
+        self.assertEqual(selected["releaseDate"], "2026-08-09")
+
+    def test_cancelled_fact_cannot_acquire_premiere_date(self):
+        entry = {"tmdbId": 113962, "title": "Lioness", "aliases": ["Lioness"]}
+        canceled = u.detect(article("Lioness Season 3 canceled"), entry, TODAY)
+        premiere = u.detect(article("Lioness Season 3 premieres August 2, 2026"), entry, TODAY)
+        selected, _ = u.merge(None, canceled + premiere, TODAY)
+        self.assertEqual(selected["status"], "CANCELED")
+        self.assertIsNone(selected["releaseDate"])
+
+    def test_publication_date_before_premiere_date_in_sentence(self):
+        entry = {"tmdbId": 113962, "title": "Lioness", "aliases": ["Lioness"]}
+        facts = u.detect(article("Article published June 4, 2026: Lioness Season 3 premieres August 2, 2026"), entry, TODAY)
+        self.assertEqual({f["releaseDate"] for f in facts}, {"2026-08-02"})
+
+    def test_publication_year_cannot_become_season_26(self):
+        sentence = "Press Release September 4, 2026 Season four of Silo will premiere on July 9, 2027 on Apple TV"
+        self.assertEqual(u.season_in(sentence), 4)
+        entry = {"tmdbId": 125988, "title": "Silo", "aliases": ["Silo"]}
+        facts = u.detect(article(sentence), entry, TODAY)
+        self.assertEqual({f["nextSeasonNumber"] for f in facts}, {4})
+
+    def test_wbd_unofficial_discovery_domain_rejected(self):
+        entry = next(e for e in json.loads(u.REGISTRY.read_text(encoding="utf-8"))["series"] if e["provider"] == "WBD")
+        self.assertFalse(u.allowed("https://example.com/wbd-feed.xml", entry["allowedDomains"]))
+        fake = {"tmdbId": entry["tmdbId"], "title": entry["title"], "nextSeasonNumber": 4,
+                "status": "RENEWED", "releaseDate": None, "releaseYear": None,
+                "sourceName": "Unverified mirror", "sourceUrl": "https://example.com/wbd-feed.xml",
+                "announcementDate": "2026-04-15", "rule": "explicit-renewal"}
+        with self.assertRaisesRegex(u.AutomationError, "Invalid evidence source"):
+            u.validate_facts([fake], entry)
+
     def test_renewal(self):
         self.assertEqual(u.detect(article("Tulsa King renewed for season 4"), ENTRY, TODAY)[0]["status"], "RENEWED")
 
