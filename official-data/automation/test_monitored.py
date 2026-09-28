@@ -250,6 +250,21 @@ class MonitoredTests(unittest.TestCase):
         with self.assertRaisesRegex(u.AutomationError, "Untrusted"):
             m.validate_registry(data)
 
+    def test_old_schema_v1_evidence_without_optional_text_remains_valid(self):
+        self.run_process(dry=False)
+        data = json.loads(self.path.read_text())
+        for fact in data["series"][0]["sourceEvidence"]:
+            fact.pop("evidenceText", None)
+            fact.pop("factType", None)
+        m.validate_registry(data)
+
+    def test_oversized_evidence_excerpt_rejected(self):
+        self.run_process(dry=False)
+        data = json.loads(self.path.read_text())
+        data["series"][0]["sourceEvidence"][0]["evidenceText"] = "x" * 201
+        with self.assertRaisesRegex(u.AutomationError, "excerpt"):
+            m.validate_registry(data)
+
     def test_trusted_id_precedence(self):
         result = m.process(153312, metadata={"tmdbId": 153312}, dry_run=False,
                            discoverer=lambda *_: self.fail("discovery"), registry_path=self.path, audit_path=self.audit)

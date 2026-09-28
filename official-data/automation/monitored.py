@@ -5,6 +5,7 @@ No function here writes the trusted registry, canonical dataset or production au
 from __future__ import annotations
 
 import datetime as dt
+from html.parser import HTMLParser
 import json
 import os
 from pathlib import Path
@@ -18,7 +19,33 @@ MONITORED_AUDIT = update.ROOT / "official-data" / "history" / "monitored_changes
 STATES = {"VERIFIED_FACTS", "NO_VERIFIED_FACTS", "NOT_PARSER_ELIGIBLE", "PROVIDER_UNAVAILABLE",
           "DISCOVERY_INSUFFICIENT", "VALIDATION_FAILED", "UNSUPPORTED_PROVIDER", "METADATA_UNAVAILABLE"}
 FACT_FIELDS = ("status", "nextSeasonNumber", "releaseDate", "releaseYear", "sourceName", "sourceUrl", "announcementDate")
-EVIDENCE_FIELDS = ("status", "nextSeasonNumber", "releaseDate", "releaseYear", "sourceName", "sourceUrl", "announcementDate", "rule")
+EVIDENCE_FIELDS = ("status", "nextSeasonNumber", "releaseDate", "releaseYear", "sourceName", "sourceUrl", "announcementDate", "rule", "factType", "evidenceText")
+
+
+def publication_date_from_html(raw: str) -> str | None:
+    """Use structured publication metadata only, never the first body date."""
+    class Dates(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.values = []
+
+        def handle_starttag(self, tag, attrs):
+            attrs = dict(attrs)
+            if tag == "meta" and attrs.get("property", attrs.get("name", "")).casefold() in (
+                    "article:published_time", "datepublished", "date_published", "pubdate"):
+                self.values.append(attrs.get("content", ""))
+            elif tag == "time" and attrs.get("datetime"):
+                self.values.append(attrs["datetime"])
+
+    dates = Dates()
+    dates.feed(raw)
+    valid = set()
+    for value in dates.values:
+        try:
+            valid.add(dt.date.fromisoformat(value[:10]).isoformat())
+        except (TypeError, ValueError):
+            continue
+    return next(iter(valid)) if len(valid) == 1 else None
 
 
 def scoped_article(article: dict, aliases: list[str]) -> dict:
@@ -80,6 +107,12 @@ def validate_registry(data: dict) -> None:
                not isinstance(item.get("nextSeasonNumber"), int) or item["nextSeasonNumber"] <= 0
                for item in evidence):
             raise update.AutomationError("Invalid monitored source evidence")
+        if any("evidenceText" in item and (not isinstance(item["evidenceText"], str) or len(item["evidenceText"]) > 200)
+               for item in evidence):
+            raise update.AutomationError("Invalid monitored evidence excerpt")
+        if any("factType" in item and item["factType"] not in ("LIFECYCLE", "RELEASE_DATE", "RELEASE_YEAR")
+               for item in evidence):
+            raise update.AutomationError("Invalid monitored fact type")
         if row["discoveryState"] == "VERIFIED_FACTS":
             if (not evidence or facts.get("status") not in update.STATUSES or
                     not isinstance(facts.get("nextSeasonNumber"), int) or facts["nextSeasonNumber"] <= 0 or
@@ -223,8 +256,10 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
                                for name in entry["aliases"]):
                         raise update.AutomationError("Discovered page identity changed")
                 article = update.ADAPTERS[provider].parse(raw, final)
+                article["publicationDate"] = publication_date_from_html(raw)
                 parsed += 1
-                facts.extend(update.detect(scoped_article(article, entry["aliases"]), entry, today, extended_final=True))
+                facts.extend(update.detect(scoped_article(article, entry["aliases"]), entry, today,
+                                         extended_final=True, strict_binding=True))
             update.validate_facts(facts, entry)
             if facts:
                 for season in {f["nextSeasonNumber"] for f in facts}:
