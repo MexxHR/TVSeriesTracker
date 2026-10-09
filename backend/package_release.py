@@ -8,14 +8,20 @@ from check_release_artifacts import check
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT.parent
-VERSION = "V2.5.1"
+VERSION = "V2.5.1.1"
 APK = OUT / f"TV-Series-Tracker-{VERSION}-debug.apk"
 ZIP = OUT / f"TVSeriesTracker-{VERSION}.zip"
 TOP = [".gitignore", "build.gradle.kts", "app/build.gradle.kts", "gradle.properties", "gradlew", "gradlew.bat",
        "README.md", "settings.gradle.kts"]
 DIRS = [".github/workflows", "app/src", "backend", "gradle/wrapper", "official-data"]
 SKIP_NAMES = {"__pycache__", ".gradle", ".gradle-user", "build", "local.properties", ".pytest_cache"}
-PRESERVE_LIVE_STATE = {"official-data/monitored_series.json", "official-data/history/monitored_changes.jsonl"}
+PRESERVE_LIVE_STATE = {
+    "official-data/official_series_data.json",
+    "official-data/history/changes.jsonl",
+    "official-data/sources.json",
+    "official-data/monitored_series.json",
+    "official-data/history/monitored_changes.jsonl",
+}
 
 
 def package():

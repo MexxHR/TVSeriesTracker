@@ -732,6 +732,9 @@ if __name__ == "__main__":
     if args.promote_monitored is not None:
         if args.metadata_file:
             parser.error("--metadata-file does not apply to --promote-monitored")
+        if args.dry_run:
+            # A preview must not create __pycache__ files in a clean checkout.
+            sys.dont_write_bytecode = True
         from promotion import promote
         report = promote(args.promote_monitored, dry_run=args.dry_run)
         print(json.dumps(report, ensure_ascii=False, indent=2))

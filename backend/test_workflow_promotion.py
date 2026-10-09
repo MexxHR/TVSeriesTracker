@@ -64,6 +64,8 @@ class PromotionWorkflowBoundaryTests(unittest.TestCase):
         self.assertIn("persist-credentials: false", source)
         self.assertIn('python official-data/automation/update.py --promote-monitored "$TMDB_ID" --dry-run', source)
         self.assertIn("git diff --exit-code HEAD", source)
+        self.assertIn('PYTHONDONTWRITEBYTECODE: \'1\'', source)
+        self.assertIn('git ls-files --others --exclude-standard', source)
         self.assertNotIn("git push", source)
 
 

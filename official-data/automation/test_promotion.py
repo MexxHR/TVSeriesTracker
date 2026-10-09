@@ -1,7 +1,10 @@
 import copy
 import datetime as dt
 import json
+import os
 from pathlib import Path
+import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -22,12 +25,14 @@ class PromotionTests(unittest.TestCase):
         self.data_path = root / "official_series_data.json"
         self.audit_path = root / "changes.jsonl"
         self.monitored_path = root / "monitored_series.json"
+        self.monitored_audit_path = root / "monitored_changes.jsonl"
         self.registry_path = root / "sources.json"
         self.registry = json.loads(update.REGISTRY.read_text(encoding="utf-8"))
         self.production = json.loads((Path(__file__).parent / "fixtures" / "v235_canonical.json").read_text(encoding="utf-8"))
         self.data_path.write_text(json.dumps(self.production, indent=2) + "\n", encoding="utf-8")
         self.registry_path.write_text(json.dumps(self.registry), encoding="utf-8")
         self.audit_path.write_bytes(update.AUDIT.read_bytes())
+        self.monitored_audit_path.write_bytes(b'{"existing":"monitored"}\n')
         self.now = dt.datetime(2026, 10, 10, 12, tzinfo=dt.timezone.utc)
         self.row = self.one_piece_row()
         self.write_monitored([self.row])
@@ -98,10 +103,56 @@ class PromotionTests(unittest.TestCase):
         self.assertFalse(result["fatal"])
 
     def test_dry_run_writes_nothing(self):
-        before = self.data_path.read_bytes(), self.audit_path.read_bytes()
+        paths = (self.data_path, self.audit_path, self.registry_path,
+                 self.monitored_path, self.monitored_audit_path)
+        before = {path: path.read_bytes() for path in paths}
+        files_before = set(self.data_path.parent.rglob("*"))
         result = self.promote(dry_run=True)
+        self.assertEqual(result["promotionState"], "PROMOTABLE")
         self.assertTrue(result["wouldPublish"])
-        self.assertEqual(before, (self.data_path.read_bytes(), self.audit_path.read_bytes()))
+        self.assertEqual(result["validationResult"], "passed")
+        self.assertEqual(result["proposedProductionRecord"]["nextSeasonNumber"], 3)
+        self.assertEqual(result["proposedProductionRecord"]["releaseYear"], 2027)
+        self.assertEqual({path: path.read_bytes() for path in paths}, before)
+        self.assertEqual(set(self.data_path.parent.rglob("*")), files_before)
+
+    def test_cli_dry_run_creates_no_bytecode_or_repository_files(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            data_dir = root / "official-data"
+            automation_dir = data_dir / "automation"
+            history_dir = data_dir / "history"
+            automation_dir.mkdir(parents=True)
+            history_dir.mkdir()
+            original = Path(__file__).parent
+            for name in ("update.py", "promotion.py", "monitored.py", "discovery.py"):
+                shutil.copyfile(original / name, automation_dir / name)
+            shutil.copyfile(update.ROOT / "official-data" / "discovery_providers.json",
+                            data_dir / "discovery_providers.json")
+            copies = {
+                data_dir / "official_series_data.json": self.data_path,
+                data_dir / "sources.json": self.registry_path,
+                data_dir / "monitored_series.json": self.monitored_path,
+                history_dir / "changes.jsonl": self.audit_path,
+                history_dir / "monitored_changes.jsonl": self.monitored_audit_path,
+            }
+            for destination, source in copies.items():
+                destination.write_bytes(source.read_bytes())
+            before = {path: path.read_bytes() for path in copies}
+            files_before = {path.relative_to(root) for path in root.rglob("*") if path.is_file()}
+            env = os.environ.copy()
+            env.pop("PYTHONDONTWRITEBYTECODE", None)
+            completed = subprocess.run(
+                [sys.executable, str(automation_dir / "update.py"),
+                 "--promote-monitored", "111110", "--dry-run"],
+                cwd=root, env=env, capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(completed.returncode, 0, completed.stderr + completed.stdout)
+            report = json.loads(completed.stdout)
+            self.assertEqual(report["promotionState"], "PROMOTABLE", report)
+            self.assertTrue(report["wouldPublish"], report)
+            self.assertEqual({path: path.read_bytes() for path in copies}, before)
+            self.assertEqual({path.relative_to(root) for path in root.rglob("*") if path.is_file()}, files_before)
 
     def test_dark_matter_unsupported_provider_is_safe_noop(self):
         row = {"tmdbId": 62425, "title": "Dark Matter", "provider": None,
