@@ -14,7 +14,8 @@ permissions:
   contents: write
 
 concurrency:
-  group: official-data-update
+  group: official-data-writes
+  queue: max
   cancel-in-progress: false
 
 jobs:

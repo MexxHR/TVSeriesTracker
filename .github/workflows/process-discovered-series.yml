@@ -14,7 +14,7 @@ on:
         type: boolean
 
 concurrency:
-  group: monitored-series-${{ github.ref }}
+  group: official-data-writes
   queue: max
   cancel-in-progress: false
 

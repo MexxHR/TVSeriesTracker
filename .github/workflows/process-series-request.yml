@@ -1,4 +1,4 @@
-name: Process Android series request (monitored only)
+name: Process Android series request and verified promotion
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ on:
         type: number
 
 concurrency:
-  group: monitored-series-${{ github.ref }}
+  group: official-data-writes
   queue: max
   cancel-in-progress: false
 
@@ -34,16 +34,44 @@ jobs:
           TMDB_API_TOKEN: ${{ secrets.TMDB_API_TOKEN }}
           TMDB_ID: ${{ inputs.tmdb_id }}
         run: python official-data/automation/update.py --process-discovered "$TMDB_ID"
-      - name: Reject production changes
+      - name: Promote validated monitored facts
+        if: ${{ vars.OFFICIAL_DATA_PROMOTION_ENABLED == 'true' }}
+        env:
+          TMDB_ID: ${{ inputs.tmdb_id }}
+        run: python official-data/automation/update.py --promote-monitored "$TMDB_ID"
+      - name: Enforce changed-file allowlist
+        env:
+          PROMOTION_ENABLED: ${{ vars.OFFICIAL_DATA_PROMOTION_ENABLED }}
         run: |
-          git diff --exit-code -- official-data/official_series_data.json official-data/sources.json official-data/history/changes.jsonl
-          git diff --cached --exit-code -- official-data/official_series_data.json official-data/sources.json official-data/history/changes.jsonl
-          test -z "$(git ls-files --others --exclude-standard -- official-data/official_series_data.json official-data/sources.json official-data/history/changes.jsonl)"
-      - name: Commit monitored registry and audit only
+          python - <<'PY'
+          import os
+          import subprocess
+          import sys
+
+          allowed = {
+              "official-data/monitored_series.json",
+              "official-data/history/monitored_changes.jsonl",
+              "official-data/official_series_data.json",
+              "official-data/history/changes.jsonl",
+          }
+          tracked = subprocess.check_output(["git", "diff", "--name-only", "--no-renames", "-z", "HEAD"])
+          untracked = subprocess.check_output(["git", "ls-files", "--others", "--exclude-standard", "-z"])
+          changed = set((tracked + untracked).decode("utf-8").strip("\0").split("\0")) - {""}
+          unexpected = sorted(changed - allowed)
+          if unexpected:
+              print("Unexpected changed files: " + ", ".join(unexpected), file=sys.stderr)
+              sys.exit(1)
+          if os.getenv("PROMOTION_ENABLED") != "true" and changed & {
+              "official-data/official_series_data.json", "official-data/history/changes.jsonl"
+          }:
+              print("Production data changed while promotion is disabled", file=sys.stderr)
+              sys.exit(1)
+          PY
+      - name: Commit permitted monitored and production data
         run: |
-          git add -- official-data/monitored_series.json official-data/history/monitored_changes.jsonl
+          git add -- official-data/monitored_series.json official-data/history/monitored_changes.jsonl official-data/official_series_data.json official-data/history/changes.jsonl
           if git diff --cached --quiet; then
-            echo 'Monitored registry unchanged.'
+            echo 'Monitored and production data unchanged.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'

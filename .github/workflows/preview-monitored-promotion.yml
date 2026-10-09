@@ -1,0 +1,43 @@
+name: Preview monitored promotion (read-only)
+
+on:
+  workflow_dispatch:
+    inputs:
+      tmdb_id:
+        description: 'TMDB TV ID to evaluate without writing production data'
+        required: true
+        type: number
+
+permissions:
+  contents: read
+
+concurrency:
+  group: official-data-writes
+  queue: max
+  cancel-in-progress: false
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require main branch
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: test "$BRANCH" = main
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Regression tests
+        run: python -m unittest discover -s official-data/automation -p 'test_*.py' -q
+      - name: Evaluate promotion without writing
+        env:
+          TMDB_ID: ${{ inputs.tmdb_id }}
+        run: python official-data/automation/update.py --promote-monitored "$TMDB_ID" --dry-run
+      - name: Verify preview made no repository changes
+        run: |
+          git diff --exit-code HEAD
+          test -z "$(git ls-files --others --exclude-standard)"
