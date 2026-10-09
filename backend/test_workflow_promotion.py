@@ -15,6 +15,7 @@ class PromotionWorkflowBoundaryTests(unittest.TestCase):
             "process-series-request.yml",
             "process-discovered-series.yml",
             "update-official-data.yml",
+            "promote-monitored-series.yml",
         ):
             with self.subTest(filename=filename):
                 source = (WORKFLOWS / filename).read_text(encoding="utf-8")
@@ -67,6 +68,41 @@ class PromotionWorkflowBoundaryTests(unittest.TestCase):
         self.assertIn('PYTHONDONTWRITEBYTECODE: \'1\'', source)
         self.assertIn('git ls-files --others --exclude-standard', source)
         self.assertNotIn("git push", source)
+
+    def test_manual_promotion_is_human_dispatched_and_narrowly_permissioned(self):
+        source = (WORKFLOWS / "promote-monitored-series.yml").read_text(encoding="utf-8")
+        triggers = source.split("on:\n", 1)[1].split("\npermissions:", 1)[0]
+        self.assertIn("workflow_dispatch:", triggers)
+        self.assertNotIn("schedule:", triggers)
+        self.assertNotIn("push:", triggers)
+        self.assertRegex(triggers, r"tmdb_id:\n(?:.*\n)*?        required: true")
+        permissions = source.split("permissions:\n", 1)[1].split("\nconcurrency:", 1)[0]
+        self.assertEqual(permissions.strip(), "contents: write")
+        self.assertIn("REF: ${{ github.ref }}", source)
+        self.assertIn("test \"$REF\" = refs/heads/main", source)
+        self.assertIn("ref: refs/heads/main", source)
+        self.assertIn("PYTHONDONTWRITEBYTECODE: '1'", source)
+        self.assertIn("manual_promotion_guard.py validate-id", source)
+        self.assertIn("manual_promotion_guard.py preflight", source)
+        self.assertIn("manual_promotion_guard.py verify", source)
+        self.assertIn('python official-data/automation/update.py --promote-monitored "$TMDB_ID"', source)
+        self.assertNotIn("--dry-run", source)
+        self.assertNotIn("OFFICIAL_DATA_PROMOTION_ENABLED", source)
+
+    def test_manual_promotion_commits_only_after_verified_real_change(self):
+        source = (WORKFLOWS / "promote-monitored-series.yml").read_text(encoding="utf-8")
+        self.assertIn("if: ${{ steps.verify.outputs.commit == 'true' }}", source)
+        self.assertIn("git add -- official-data/official_series_data.json official-data/history/changes.jsonl", source)
+        self.assertIn("git push origin HEAD:main", source)
+        self.assertNotIn("official-data/monitored_series.json official-data/history/monitored_changes.jsonl", source)
+        guard = (ROOT / "official-data" / "automation" / "manual_promotion_guard.py").read_text(encoding="utf-8")
+        self.assertIn("if state == \"NO_CHANGE\":", guard)
+        self.assertIn("if state != \"PROMOTED\":", guard)
+        self.assertIn('WRITABLE = set(PROTECTED[:2])', guard)
+        self.assertIn('different != {tmdb_id}', guard)
+        self.assertIn('changed - WRITABLE', guard)
+        automatic = (WORKFLOWS / "process-series-request.yml").read_text(encoding="utf-8")
+        self.assertIn("if: ${{ vars.OFFICIAL_DATA_PROMOTION_ENABLED == 'true' }}", automatic)
 
 
 if __name__ == "__main__":

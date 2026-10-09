@@ -151,3 +151,34 @@ record later needs manual rollback, pause the data-writing workflows, revert
 the single promotion commit (canonical JSON and production audit together),
 validate both files and their history, then resume workflows. Do not edit only
 one side of that pair or rewrite monitored evidence to hide the event.
+
+## Controlled manual production acceptance (V2.5.2)
+
+The **Preview monitored promotion (read-only)** workflow evaluates one TMDB ID
+without a repository write. After its ONE PIECE 111110 report and both Git
+mutation guards passed on the GitHub runner, the dedicated **Promote monitored
+series to Official Data** workflow provides a separate human-dispatched first
+production write. It accepts only a positive TMDB ID on `main`, uses the shared
+non-cancelling `official-data-writes` queue and workflow-scoped Contents:write,
+and runs the existing `update.py --promote-monitored` engine. It snapshots all
+five live data/audit files outside the checkout before the command. A second
+guard validates the JSON result, exact two-file allowlist, single-series
+canonical diff, complete schema, advanced `generatedAt`, official source,
+and exactly one matching audit entry before committing. For the first ONE PIECE
+acceptance it also checks S3 RENEWED / 2027 with no S3 release date. Other
+rejected states fail without a commit.
+
+Run the workflow manually with `tmdb_id=111110` once. Inspect its canonical and
+production audit diff and confirm that the bot commit contains only those two
+files. Run the exact same workflow and ID again: the required result is
+`NO_CHANGE`, byte-identical canonical and audit, and no second commit. The
+workflow never commits a no-op. If validation, publication or push fails, stop
+and inspect the report and repository before retrying. The Python publisher
+restores both files after a local write/verification failure. After an already
+pushed erroneous commit, pause data writers and revert canonical and audit
+together, then validate the restored dataset and history.
+
+This manual workflow authorization does **not** activate routine promotion.
+`OFFICIAL_DATA_PROMOTION_ENABLED` remains unset; the Android-request workflow
+still requires that separate future gate. No production promotion is run while
+implementing or packaging this workflow.
