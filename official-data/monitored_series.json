@@ -1,4 +1,15 @@
 {
   "schemaVersion": 1,
-  "series": []
+  "series": [
+    {
+      "tmdbId": 62425,
+      "title": "Dark Matter",
+      "provider": null,
+      "discoveryState": "UNSUPPORTED_PROVIDER",
+      "candidateUrls": [],
+      "verifiedFacts": {},
+      "sourceEvidence": [],
+      "lastChecked": "2026-10-09"
+    }
+  ]
 }
