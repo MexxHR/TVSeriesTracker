@@ -113,11 +113,28 @@ def validate_registry(data: dict) -> None:
         if any("factType" in item and item["factType"] not in ("LIFECYCLE", "RELEASE_DATE", "RELEASE_YEAR")
                for item in evidence):
             raise update.AutomationError("Invalid monitored fact type")
+        if any("publicationDateSource" in item and item["publicationDateSource"] not in ("structured_metadata", "none")
+               for item in evidence):
+            raise update.AutomationError("Invalid publication-date provenance")
+        # New rows persist the parser gate and the exact identity-checked
+        # candidate URLs so promotion can verify where each fact came from.
+        # Older rows remain readable; promotion itself fails closed when this
+        # proof is absent.
+        if "parserResult" in row and row["parserResult"] not in ("facts", "no_facts", "failed", "skipped", "unavailable"):
+            raise update.AutomationError("Invalid monitored parser result")
+        if "validationResult" in row and row["validationResult"] not in ("passed", "failed", "not_applicable"):
+            raise update.AutomationError("Invalid monitored validation result")
+        eligible_urls = row.get("eligibleSourceUrls")
+        if eligible_urls is not None and (not isinstance(eligible_urls, list) or
+                any(not isinstance(url, str) or not update.allowed(url, domains) for url in eligible_urls)):
+            raise update.AutomationError("Invalid eligible source URLs")
         if row["discoveryState"] == "VERIFIED_FACTS":
             if (not evidence or facts.get("status") not in update.STATUSES or
                     not isinstance(facts.get("nextSeasonNumber"), int) or facts["nextSeasonNumber"] <= 0 or
                     not facts.get("sourceName") or not update.allowed(facts.get("sourceUrl", ""), domains)):
                 raise update.AutomationError("Verified monitored record lacks official evidence")
+            if eligible_urls is not None and any(item.get("sourceUrl") not in eligible_urls for item in evidence):
+                raise update.AutomationError("Evidence source was not parser-eligible")
         elif facts or evidence:
             raise update.AutomationError("Unverified monitored record contains facts")
         for item in evidence + ([facts] if facts else []):
@@ -229,6 +246,7 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
         state = "NOT_PARSER_ELIGIBLE"
     facts = []
     parsed = 0
+    eligible_source_urls: set[str] = set()
     validation_reason = None
     merged = None
     source_evidence = []
@@ -245,6 +263,7 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
                 raw, final = fetcher(url, domains)
                 if not update.allowed(final, domains):
                     raise update.AutomationError("Eligible candidate redirect outside allowlist")
+                eligible_source_urls.update((url, final))
                 if provider in ("NETFLIX", "APPLE"):
                     # The page may have changed since discovery. Recheck the
                     # visible heading, including the title boundary, before
@@ -277,7 +296,9 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
                                      f.get("releaseDate") == merged["releaseDate"] and f["rule"] == "explicit-premiere")
                     for key in ("sourceName", "sourceUrl", "announcementDate"):
                         merged[key] = date_fact[key]
-                source_evidence = [{key: fact.get(key) for key in EVIDENCE_FIELDS} for fact in facts]
+                source_evidence = [{**{key: fact.get(key) for key in EVIDENCE_FIELDS},
+                                    "publicationDateSource": "structured_metadata" if fact.get("announcementDate") else "none"}
+                                   for fact in facts]
                 source_evidence.sort(key=lambda f: (f["nextSeasonNumber"], f["status"], f["sourceUrl"], f["rule"]))
                 state = "VERIFIED_FACTS"
             else:
@@ -298,9 +319,15 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
                 "verifiedFacts": {}, "sourceEvidence": [], "candidateUrls": report.get("candidateUrls") or [],
                 "dryRun": dry_run, "registryChange": "none"}
     verified = {key: merged.get(key) for key in FACT_FIELDS} if state == "VERIFIED_FACTS" else {}
+    parser_result = "facts" if state == "VERIFIED_FACTS" else "no_facts" if state == "NO_VERIFIED_FACTS" else \
+                    "failed" if state == "VALIDATION_FAILED" else "skipped" if not eligible else "unavailable"
+    validation_result = "passed" if state == "VERIFIED_FACTS" else "failed" if state == "VALIDATION_FAILED" else "not_applicable"
+    eligible_urls = sorted(eligible_source_urls)
     row = {"tmdbId": tmdb_id, "title": meta["title"], "provider": provider,
            "discoveryState": state, "candidateUrls": sorted(set(report.get("candidateUrls") or [])),
            "verifiedFacts": verified, "sourceEvidence": source_evidence if state == "VERIFIED_FACTS" else [],
+           "parserResult": parser_result, "validationResult": validation_result,
+           "eligibleSourceUrls": eligible_urls,
            "lastChecked": today.isoformat()}
     current = next((item for item in registry["series"] if item["tmdbId"] == tmdb_id), None)
     comparable = lambda item: {key: value for key, value in item.items() if key != "lastChecked"}
@@ -315,9 +342,8 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
               "discoveryResult": report.get("result"), "eligibleCandidateCount": len(eligible),
               "parsedSourceCount": parsed, "pipelineState": state, "verifiedFacts": verified,
               "sourceEvidence": row["sourceEvidence"], "candidateUrls": row["candidateUrls"],
-              "parserResult": "facts" if state == "VERIFIED_FACTS" else "no_facts" if state == "NO_VERIFIED_FACTS" else
-                              "failed" if state == "VALIDATION_FAILED" else "skipped" if not eligible else "unavailable",
-              "validationResult": "passed" if state == "VERIFIED_FACTS" else "failed" if state == "VALIDATION_FAILED" else "not_applicable",
+              "parserResult": parser_result,
+              "validationResult": validation_result,
               "dryRun": dry_run, "registryChange": action,
               "oldRecord": current if dry_run and changed else None,
               "proposedRecord": row if dry_run and changed else None}

@@ -20,11 +20,12 @@ own `GITHUB_TOKEN` gets Contents:write only in the monitored workflow.
    per-ID cooldown limits transactionally. It dispatches the restricted GitHub
    workflow with `tmdb_id` only. The ID is a routing key, not lifecycle evidence.
 3. The workflow runs the existing `update.py --process-discovered` entry point.
-   It checks that production files are unchanged and commits only the monitored
-   registry and audit. Its `queue: max` concurrency group is shared with the
-   manual Phase 2A writer. GitHub currently supports up to 100 pending runs in
-   that group; excess runs can be canceled and require operational monitoring.
-   It never promotes staging to canonical production data.
+   That monitored step writes only the monitored registry and audit; it never
+   promotes staging directly. A separate Phase 2B.2 step may promote validated
+   facts after the monitored step succeeds. Its `queue: max` concurrency group
+   is shared with the manual Phase 2A writer and daily production updater.
+   GitHub currently supports up to 100 pending runs in that group; excess runs
+   can be canceled and require operational monitoring.
 4. No user authentication is required for this anonymous feature. Coarse rate
    limits, request size validation, server-side cooldown, and optional edge/WAF
    rules protect it. Configure `TRUSTED_PROXY_IPS` only with actual ingress IPs;
@@ -43,13 +44,12 @@ own `GITHUB_TOKEN` gets Contents:write only in the monitored workflow.
    permanent deployment failures (backend HTTP 424). Backend 503/429 and network errors make the
    Android worker retry with exponential backoff; other 4xx stop retrying.
    WorkManager's persisted work survives process death and offline periods.
-7. Result retrieval in 2B.1 remains the existing official-data sync, after a
-   separate future promotion decision. `queued` and `already_queued` are
+7. Result retrieval remains the existing official-data sync after a separate
+   successful promotion. `queued` and `already_queued` are
    transport states, never verified factual statuses. No staging status is
    displayed as production truth.
-8. The backend URL is public build configuration and may be empty. Empty config
-   makes the worker exit in a controlled unavailable state; watchlist use remains
-   local. The same backend serves two fixed read-only TMDB metadata routes for
+8. The backend URL is public build configuration, defaulting to
+   `https://mexxhr.pythonanywhere.com`. The same backend serves two fixed read-only TMDB metadata routes for
    Android search/details, with its `TMDB_API_TOKEN` held server-side. These
    routes use a separate hourly SQLite quota (120 requests per client and 3000
    globally), so interactive searches cannot exhaust the stricter dispatch
@@ -69,8 +69,9 @@ persistent SQLite storage. Required environment names: `GITHUB_TOKEN`
 server-side. No values belong in Git, Android resources, APK or project ZIP.
 
 The backend's GitHub permission is Actions:write for this repository. The
-workflow `process-series-request.yml` has Contents:write only to commit monitored
-files. It does not receive the backend dispatch credential. Configure edge rate
+workflow `process-series-request.yml` has Contents:write only for the four
+allowlisted monitored/production data and audit files. It does not receive the
+backend dispatch credential. Configure edge rate
 limits too; core SQLite limits remain active if edge rules are unavailable.
 
 Local tests inject a fake dispatcher and a temporary SQLite database. They do
@@ -78,3 +79,75 @@ not require or use a GitHub credential. `python backend/dev_server.py` starts a
 loopback-only WSGI endpoint with a fake dispatcher; never expose that mode
 publicly. Android requires HTTPS, so this HTTP test endpoint is for backend
 integration tests rather than a phone build.
+
+## Phase 2B.2: controlled monitored promotion
+
+The Phase 2B.1 path was verified on a physical phone through the PythonAnywhere
+backend, monitored GitHub workflow, and monitored registry. Android still sends
+only `POST /v1/series-requests`; it does not read monitored staging or hold a
+GitHub or TMDB credential. The backend exposes no publication endpoint. GitHub
+Actions performs repository writes with its workflow-scoped token; the backend
+credential remains limited to workflow dispatch.
+
+`VERIFIED_FACTS` means a record may enter the independent production promotion
+gate. It never means blind publication. Discovery, factual parsing and monitored
+storage remain separate from promotion. The gate checks the persisted evidence,
+source identity and official-domain policy, fact/season agreement, production
+schema, merge result and exact one-series semantic diff before a write. Unknown
+or weaker monitored states, including `UNSUPPORTED_PROVIDER`, are successful
+monitored outcomes with no production change. Trusted `sources.json` entries
+retain precedence and continue through the original daily updater. Promotion
+does not change that registry or widen provider eligibility.
+
+The Android-request workflow runs monitored processing first and attempts
+promotion only if that step succeeds and the repository Actions variable
+`OFFICIAL_DATA_PROMOTION_ENABLED` is `true`. Leave the variable unset during
+the first controlled dry-run and review. Once activated, routine eligible
+promotions require no manual approval. It can commit only the monitored registry
+and audit and, on a successful promotion, canonical JSON and the existing
+production audit. Its explicit changed-file allowlist rejects all other paths.
+The Android-request, manual monitored writer and daily production updater share
+one non-cancelling `official-data-writes` GitHub Actions concurrency group with
+the existing maximum queue setting. This serializes read/modify/write of
+canonical data across the workflows. Queue limits still require operational
+monitoring during bursts.
+
+Promotion builds and validates the complete candidate in memory, then uses
+staged writes with verification and restoration of canonical JSON and production
+audit on failure. A semantic no-op does not rewrite either file, advance
+`generatedAt`, append audit or create a commit. A successful factual change
+appends to `history/changes.jsonl` with the previous/new record, official source
+URLs, monitored state and automatic-promotion reason. The monitored audit remains
+separate. One request may alter only its own TMDB ID. The daily updater's
+maximum-four factual-change guard remains in force.
+
+The local project snapshot currently contains an empty monitored registry;
+ONE PIECE and Dark Matter acceptance therefore uses isolated fixtures. Older
+monitored rows do not contain persisted parser/validation/eligible-source proof
+and fail closed. This means a direct dry-run on the legacy ONE PIECE row cannot
+yet produce the requested Season 3 candidate. With
+`OFFICIAL_DATA_PROMOTION_ENABLED` unset, first preview a refresh through the
+manual **Process discovered series (monitored only)** workflow with
+`dry_run=true`. Confirm that it remains `VERIFIED_FACTS` with eligible sources;
+preserve the existing monitored row/audit for recovery. Then run the same
+workflow with `dry_run=false` to write only monitored staging. Next run the
+read-only **Preview monitored promotion** workflow on GitHub main with TMDB ID
+`111110`, or run this command in a fresh main checkout:
+
+```bash
+python official-data/automation/update.py --promote-monitored 111110 --dry-run
+```
+
+Review the proposed ONE PIECE Season 3 record, source URLs, evidence, changed
+fields and validation result before permitting any live promotion. In
+particular, Season 2's 2026-03-10 premiere must not become a Season 3 date.
+`--promote-monitored 62425 --dry-run` must report a non-promotable
+`UNSUPPORTED_PROVIDER` outcome without changing production data. A live
+promotion must not be used as the first acceptance test.
+
+If a publication fails, stop the affected workflow and inspect its validation
+report; the writer restores both canonical and audit bytes. If a published
+record later needs manual rollback, pause the data-writing workflows, revert
+the single promotion commit (canonical JSON and production audit together),
+validate both files and their history, then resume workflows. Do not edit only
+one side of that pair or rewrite monitored evidence to hide the event.

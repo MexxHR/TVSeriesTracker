@@ -323,21 +323,25 @@ class SecretPatternTest(unittest.TestCase):
 
 
 class WorkflowBoundaryTest(unittest.TestCase):
-    def test_monitored_workflows_share_non_canceling_queue(self):
+    def test_all_production_writers_share_non_canceling_queue(self):
         root = Path(__file__).resolve().parents[1]
-        for name in ('process-series-request.yml', 'process-discovered-series.yml'):
+        for name in ('process-series-request.yml', 'process-discovered-series.yml', 'update-official-data.yml'):
             content = (root / '.github/workflows' / name).read_text(encoding='utf-8')
-            self.assertIn('group: monitored-series-${{ github.ref }}', content)
+            self.assertIn('group: official-data-writes', content)
             self.assertIn('queue: max', content)
             self.assertIn('cancel-in-progress: false', content)
 
-    def test_new_workflow_commits_only_staging(self):
+    def test_android_workflow_commits_only_allowlisted_data(self):
         root = Path(__file__).resolve().parents[1]
         content = (root / '.github/workflows/process-series-request.yml').read_text(encoding='utf-8')
         self.assertIn('--process-discovered "$TMDB_ID"', content)
-        self.assertIn('git diff --exit-code -- official-data/official_series_data.json', content)
-        self.assertIn('git add -- official-data/monitored_series.json official-data/history/monitored_changes.jsonl', content)
-        self.assertNotIn('git add -- official-data/official_series_data.json', content)
+        self.assertIn('--promote-monitored "$TMDB_ID"', content)
+        self.assertIn('Enforce changed-file allowlist', content)
+        self.assertIn('git", "diff", "--name-only", "--no-renames", "-z", "HEAD', content)
+        self.assertIn('git", "ls-files", "--others", "--exclude-standard", "-z', content)
+        self.assertIn("vars.OFFICIAL_DATA_PROMOTION_ENABLED == 'true'", content)
+        self.assertIn('git add -- official-data/monitored_series.json official-data/history/monitored_changes.jsonl official-data/official_series_data.json official-data/history/changes.jsonl', content)
+        self.assertNotIn('git add -- official-data/sources.json', content)
 
     def test_android_build_has_no_token_build_config(self):
         root = Path(__file__).resolve().parents[1]

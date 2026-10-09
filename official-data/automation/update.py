@@ -366,7 +366,8 @@ def validate_registry(registry: dict):
             raise AutomationError(f"Invalid registry entry: {e.get('title')}")
 
 
-def validate_dataset(data: dict, registry: dict, old: dict | None = None):
+def validate_dataset(data: dict, registry: dict, old: dict | None = None, *,
+                     allow_supplemental_ids: set[int] | None = None):
     if data.get("schemaVersion") != 1 or not isinstance(data.get("series"), list):
         raise AutomationError("Unsupported schema")
     try:
@@ -383,9 +384,26 @@ def validate_dataset(data: dict, registry: dict, old: dict | None = None):
     previous = {r["tmdbId"]: r for r in old["series"]} if old else {}
     for r in data["series"]:
         i = r.get("tmdbId")
-        if i not in known or r.get("title") != known[i]["title"] or r.get("status") not in STATUSES:
+        supplemental = i not in known
+        if supplemental:
+            explicitly_allowed = allow_supplemental_ids or set()
+            if i not in previous and i not in explicitly_allowed:
+                raise AutomationError(f"Supplemental series may only be added by promotion: {i}")
+            if i in previous and i not in explicitly_allowed and r != previous[i]:
+                raise AutomationError(f"Supplemental series may only be changed by promotion: {i}")
+            # Automatically promoted discovered series are canonical records,
+            # but deliberately do not enter the trusted bootstrap registry.
+            # Keep them valid for subsequent daily updater runs by applying
+            # the same provider-owned hostname policy used at promotion.
+            from discovery import provider_specs
+            domains = sorted({domain for spec in provider_specs().values() for domain in spec["officialDomains"]})
+        else:
+            domains = known[i]["allowedDomains"]
+        if (not isinstance(i, int) or isinstance(i, bool) or i <= 0 or
+                not isinstance(r.get("title"), str) or not r["title"].strip() or
+                (not supplemental and r.get("title") != known[i]["title"]) or r.get("status") not in STATUSES):
             raise AutomationError(f"Unknown series/status: {i}")
-        if not r.get("sourceName") or not r.get("sourceUrl") or not allowed(r["sourceUrl"], known[i]["allowedDomains"]):
+        if not isinstance(r.get("sourceName"), str) or not r["sourceName"].strip() or not isinstance(r.get("sourceUrl"), str) or not allowed(r["sourceUrl"], domains):
             raise AutomationError(f"Invalid source: {i}")
         if not isinstance(r.get("nextSeasonNumber"), int) or r["nextSeasonNumber"] <= 0:
             raise AutomationError(f"Invalid season: {i}")
@@ -401,6 +419,8 @@ def validate_dataset(data: dict, registry: dict, old: dict | None = None):
             raise AutomationError(f"Invalid date/year: {i}")
         if r["status"] == "RELEASE_DATE_CONFIRMED" and not r["releaseDate"]:
             raise AutomationError(f"Date status without date: {i}")
+        if supplemental and i in previous and r["nextSeasonNumber"] < previous[i]["nextSeasonNumber"]:
+            raise AutomationError(f"Season regression: {i}")
     if old and not set(previous).issubset(set(ids)):
         raise AutomationError("Destructive deletion")
 
@@ -420,6 +440,10 @@ def merge(old: dict | None, facts: list[dict], today: dt.date) -> tuple[dict | N
     if old and season == old["nextSeasonNumber"]:
         # Existing final/cancelled state is sticky; same-season date is independent.
         status = old["status"] if old["status"] in ("FINAL_SEASON", "CANCELED") else (lifecycle["status"] if lifecycle else old["status"])
+        # A weaker renewal assertion cannot erase an already confirmed
+        # premiere status for the same season.
+        if old["status"] == "RELEASE_DATE_CONFIRMED" and (not lifecycle or lifecycle["status"] == "RENEWED"):
+            status = old["status"]
     else:
         status = lifecycle["status"] if lifecycle else same[0]["status"]
     date_evidence = [f for f in same if f["releaseDate"]]
@@ -437,6 +461,12 @@ def merge(old: dict | None, facts: list[dict], today: dt.date) -> tuple[dict | N
     else:
         dated = next((f for f in same if f["releaseDate"]), None)
     year_only = next((f for f in same if f["releaseYear"]), None)
+    if year_only and old and season == old["nextSeasonNumber"] and old.get("releaseDate") and \
+            year_only["releaseYear"] != dt.date.fromisoformat(old["releaseDate"]).year and not dated:
+        raise AutomationError(f"Conflicting release year for {same[0]['title']} season {season}")
+    if year_only and old and season == old["nextSeasonNumber"] and old.get("releaseYear") and \
+            year_only["releaseYear"] != old["releaseYear"] and not dated:
+        raise AutomationError(f"Conflicting release year for {same[0]['title']} season {season}")
     release_date = dated["releaseDate"] if dated else (old["releaseDate"] if old and season == old["nextSeasonNumber"] else None)
     release_year = int(release_date[:4]) if release_date else (year_only["releaseYear"] if year_only else (old["releaseYear"] if old and season == old["nextSeasonNumber"] else None))
     if status == "CANCELED":
@@ -535,8 +565,9 @@ def collect(entry: dict, current: dict | None, today: dt.date, fetcher=fetch) ->
     return facts, len(articles)
 
 
-def audit_bytes() -> bytes:
-    content = AUDIT.read_bytes() if AUDIT.exists() else b""
+def audit_bytes(path: Path | None = None) -> bytes:
+    path = path or AUDIT
+    content = path.read_bytes() if path.exists() else b""
     try:
         for line in content.decode("utf-8").splitlines():
             if line.strip() and not isinstance(json.loads(line), dict):
@@ -556,36 +587,44 @@ def staged_file(path: Path, content: bytes) -> Path:
     return staged
 
 
-def publish(proposed: dict, registry: dict, changes: list[dict], original_data: bytes, old_audit: bytes, old_audit_exists: bool):
+def publish(proposed: dict, registry: dict, changes: list[dict], original_data: bytes, old_audit: bytes,
+            old_audit_exists: bool, *, data_path: Path | None = None, audit_path: Path | None = None,
+            previous_data: dict | None = None, allow_supplemental_ids: set[int] | None = None):
+    data_path = data_path or DATA
+    audit_path = audit_path or AUDIT
     new_data = (json.dumps(proposed, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
     new_audit = old_audit + b"".join((json.dumps(change, ensure_ascii=False, separators=(",", ":")) + "\n").encode("utf-8") for change in changes)
     staged_data = staged_audit = None
     committed = False
     replaced = False
     try:
-        staged_data = staged_file(DATA, new_data)
-        staged_audit = staged_file(AUDIT, new_audit)
-        os.replace(staged_audit, AUDIT)
+        staged_data = staged_file(data_path, new_data)
+        staged_audit = staged_file(audit_path, new_audit)
+        os.replace(staged_audit, audit_path)
         replaced = True
         staged_audit = None
-        os.replace(staged_data, DATA)
+        os.replace(staged_data, data_path)
         staged_data = None
-        written = DATA.read_bytes()
-        if written != new_data or AUDIT.read_bytes() != new_audit:
+        written = data_path.read_bytes()
+        if written != new_data or audit_path.read_bytes() != new_audit:
             raise AutomationError("Write verification failed")
-        validate_dataset(json.loads(written), registry)
-        audit_bytes()
+        if allow_supplemental_ids:
+            validate_dataset(json.loads(written), registry, previous_data,
+                             allow_supplemental_ids=allow_supplemental_ids)
+        else:
+            validate_dataset(json.loads(written), registry, previous_data)
+        audit_bytes(audit_path)
         committed = True
     finally:
         if replaced and not committed:
             # Restore both files if either replacement or verification failed.
-            restore_data = staged_file(DATA, original_data)
-            os.replace(restore_data, DATA)
+            restore_data = staged_file(data_path, original_data)
+            os.replace(restore_data, data_path)
             if old_audit_exists:
-                restore_audit = staged_file(AUDIT, old_audit)
-                os.replace(restore_audit, AUDIT)
-            elif AUDIT.exists():
-                AUDIT.unlink()
+                restore_audit = staged_file(audit_path, old_audit)
+                os.replace(restore_audit, audit_path)
+            elif audit_path.exists():
+                audit_path.unlink()
         for staged in (staged_data, staged_audit):
             if staged is not None:
                 staged.unlink(missing_ok=True)
@@ -598,7 +637,7 @@ def run(dry_run: bool, collector=collect, today: dt.date | None = None) -> dict:
         validate_registry(registry)
         original_data = DATA.read_bytes()
         original = json.loads(original_data)
-        validate_dataset(original, registry)
+        validate_dataset(original, registry, original)
         old_audit_exists = AUDIT.exists()
         old_audit = audit_bytes()
     except (OSError, UnicodeError, ValueError, AutomationError) as exc:
@@ -653,7 +692,8 @@ def run(dry_run: bool, collector=collect, today: dt.date | None = None) -> dict:
     result = {"dryRun": dry_run, "publishable": not failures, "reports": reports, "changes": changes, "warnings": warnings, "failures": failures}
     if not dry_run and result["publishable"] and changes:
         try:
-            publish(proposed, registry, changes, original_data, old_audit, old_audit_exists)
+            publish(proposed, registry, changes, original_data, old_audit, old_audit_exists,
+                    previous_data=original)
         except (OSError, AutomationError, ValueError) as exc:
             result["failures"].append(f"GLOBAL_SAFETY_FAILURE: publishing failed: {exc}")
             result["publishable"] = False
@@ -665,10 +705,13 @@ if __name__ == "__main__":
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--discover", type=int, metavar="TMDB_ID", help="Report official-source discovery without changing production data")
     parser.add_argument("--process-discovered", type=int, metavar="TMDB_ID", help="Process eligible discovery sources into the monitored registry only")
+    parser.add_argument("--promote-monitored", type=int, metavar="TMDB_ID", help="Independently validate and promote one monitored record")
     parser.add_argument("--metadata-file", type=Path, help="Optional local TMDB metadata fixture for discovery or monitored processing")
     args = parser.parse_args()
-    if args.discover is not None and args.process_discovered is not None:
-        parser.error("Choose --discover or --process-discovered")
+    selected = [args.discover is not None, args.process_discovered is not None,
+                args.promote_monitored is not None]
+    if sum(selected) > 1:
+        parser.error("Choose only one of --discover, --process-discovered or --promote-monitored")
     if args.discover is not None:
         if args.dry_run:
             parser.error("--discover is always read-only; do not combine it with --dry-run")
@@ -686,6 +729,13 @@ if __name__ == "__main__":
                       "validationReason": type(exc).__name__, "dryRun": args.dry_run, "registryChange": "none"}
         print(json.dumps(report, ensure_ascii=False, indent=2))
         sys.exit(1 if report["pipelineState"] in ("VALIDATION_FAILED", "METADATA_UNAVAILABLE") else 0)
+    if args.promote_monitored is not None:
+        if args.metadata_file:
+            parser.error("--metadata-file does not apply to --promote-monitored")
+        from promotion import promote
+        report = promote(args.promote_monitored, dry_run=args.dry_run)
+        print(json.dumps(report, ensure_ascii=False, indent=2))
+        sys.exit(1 if report["fatal"] else 0)
     if args.metadata_file:
         parser.error("--metadata-file requires --discover or --process-discovered")
     output = run(args.dry_run)

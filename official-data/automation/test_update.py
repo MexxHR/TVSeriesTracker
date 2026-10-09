@@ -461,6 +461,16 @@ class PipelineTests(unittest.TestCase):
         for p in self.patches:
             p.start()
             self.addCleanup(p.stop)
+        original_publish = u.publish
+        def guarded_publish(*args, **kwargs):
+            target_data = kwargs.get("data_path") or u.DATA
+            target_audit = kwargs.get("audit_path") or u.AUDIT
+            if Path(target_data) != self.data or Path(target_audit) != self.audit:
+                raise AssertionError("Automation test attempted to write outside its temporary fixture")
+            return original_publish(*args, **kwargs)
+        writer_guard = patch.object(u, "publish", side_effect=guarded_publish)
+        writer_guard.start()
+        self.addCleanup(writer_guard.stop)
 
     def partial_collector(self, entry, old, today):
         if entry["provider"] == "WBD":
