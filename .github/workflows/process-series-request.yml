@@ -18,63 +18,159 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    outputs:
+      tmdb_id: ${{ steps.input.outputs.tmdb_id }}
+      monitored_state: ${{ steps.stage.outputs.state }}
+      promotion_enabled: ${{ steps.gate.outputs.enabled }}
+      staged_head: ${{ steps.finish.outputs.head }}
+      monitored_commit: ${{ steps.finish.outputs.committed }}
     steps:
       - name: Require main branch
         env:
-          BRANCH: ${{ github.ref_name }}
-        run: test "$BRANCH" = main
+          REF: ${{ github.ref }}
+        run: test "$REF" = refs/heads/main
       - uses: actions/checkout@v4
+        with:
+          ref: refs/heads/main
+          persist-credentials: true
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Validate requested TMDB ID
+        id: input
+        env:
+          RAW_TMDB_ID: ${{ inputs.tmdb_id }}
+        run: |
+          TMDB_ID=$(python official-data/automation/manual_promotion_guard.py validate-id "$RAW_TMDB_ID")
+          echo "tmdb_id=$TMDB_ID" >> "$GITHUB_OUTPUT"
+      - name: Parse exact automatic promotion kill switch
+        id: gate
+        env:
+          RAW_PROMOTION_GATE: ${{ vars.OFFICIAL_DATA_PROMOTION_ENABLED }}
+        run: |
+          ENABLED=$(python official-data/automation/automatic_promotion.py gate "$RAW_PROMOTION_GATE")
+          echo "enabled=$ENABLED" >> "$GITHUB_OUTPUT"
       - name: Regression tests
         run: python -m unittest discover -s official-data/automation -p 'test_*.py' -q
+      - name: Require current main before monitored write
+        run: |
+          git fetch --no-tags origin refs/heads/main:refs/remotes/origin/main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse refs/remotes/origin/main)"
+      - name: Snapshot clean staging boundary
+        env:
+          TMDB_ID: ${{ steps.input.outputs.tmdb_id }}
+        run: python official-data/automation/automatic_promotion.py snapshot "$TMDB_ID" "$RUNNER_TEMP/monitored-before"
       - name: Process official sources into monitored staging only
         env:
           TMDB_API_TOKEN: ${{ secrets.TMDB_API_TOKEN }}
-          TMDB_ID: ${{ inputs.tmdb_id }}
-        run: python official-data/automation/update.py --process-discovered "$TMDB_ID"
-      - name: Promote validated monitored facts
-        if: ${{ vars.OFFICIAL_DATA_PROMOTION_ENABLED == 'true' }}
-        env:
-          TMDB_ID: ${{ inputs.tmdb_id }}
-        run: python official-data/automation/update.py --promote-monitored "$TMDB_ID"
-      - name: Enforce changed-file allowlist
-        env:
-          PROMOTION_ENABLED: ${{ vars.OFFICIAL_DATA_PROMOTION_ENABLED }}
+          TMDB_ID: ${{ steps.input.outputs.tmdb_id }}
         run: |
-          python - <<'PY'
-          import os
-          import subprocess
-          import sys
-
-          allowed = {
-              "official-data/monitored_series.json",
-              "official-data/history/monitored_changes.jsonl",
-              "official-data/official_series_data.json",
-              "official-data/history/changes.jsonl",
-          }
-          tracked = subprocess.check_output(["git", "diff", "--name-only", "--no-renames", "-z", "HEAD"])
-          untracked = subprocess.check_output(["git", "ls-files", "--others", "--exclude-standard", "-z"])
-          changed = set((tracked + untracked).decode("utf-8").strip("\0").split("\0")) - {""}
-          unexpected = sorted(changed - allowed)
-          if unexpected:
-              print("Unexpected changed files: " + ", ".join(unexpected), file=sys.stderr)
-              sys.exit(1)
-          if os.getenv("PROMOTION_ENABLED") != "true" and changed & {
-              "official-data/official_series_data.json", "official-data/history/changes.jsonl"
-          }:
-              print("Production data changed while promotion is disabled", file=sys.stderr)
-              sys.exit(1)
-          PY
-      - name: Commit permitted monitored and production data
+          set -euo pipefail
+          python official-data/automation/update.py --process-discovered "$TMDB_ID" | tee "$RUNNER_TEMP/monitored-result.json"
+      - name: Validate requested monitored change only
+        id: stage
+        env:
+          TMDB_ID: ${{ steps.input.outputs.tmdb_id }}
         run: |
-          git add -- official-data/monitored_series.json official-data/history/monitored_changes.jsonl official-data/official_series_data.json official-data/history/changes.jsonl
-          if git diff --cached --quiet; then
-            echo 'Monitored and production data unchanged.'
-            exit 0
-          fi
+          python official-data/automation/automatic_promotion.py verify-stage "$TMDB_ID" "$RUNNER_TEMP/monitored-before" "$RUNNER_TEMP/monitored-result.json" >> "$GITHUB_OUTPUT"
+      - name: Require current main before monitored commit
+        run: |
+          git fetch --no-tags origin refs/heads/main:refs/remotes/origin/main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse refs/remotes/origin/main)"
+      - name: Commit monitored staging only when changed
+        if: ${{ steps.stage.outputs.monitored_changed == 'true' }}
+        run: |
+          git add -- official-data/monitored_series.json official-data/history/monitored_changes.jsonl
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git commit -m 'Update monitored series registry'
-          git push
+          git push origin HEAD:main
+      - name: Record monitored boundary
+        id: finish
+        env:
+          MONITORED_CHANGED: ${{ steps.stage.outputs.monitored_changed }}
+          TMDB_ID: ${{ steps.input.outputs.tmdb_id }}
+          MONITORED_STATE: ${{ steps.stage.outputs.state }}
+          PROMOTION_ENABLED: ${{ steps.gate.outputs.enabled }}
+        run: |
+          echo "head=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "committed=$MONITORED_CHANGED" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Android request $TMDB_ID"
+            echo "Monitored state: $MONITORED_STATE"
+            echo "Automatic promotion gate: $PROMOTION_ENABLED"
+            echo "Monitored commit created: $MONITORED_CHANGED"
+            if [ "$PROMOTION_ENABLED" != true ] || [ "$MONITORED_STATE" != VERIFIED_FACTS ]; then
+              echo 'Promotion attempted: no; production changed: no; production commit created: no'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  promote:
+    needs: monitored_update
+    if: ${{ needs.monitored_update.outputs.promotion_enabled == 'true' && needs.monitored_update.outputs.monitored_state == 'VERIFIED_FACTS' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/heads/main
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Require exact monitored-stage main commit
+        env:
+          EXPECTED_HEAD: ${{ needs.monitored_update.outputs.staged_head }}
+        run: |
+          git fetch --no-tags origin refs/heads/main:refs/remotes/origin/main
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          test "$(git rev-parse HEAD)" = "$(git rev-parse refs/remotes/origin/main)"
+      - name: Snapshot clean production boundary
+        env:
+          TMDB_ID: ${{ needs.monitored_update.outputs.tmdb_id }}
+        run: python official-data/automation/manual_promotion_guard.py preflight "$TMDB_ID" "$RUNNER_TEMP/promotion-before"
+      - name: Run accepted production promotion engine for requested ID
+        env:
+          TMDB_ID: ${{ needs.monitored_update.outputs.tmdb_id }}
+        run: |
+          set -euo pipefail
+          python official-data/automation/update.py --promote-monitored "$TMDB_ID" | tee "$RUNNER_TEMP/promotion-result.json"
+      - name: Validate production result and exact two-file boundary
+        id: verify
+        env:
+          TMDB_ID: ${{ needs.monitored_update.outputs.tmdb_id }}
+        run: |
+          python official-data/automation/manual_promotion_guard.py verify-auto "$TMDB_ID" "$RUNNER_TEMP/promotion-before" "$RUNNER_TEMP/promotion-result.json" >> "$GITHUB_OUTPUT"
+      - name: Require current main before production commit
+        if: ${{ steps.verify.outputs.commit == 'true' }}
+        run: |
+          git fetch --no-tags origin refs/heads/main:refs/remotes/origin/main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse refs/remotes/origin/main)"
+      - name: Commit only a verified production promotion
+        if: ${{ steps.verify.outputs.commit == 'true' }}
+        env:
+          TMDB_ID: ${{ needs.monitored_update.outputs.tmdb_id }}
+        run: |
+          git add -- official-data/official_series_data.json official-data/history/changes.jsonl
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m "Promote verified monitored series $TMDB_ID"
+          git push origin HEAD:main
+      - name: Summarize automatic production decision
+        env:
+          TMDB_ID: ${{ needs.monitored_update.outputs.tmdb_id }}
+          PROMOTION_STATE: ${{ steps.verify.outputs.state }}
+          COMMITTED: ${{ steps.verify.outputs.commit }}
+        run: |
+          {
+            echo "### Automatic promotion $TMDB_ID"
+            echo 'Promotion attempted: yes'
+            echo "Promotion state: $PROMOTION_STATE"
+            echo "Production changed: $COMMITTED"
+            echo "Production commit created: $COMMITTED"
+          } >> "$GITHUB_STEP_SUMMARY"
