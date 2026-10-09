@@ -65,7 +65,8 @@ def preflight(root: Path, snapshot: Path, tmdb_id: int) -> None:
         target.write_bytes(data)
 
 
-def verify(root: Path, snapshot: Path, tmdb_id: int, result: dict) -> bool:
+def verify(root: Path, snapshot: Path, tmdb_id: int, result: dict, *,
+           first_one_piece_acceptance: bool = True) -> bool:
     before = {name: (snapshot / name).read_bytes() for name in PROTECTED}
     after = {name: (root / name).read_bytes() for name in PROTECTED}
     changed = changed_paths(root)
@@ -116,7 +117,7 @@ def verify(root: Path, snapshot: Path, tmdb_id: int, result: dict) -> bool:
     if result.get("changedFields") != expected_fields:
         raise ValueError("Reported changed fields differ from canonical record")
 
-    if tmdb_id == 111110:
+    if first_one_piece_acceptance and tmdb_id == 111110:
         expected = {"title": "ONE PIECE", "nextSeasonNumber": 3, "status": "RENEWED",
                     "releaseDate": None, "releaseYear": 2027, "sourceName": "Netflix Tudum",
                     "sourceUrl": "https://www.netflix.com/tudum/articles/one-piece-renewed-season-3",
@@ -166,10 +167,13 @@ def main() -> None:
         preflight(Path.cwd(), Path(sys.argv[3]), positive_id(sys.argv[2]))
         print("Preflight validated; five protected files snapshotted outside checkout")
         return
-    if command == "verify" and len(sys.argv) == 5:
+    if command in ("verify", "verify-auto") and len(sys.argv) == 5:
         report = json.loads(Path(sys.argv[4]).read_text(encoding="utf-8"))
-        print("commit=true" if verify(Path.cwd(), Path(sys.argv[3]), positive_id(sys.argv[2]), report)
-              else "commit=false")
+        should_commit = verify(Path.cwd(), Path(sys.argv[3]), positive_id(sys.argv[2]), report,
+                               first_one_piece_acceptance=command == "verify")
+        print("commit=true" if should_commit else "commit=false")
+        if command == "verify-auto":
+            print("state=" + report["promotionState"])
         return
     raise SystemExit("Usage: manual_promotion_guard.py validate-id ID | preflight ID SNAPSHOT | verify ID SNAPSHOT REPORT")
 

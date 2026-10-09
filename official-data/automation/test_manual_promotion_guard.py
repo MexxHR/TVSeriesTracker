@@ -122,6 +122,16 @@ class ManualPromotionGuardTests(unittest.TestCase):
                 guard.positive_id(value)
         self.assertEqual(guard.positive_id("111110"), 111110)
 
+    def test_automatic_verified_stage_rejects_unexpected_promotion_state(self):
+        guard.preflight(self.root, self.snapshot, 111110)
+        for state in ("NOT_VERIFIED", "TRUSTED_SOURCE_PRECEDENCE", "NOT_FOUND",
+                      "VALIDATION_FAILED", "CONFLICT"):
+            with self.subTest(state=state), self.assertRaisesRegex(ValueError, "not approved"):
+                guard.verify(self.root, self.snapshot, 111110,
+                             {"tmdbId": 111110, "dryRun": False, "fatal": False,
+                              "promotionState": state, "wouldPublish": False},
+                             first_one_piece_acceptance=False)
+
 
 if __name__ == "__main__":
     unittest.main()

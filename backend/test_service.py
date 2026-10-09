@@ -336,11 +336,13 @@ class WorkflowBoundaryTest(unittest.TestCase):
         content = (root / '.github/workflows/process-series-request.yml').read_text(encoding='utf-8')
         self.assertIn('--process-discovered "$TMDB_ID"', content)
         self.assertIn('--promote-monitored "$TMDB_ID"', content)
-        self.assertIn('Enforce changed-file allowlist', content)
-        self.assertIn('git", "diff", "--name-only", "--no-renames", "-z", "HEAD', content)
-        self.assertIn('git", "ls-files", "--others", "--exclude-standard", "-z', content)
-        self.assertIn("vars.OFFICIAL_DATA_PROMOTION_ENABLED == 'true'", content)
-        self.assertIn('git add -- official-data/monitored_series.json official-data/history/monitored_changes.jsonl official-data/official_series_data.json official-data/history/changes.jsonl', content)
+        self.assertIn('automatic_promotion.py verify-stage', content)
+        self.assertIn('manual_promotion_guard.py verify-auto', content)
+        self.assertIn('RAW_PROMOTION_GATE: ${{ vars.OFFICIAL_DATA_PROMOTION_ENABLED }}', content)
+        self.assertIn("needs.monitored_update.outputs.promotion_enabled == 'true'", content)
+        self.assertIn('git add -- official-data/monitored_series.json official-data/history/monitored_changes.jsonl', content)
+        self.assertIn('git add -- official-data/official_series_data.json official-data/history/changes.jsonl', content)
+        self.assertNotIn('git add -- official-data/monitored_series.json official-data/history/monitored_changes.jsonl official-data/official_series_data.json', content)
         self.assertNotIn('git add -- official-data/sources.json', content)
 
     def test_android_build_has_no_token_build_config(self):

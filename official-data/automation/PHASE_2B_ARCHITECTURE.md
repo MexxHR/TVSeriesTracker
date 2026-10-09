@@ -182,3 +182,55 @@ This manual workflow authorization does **not** activate routine promotion.
 `OFFICIAL_DATA_PROMOTION_ENABLED` remains unset; the Android-request workflow
 still requires that separate future gate. No production promotion is run while
 implementing or packaging this workflow.
+
+## Phase 2B.3 automatic promotion path (V2.6.0)
+
+Android adds the series to Room first, then WorkManager best-effort submits its
+TMDB ID through the PythonAnywhere backend. The backend dispatches one
+`process-series-request.yml` run. TMDB supplies metadata and provider routing;
+official-source discovery and strict parsing write one requested ID to monitored
+staging. Only a persisted `VERIFIED_FACTS` row with eligible official-source
+provenance may enter the **same** `update.py --promote-monitored` production
+engine accepted by the manual ONE PIECE run. The app reads only canonical
+Official Data after its existing manual refresh or stale-after-24-hours refresh.
+No monitored record becomes an Android factual source.
+
+`OFFICIAL_DATA_PROMOTION_ENABLED` is the separate automatic kill switch. Only
+the exact string `true` enables the second job; unset, empty, `false`, `1`,
+`yes`, whitespace and typos leave it off. Deployment of this code does not set
+the repository variable. A non-verified monitored state also skips promotion,
+even with the gate enabled. The accepted manual production workflow remains
+independent of this switch. Disable automatic promotion immediately by removing
+the variable or setting it to `false` in repository Actions variables.
+
+The Android-request workflow uses two jobs under the shared, non-cancelling
+`official-data-writes` concurrency group. The first job validates the positive
+ID, checks current `main`, snapshots five protected files outside the checkout,
+processes official evidence and validates that only that ID and the two monitored
+files changed. It commits monitored staging by itself. The second job runs only
+for `VERIFIED_FACTS` plus the exact enabled gate. It checks out fresh `main` and
+requires its SHA to equal the first job's final SHA, then uses the accepted
+production preflight, promotion engine and postwrite guard. Only canonical JSON
+and production audit can change; the guard validates one requested ID, complete
+schema, official URLs, advanced `generatedAt` and one matching audit entry.
+`PROMOTED` gets a separate bot commit. `NO_CHANGE` keeps both production files
+byte-identical and creates no commit. Expected safe non-promotable results do
+not publish; fatal validation/conflict results fail. Both jobs recheck current
+`main` before pushing, and normal pushes fail on an unexpected race. No force
+push, reset, cleanup or silent repair hides a mutation.
+
+A failed production validation may leave a valid monitored staging commit in
+place for inspection and retry; it cannot commit partial production data. The
+publisher itself restores canonical and audit bytes after a local write or
+verification failure. The original V2.3.5 daily trusted-source updater stays
+independent and retains precedence through `sources.json`. The manual promotion
+workflow remains available for controlled operations.
+
+For first post-activation acceptance, choose a monitored candidate that is not
+already canonical, whose current official provider is supported and reachable,
+and whose official page explicitly states a season fact. Preview its discovery
+and evidence before submitting one Android add request. Confirm monitored
+`VERIFIED_FACTS`, two separate commits only when each layer truly changes,
+canonical single-ID diff, matching audit, and successful app refresh. Repeating
+the request after backend cooldown should yield no production rewrite or audit
+churn. Do not treat transport `queued` or `already_queued` as factual status.

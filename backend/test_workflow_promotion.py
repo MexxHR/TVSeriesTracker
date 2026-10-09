@@ -25,39 +25,40 @@ class PromotionWorkflowBoundaryTests(unittest.TestCase):
                 )
                 self.assertRegex(source, r"(?m)^  cancel-in-progress: false$")
 
-    def test_request_promotes_only_after_successful_monitored_processing(self):
+    def test_request_promotes_only_after_monitored_commit_and_exact_gate(self):
         source = (WORKFLOWS / "process-series-request.yml").read_text(
             encoding="utf-8"
         )
         process = source.index("--process-discovered")
         promote = source.index("--promote-monitored")
-        allowlist = source.index("Enforce changed-file allowlist")
-        commit = source.index("Commit permitted monitored and production data")
-        self.assertLess(process, promote)
-        self.assertLess(promote, allowlist)
-        self.assertLess(allowlist, commit)
-        self.assertNotRegex(source[promote:allowlist], r"continue-on-error:\s*true")
-        self.assertIn("if: ${{ vars.OFFICIAL_DATA_PROMOTION_ENABLED == 'true' }}", source)
+        stage_guard = source.index("automatic_promotion.py verify-stage")
+        monitored_commit = source.index("Commit monitored staging only when changed")
+        production_guard = source.index("manual_promotion_guard.py verify-auto")
+        production_commit = source.index("Commit only a verified production promotion")
+        self.assertLess(process, stage_guard)
+        self.assertLess(stage_guard, monitored_commit)
+        self.assertLess(monitored_commit, promote)
+        self.assertLess(promote, production_guard)
+        self.assertLess(production_guard, production_commit)
+        self.assertIn("needs.monitored_update.outputs.promotion_enabled == 'true'", source)
+        self.assertIn("needs.monitored_update.outputs.monitored_state == 'VERIFIED_FACTS'", source)
+        self.assertNotRegex(source[process:production_commit], r"continue-on-error:\s*true")
 
-    def test_request_workflow_has_an_exact_four_path_allowlist(self):
+    def test_request_workflow_separates_stage_allowlists_and_current_main(self):
         source = (WORKFLOWS / "process-series-request.yml").read_text(
             encoding="utf-8"
         )
-        section = source.split("allowed = {", 1)[1].split("}", 1)[0]
-        allowed = set(re.findall(r'"([^\"]+)"', section))
-        self.assertEqual(
-            allowed,
-            {
-                "official-data/monitored_series.json",
-                "official-data/history/monitored_changes.jsonl",
-                "official-data/official_series_data.json",
-                "official-data/history/changes.jsonl",
-            },
-        )
-        self.assertNotIn("official-data/sources.json", allowed)
-        self.assertIn('"git", "diff", "--name-only", "--no-renames", "-z", "HEAD"', source)
-        self.assertIn('"git", "ls-files", "--others", "--exclude-standard", "-z"', source)
-        self.assertIn('Production data changed while promotion is disabled', source)
+        self.assertIn("automatic_promotion.py verify-stage", source)
+        self.assertIn("manual_promotion_guard.py verify-auto", source)
+        self.assertIn("git add -- official-data/monitored_series.json official-data/history/monitored_changes.jsonl", source)
+        self.assertIn("git add -- official-data/official_series_data.json official-data/history/changes.jsonl", source)
+        self.assertNotIn("git add -- official-data/sources.json", source)
+        self.assertIn("REF: ${{ github.ref }}", source)
+        self.assertEqual(source.count("ref: refs/heads/main"), 2)
+        self.assertIn('test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"', source)
+        self.assertIn("needs.monitored_update.outputs.staged_head", source)
+        self.assertIn("PYTHONDONTWRITEBYTECODE: '1'", source)
+        self.assertNotIn("git push --force", source)
 
     def test_preview_workflow_is_read_only_and_uses_dry_run(self):
         source = (WORKFLOWS / "preview-monitored-promotion.yml").read_text(encoding="utf-8")
@@ -102,7 +103,8 @@ class PromotionWorkflowBoundaryTests(unittest.TestCase):
         self.assertIn('different != {tmdb_id}', guard)
         self.assertIn('changed - WRITABLE', guard)
         automatic = (WORKFLOWS / "process-series-request.yml").read_text(encoding="utf-8")
-        self.assertIn("if: ${{ vars.OFFICIAL_DATA_PROMOTION_ENABLED == 'true' }}", automatic)
+        self.assertIn("RAW_PROMOTION_GATE: ${{ vars.OFFICIAL_DATA_PROMOTION_ENABLED }}", automatic)
+        self.assertIn("needs.monitored_update.outputs.promotion_enabled == 'true'", automatic)
 
 
 if __name__ == "__main__":
