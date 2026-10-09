@@ -11,10 +11,10 @@ val localProperties = Properties().apply {
     val file = rootProject.file("local.properties")
     if (file.exists()) file.inputStream().use { load(it) }
 }
-val tmdbToken = providers.gradleProperty("TMDB_API_TOKEN").orNull
-    ?: System.getenv("TMDB_API_TOKEN")
-    ?: localProperties.getProperty("TMDB_API_TOKEN", "")
-val encodedTmdbToken = "\"${tmdbToken.replace("\\", "\\\\").replace("\"", "\\\"")}\""
+val requestApiUrl = providers.gradleProperty("SERIES_REQUEST_API_BASE_URL").orNull
+    ?: System.getenv("SERIES_REQUEST_API_BASE_URL")
+    ?: localProperties.getProperty("SERIES_REQUEST_API_BASE_URL", "")
+val encodedRequestApiUrl = "\"${requestApiUrl.replace("\\", "\\\\").replace("\"", "\\\"")}\""
 val officialDataUrl = providers.gradleProperty("OFFICIAL_DATA_URL").orNull?.takeIf(String::isNotBlank)
     ?: System.getenv("OFFICIAL_DATA_URL")?.takeIf(String::isNotBlank)
     ?: localProperties.getProperty("OFFICIAL_DATA_URL")?.takeIf(String::isNotBlank)
@@ -28,9 +28,9 @@ android {
         applicationId = "com.example.tvseriestracker"
         minSdk = 26
         targetSdk = 35
-        versionCode = 15
-        versionName = "2.4.2.1"
-        buildConfigField("String", "TMDB_API_TOKEN", encodedTmdbToken)
+        versionCode = 16
+        versionName = "2.5.0"
+        buildConfigField("String", "SERIES_REQUEST_API_BASE_URL", encodedRequestApiUrl)
         buildConfigField("String", "OFFICIAL_DATA_URL", encodedOfficialDataUrl)
     }
     buildTypes { release { isMinifyEnabled = false } }
@@ -57,6 +57,7 @@ dependencies {
     kapt("androidx.room:room-compiler:2.6.1")
     implementation("androidx.datastore:datastore-preferences:1.1.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
+    implementation("androidx.work:work-runtime-ktx:2.10.0")
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("io.coil-kt:coil-compose:2.7.0")

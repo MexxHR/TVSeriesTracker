@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-01T14:28:23Z",
+  "generatedAt": "2026-09-28T09:43:42Z",
   "series": [
     {
       "tmdbId": 153312,
@@ -66,13 +66,13 @@
       "tmdbId": 129552,
       "title": "The Night Agent",
       "nextSeasonNumber": 4,
-      "sourceName": "Netflix Tudum",
-      "sourceUrl": "https://www.netflix.com/tudum/articles/the-night-agent-season-4-cast-release-date-news",
-      "announcementDate": null,
       "status": "FINAL_SEASON",
       "releaseDate": null,
-      "releaseYear": 2027,
-      "lastChecked": "2026-10-01"
+      "releaseYear": null,
+      "sourceName": "Netflix Tudum",
+      "sourceUrl": "https://www.netflix.com/tudum/articles/the-night-agent-season-4-release-date",
+      "announcementDate": "2026-05-04",
+      "lastChecked": "2026-09-26"
     },
     {
       "tmdbId": 125988,

@@ -11,7 +11,7 @@ OUT = ROOT.parent
 VERSION = "V2.5.0"
 APK = OUT / f"TV-Series-Tracker-{VERSION}-debug.apk"
 ZIP = OUT / f"TVSeriesTracker-{VERSION}.zip"
-TOP = [".gitignore", "build.gradle.kts", "gradle.properties", "gradlew", "gradlew.bat",
+TOP = [".gitignore", "build.gradle.kts", "app/build.gradle.kts", "gradle.properties", "gradlew", "gradlew.bat",
        "README.md", "settings.gradle.kts"]
 DIRS = [".github/workflows", "app/src", "backend", "gradle/wrapper", "official-data"]
 SKIP_NAMES = {"__pycache__", ".gradle", ".gradle-user", "build", "local.properties", ".pytest_cache"}

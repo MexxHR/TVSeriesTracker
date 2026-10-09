@@ -28,6 +28,9 @@ def check(project: Path, apk: Path, archive: Path):
     known = secret_values(project)
     with ZipFile(archive) as zipped:
         names = zipped.namelist()
+        gradle_path = "app/build.gradle.kts"
+        if gradle_path not in names or zipped.read(gradle_path) != (project / gradle_path).read_bytes():
+            raise ValueError("Android Gradle configuration is missing or stale in project ZIP")
         forbidden_names = ("local.properties", ".keystore", ".jks", ".p12", ".gradle/", "/build/")
         if any(name.endswith(forbidden_names[:4]) or any(part in name for part in forbidden_names[4:])
                for name in names):
