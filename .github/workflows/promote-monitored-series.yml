@@ -1,0 +1,71 @@
+name: Promote monitored series to Official Data
+
+on:
+  workflow_dispatch:
+    inputs:
+      tmdb_id:
+        description: 'Positive TMDB TV ID to promote once from verified monitored evidence'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: official-data-writes
+  queue: max
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Require production main branch
+        env:
+          REF: ${{ github.ref }}
+        run: test "$REF" = refs/heads/main
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/heads/main
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate positive TMDB ID
+        id: input
+        env:
+          RAW_TMDB_ID: ${{ inputs.tmdb_id }}
+        run: |
+          TMDB_ID=$(python official-data/automation/manual_promotion_guard.py validate-id "$RAW_TMDB_ID")
+          echo "tmdb_id=$TMDB_ID" >> "$GITHUB_OUTPUT"
+      - name: Targeted promotion regression tests
+        run: python -m unittest discover -s official-data/automation -p 'test_*promotion*.py' -q
+      - name: Check clean repository and snapshot live data
+        env:
+          TMDB_ID: ${{ steps.input.outputs.tmdb_id }}
+        run: python official-data/automation/manual_promotion_guard.py preflight "$TMDB_ID" "$RUNNER_TEMP/manual-promotion-before"
+      - name: Run existing production promotion CLI
+        env:
+          TMDB_ID: ${{ steps.input.outputs.tmdb_id }}
+        run: |
+          set -euo pipefail
+          python official-data/automation/update.py --promote-monitored "$TMDB_ID" | tee "$RUNNER_TEMP/manual-promotion-result.json"
+      - name: Validate result and exact production changes
+        id: verify
+        env:
+          TMDB_ID: ${{ steps.input.outputs.tmdb_id }}
+        run: |
+          python official-data/automation/manual_promotion_guard.py verify "$TMDB_ID" "$RUNNER_TEMP/manual-promotion-before" "$RUNNER_TEMP/manual-promotion-result.json" >> "$GITHUB_OUTPUT"
+      - name: Commit only a real promotion
+        if: ${{ steps.verify.outputs.commit == 'true' }}
+        env:
+          TMDB_ID: ${{ steps.input.outputs.tmdb_id }}
+        run: |
+          git add -- official-data/official_series_data.json official-data/history/changes.jsonl
+          git diff --cached --name-only
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m "Promote verified monitored series $TMDB_ID"
+          git push origin HEAD:main
