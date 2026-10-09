@@ -197,8 +197,13 @@ private fun AddScreen(model: SeriesViewModel, settings: AppSettings) {
             SearchPhase.PROMPT -> EmptyState(R.string.search_prompt)
             SearchPhase.LOADING -> Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
             SearchPhase.EMPTY -> EmptyState(R.string.no_search_results)
-            SearchPhase.SERVICE_UNAVAILABLE, SearchPhase.ERROR -> {
-                Text(stringResource(if (search.phase == SearchPhase.SERVICE_UNAVAILABLE) R.string.search_service_unavailable else R.string.search_error))
+            SearchPhase.SERVICE_UNAVAILABLE, SearchPhase.ERROR, SearchPhase.RATE_LIMITED -> {
+                val message = when (search.phase) {
+                    SearchPhase.SERVICE_UNAVAILABLE -> R.string.search_service_unavailable
+                    SearchPhase.RATE_LIMITED -> R.string.search_rate_limited
+                    else -> R.string.search_error
+                }
+                Text(stringResource(message))
                 Spacer(Modifier.height(8.dp))
                 OutlinedButton(onClick = { model.retrySearch(settings.language) }) { Text(stringResource(R.string.retry)) }
             }

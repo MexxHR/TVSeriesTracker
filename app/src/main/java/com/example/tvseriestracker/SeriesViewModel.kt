@@ -18,10 +18,17 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
-enum class SearchPhase { PROMPT, LOADING, RESULTS, EMPTY, ERROR, SERVICE_UNAVAILABLE }
+enum class SearchPhase { PROMPT, LOADING, RESULTS, EMPTY, ERROR, RATE_LIMITED, SERVICE_UNAVAILABLE }
 enum class OfficialRefreshPhase { IDLE, LOADING, SUCCESS, UP_TO_DATE, ERROR }
 data class SearchUiState(val query: String = "", val phase: SearchPhase = SearchPhase.PROMPT, val results: List<Series> = emptyList())
+
+internal fun searchFailurePhase(exception: Exception): SearchPhase = when {
+    exception is MissingTmdbServiceException -> SearchPhase.SERVICE_UNAVAILABLE
+    exception is HttpException && exception.code() == 429 -> SearchPhase.RATE_LIMITED
+    else -> SearchPhase.ERROR
+}
 
 class SeriesViewModel(val series: SeriesRepository, val preferences: SettingsRepository,
     val official: OfficialDataRepository, private val monitoringQueue: MonitoringRequestQueue) : ViewModel() {
@@ -68,10 +75,8 @@ class SeriesViewModel(val series: SeriesRepository, val preferences: SettingsRep
             _searchState.value = SearchUiState(query, if (results.isEmpty()) SearchPhase.EMPTY else SearchPhase.RESULTS, results)
         } catch (exception: CancellationException) {
             throw exception
-        } catch (_: MissingTmdbServiceException) {
-            _searchState.value = SearchUiState(query, SearchPhase.SERVICE_UNAVAILABLE)
-        } catch (_: Exception) {
-            _searchState.value = SearchUiState(query, SearchPhase.ERROR)
+        } catch (exception: Exception) {
+            _searchState.value = SearchUiState(query, searchFailurePhase(exception))
         }
     }
 

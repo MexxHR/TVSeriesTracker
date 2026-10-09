@@ -7,7 +7,7 @@ import unittest
 from pathlib import Path
 from urllib import error
 
-from service import App, Config, DispatchFailure, GitHubDispatcher, RequestStore, TmdbProxy
+from service import App, Config, DispatchFailure, GitHubDispatcher, RequestStore, TmdbProxy, WINDOW_SECONDS
 from check_release_artifacts import PATTERNS
 
 
@@ -49,14 +49,21 @@ class ServiceTest(unittest.TestCase):
         self.dispatcher = FakeDispatcher()
         self.app = App(self.store, self.dispatcher)
 
-    def call(self, value, ip='127.0.0.1', path='/v1/series-requests', method='POST', content_type='application/json', length=None):
+    def call(self, value, ip='127.0.0.1', path='/v1/series-requests', method='POST', content_type='application/json', length=None, query_string=''):
         raw = value if isinstance(value, bytes) else json.dumps(value).encode()
         env = {'PATH_INFO': path, 'REQUEST_METHOD': method, 'CONTENT_TYPE': content_type,
                'CONTENT_LENGTH': str(len(raw) if length is None else length),
-               'wsgi.input': io.BytesIO(raw), 'REMOTE_ADDR': ip}
+               'wsgi.input': io.BytesIO(raw), 'REMOTE_ADDR': ip, 'QUERY_STRING': query_string}
         status = []
-        body = b''.join(self.app(env, lambda code, headers: status.append(code)))
+        headers = []
+        body = b''.join(self.app(env, lambda code, response_headers: (status.append(code), headers.extend(response_headers))))
+        self.last_headers = dict(headers)
         return int(status[0][:3]), json.loads(body)
+
+    def tmdb_get(self, path='/v1/tmdb/search', query='sever', ip='127.0.0.1'):
+        query_string = ('query=' + query + '&language=hr-HR' if path == '/v1/tmdb/search'
+                        else 'language=hr-HR')
+        return self.call({}, ip=ip, path=path, method='GET', query_string=query_string)
 
     def test_valid(self):
         self.assertEqual((202, {'accepted': True, 'tmdbId': 111110, 'state': 'queued'}),
@@ -108,6 +115,7 @@ class ServiceTest(unittest.TestCase):
         for value in (1, 2, 3):
             self.assertEqual(202, self.call({'tmdbId': value})[0])
         self.assertEqual(429, self.call({'tmdbId': 4})[0])
+        self.assertEqual('3600', self.last_headers['Retry-After'])
 
     def test_invalid_requests_are_rate_limited(self):
         for _ in range(3):
@@ -121,7 +129,49 @@ class ServiceTest(unittest.TestCase):
 
     def test_no_raw_ip_in_store(self):
         self.call({'tmdbId': 1}, ip='198.51.100.12')
+        self.app.tmdb_proxy = TmdbProxy('test-token', opener=lambda req, timeout: TmdbResponse())
+        self.tmdb_get(ip='198.51.100.12')
         self.assertNotIn(b'198.51.100.12', Path(self.store.path).read_bytes())
+
+    def test_tmdb_typeahead_and_details_have_separate_quota(self):
+        self.app.tmdb_proxy = TmdbProxy('test-token', opener=lambda req, timeout: TmdbResponse())
+        self.store.per_client = 1
+        self.store.global_limit = 1
+        for query in ('sever', 'severance', 'dark', 'dark%20matter'):
+            self.assertEqual(200, self.tmdb_get(query=query)[0])
+        self.assertEqual(200, self.tmdb_get(path='/v1/tmdb/series/123')[0])
+        self.assertEqual(202, self.call({'tmdbId': 123})[0])
+        self.assertEqual(429, self.call({'tmdbId': 124})[0])
+        self.assertEqual([123], self.dispatcher.calls)
+
+    def test_tmdb_read_limit_and_retry_after(self):
+        self.app.tmdb_proxy = TmdbProxy('test-token', opener=lambda req, timeout: TmdbResponse())
+        self.store.tmdb_per_client = 3
+        for query in ('sever', 'severance', 'dark'):
+            self.assertEqual(200, self.tmdb_get(query=query)[0])
+        self.assertEqual(429, self.tmdb_get(query='dark%20matter')[0])
+        self.assertEqual('3600', self.last_headers['Retry-After'])
+        self.now[0] += 30
+        self.assertEqual(429, self.tmdb_get()[0])
+        self.assertEqual('3570', self.last_headers['Retry-After'])
+        self.now[0] += WINDOW_SECONDS
+        self.assertEqual(200, self.tmdb_get()[0])
+
+    def test_tmdb_global_limit_is_separate_from_dispatch(self):
+        self.app.tmdb_proxy = TmdbProxy('test-token', opener=lambda req, timeout: TmdbResponse())
+        self.store.tmdb_global_limit = 2
+        self.assertEqual(200, self.tmdb_get(ip='198.51.100.1')[0])
+        self.assertEqual(200, self.tmdb_get(ip='198.51.100.2')[0])
+        self.assertEqual(429, self.tmdb_get(ip='198.51.100.3')[0])
+        self.assertEqual('3600', self.last_headers['Retry-After'])
+        self.assertEqual(202, self.call({'tmdbId': 1}, ip='198.51.100.3')[0])
+
+    def test_dispatch_quota_does_not_consume_tmdb_reads(self):
+        self.app.tmdb_proxy = TmdbProxy('test-token', opener=lambda req, timeout: TmdbResponse())
+        for tmdb_id in (1, 2, 3):
+            self.assertEqual(202, self.call({'tmdbId': tmdb_id})[0])
+        self.assertEqual(429, self.call({'tmdbId': 4})[0])
+        self.assertEqual(200, self.tmdb_get()[0])
 
     def test_forwarded_ip_only_from_trusted_proxy(self):
         env = {'REMOTE_ADDR': '203.0.113.1', 'HTTP_X_FORWARDED_FOR': '198.51.100.12'}

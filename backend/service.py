@@ -5,6 +5,7 @@ import hashlib
 import hmac
 import ipaddress
 import json
+import math
 import os
 import re
 import sqlite3
@@ -85,15 +86,19 @@ class GitHubDispatcher:
 
 class RequestStore:
     """One shared durable SQLite file; BEGIN IMMEDIATE serializes all replicas."""
-    def __init__(self, path: str, ip_key: bytes, clock=time.time, per_client=10, global_limit=200):
+    def __init__(self, path: str, ip_key: bytes, clock=time.time, per_client=10, global_limit=200,
+                 tmdb_per_client=120, tmdb_global_limit=3000):
         if not path or path == ":memory:" or not ip_key:
             raise ValueError("Request storage and IP HMAC key are required")
         self.path, self.ip_key, self.clock = path, ip_key, clock
         self.per_client, self.global_limit = per_client, global_limit
+        self.tmdb_per_client, self.tmdb_global_limit = tmdb_per_client, tmdb_global_limit
         with self._connect() as db:
             db.execute("CREATE TABLE IF NOT EXISTS requests (tmdb_id INTEGER PRIMARY KEY, at REAL NOT NULL)")
             db.execute("CREATE TABLE IF NOT EXISTS rate_events (ip_hash TEXT NOT NULL, at REAL NOT NULL)")
             db.execute("CREATE INDEX IF NOT EXISTS rate_at ON rate_events(at)")
+            db.execute("CREATE TABLE IF NOT EXISTS tmdb_rate_events (ip_hash TEXT NOT NULL, at REAL NOT NULL)")
+            db.execute("CREATE INDEX IF NOT EXISTS tmdb_rate_at ON tmdb_rate_events(at)")
 
     @contextmanager
     def _connect(self):
@@ -121,21 +126,33 @@ class RequestStore:
             db.execute("INSERT INTO requests VALUES (?, ?)", (tmdb_id, now))
             return 202, "queued"
 
-    def _charge(self, db, ip, now):
+    def _charge(self, db, ip, now, kind):
+        if kind == "tmdb":
+            table = "tmdb_rate_events"
+            per_client, global_limit = self.tmdb_per_client, self.tmdb_global_limit
+        elif kind == "dispatch":
+            table = "rate_events"
+            per_client, global_limit = self.per_client, self.global_limit
+        else:
+            raise ValueError("Unknown rate-limit class")
         day = int(now // 86400)
-        digest = hmac.new(self.ip_key, f"{day}:{ip}".encode(), hashlib.sha256).hexdigest()
-        db.execute("DELETE FROM rate_events WHERE at < ?", (now - WINDOW_SECONDS,))
-        total = db.execute("SELECT COUNT(*) FROM rate_events").fetchone()[0]
-        own = db.execute("SELECT COUNT(*) FROM rate_events WHERE ip_hash=?", (digest,)).fetchone()[0]
-        if total >= self.global_limit or own >= self.per_client:
-            return False
-        db.execute("INSERT INTO rate_events VALUES (?, ?)", (digest, now))
-        return True
+        hash_input = f"{day}:{ip}" if kind == "dispatch" else f"{day}:tmdb:{ip}"
+        digest = hmac.new(self.ip_key, hash_input.encode(), hashlib.sha256).hexdigest()
+        db.execute(f"DELETE FROM {table} WHERE at < ?", (now - WINDOW_SECONDS,))
+        total, first_global = db.execute(f"SELECT COUNT(*), MIN(at) FROM {table}").fetchone()
+        own, first_client = db.execute(
+            f"SELECT COUNT(*), MIN(at) FROM {table} WHERE ip_hash=?", (digest,)).fetchone()
+        if total >= global_limit or own >= per_client:
+            expiry = max(first_global + WINDOW_SECONDS if total >= global_limit else now,
+                         first_client + WINDOW_SECONDS if own >= per_client else now)
+            return False, max(1, math.ceil(expiry - now))
+        db.execute(f"INSERT INTO {table} VALUES (?, ?)", (digest, now))
+        return True, None
 
-    def charge(self, ip):
+    def charge(self, ip, kind="dispatch"):
         with self._connect() as db:
             db.execute("BEGIN IMMEDIATE")
-            return self._charge(db, ip, self.clock())
+            return self._charge(db, ip, self.clock(), kind)
 
 
 class TmdbProxy:
@@ -195,21 +212,25 @@ class App:
             return peer
 
     def __call__(self, environ, start_response):
-        def reply(status, data):
+        def reply(status, data, retry_after=None):
             labels = {200: "OK", 202: "Accepted", 400: "Bad Request", 404: "Not Found",
                       405: "Method Not Allowed", 413: "Content Too Large",
                       415: "Unsupported Media Type", 424: "Failed Dependency", 429: "Too Many Requests",
                       502: "Bad Gateway", 503: "Service Unavailable"}
             body = json.dumps(data, separators=(",", ":")).encode()
-            start_response(f"{status} {labels[status]}", [("Content-Type", "application/json"),
-                            ("Content-Length", str(len(body))), ("Cache-Control", "no-store")])
+            headers = [("Content-Type", "application/json"), ("Content-Length", str(len(body))),
+                       ("Cache-Control", "no-store")]
+            if retry_after is not None:
+                headers.append(("Retry-After", str(retry_after)))
+            start_response(f"{status} {labels[status]}", headers)
             return [body]
 
         path = environ.get("PATH_INFO", "")
         if path.startswith("/v1/tmdb/"):
             try:
-                if not self.store.charge(self.client_ip(environ)):
-                    return reply(429, {"error": "rate_limited"})
+                allowed, retry_after = self.store.charge(self.client_ip(environ), "tmdb")
+                if not allowed:
+                    return reply(429, {"error": "rate_limited"}, retry_after)
             except (sqlite3.Error, OSError):
                 return reply(503, {"error": "storage_unavailable"})
             if environ.get("REQUEST_METHOD") != "GET":
@@ -231,8 +252,9 @@ class App:
         if path != "/v1/series-requests":
             return reply(404, {"error": "not_found"})
         try:
-            if not self.store.charge(self.client_ip(environ)):
-                return reply(429, {"error": "rate_limited"})
+            allowed, retry_after = self.store.charge(self.client_ip(environ))
+            if not allowed:
+                return reply(429, {"error": "rate_limited"}, retry_after)
         except (sqlite3.Error, OSError):
             return reply(503, {"error": "storage_unavailable"})
         if environ.get("REQUEST_METHOD") != "POST":

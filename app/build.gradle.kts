@@ -11,9 +11,10 @@ val localProperties = Properties().apply {
     val file = rootProject.file("local.properties")
     if (file.exists()) file.inputStream().use { load(it) }
 }
-val requestApiUrl = providers.gradleProperty("SERIES_REQUEST_API_BASE_URL").orNull
-    ?: System.getenv("SERIES_REQUEST_API_BASE_URL")
-    ?: localProperties.getProperty("SERIES_REQUEST_API_BASE_URL", "")
+val requestApiUrl = providers.gradleProperty("SERIES_REQUEST_API_BASE_URL").orNull?.takeIf(String::isNotBlank)
+    ?: System.getenv("SERIES_REQUEST_API_BASE_URL")?.takeIf(String::isNotBlank)
+    ?: localProperties.getProperty("SERIES_REQUEST_API_BASE_URL")?.takeIf(String::isNotBlank)
+    ?: "https://mexxhr.pythonanywhere.com"
 val encodedRequestApiUrl = "\"${requestApiUrl.replace("\\", "\\\\").replace("\"", "\\\"")}\""
 val officialDataUrl = providers.gradleProperty("OFFICIAL_DATA_URL").orNull?.takeIf(String::isNotBlank)
     ?: System.getenv("OFFICIAL_DATA_URL")?.takeIf(String::isNotBlank)

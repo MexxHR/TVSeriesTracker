@@ -69,13 +69,10 @@ watchlista. `queued` i `already_queued` nisu verified statusi. Backend pokreće
 strogo ograničeni workflow `process-series-request.yml`, koji piše samo u
 monitored staging datoteke. Production Official Data sync i UI ostaju odvojeni.
 
-Backend još treba **deployati** iza HTTPS-a s trajnom SQLite pohranom.
-Postavite server-side `GITHUB_TOKEN` (repository Actions:write),
-`TARGET_REPOSITORY`, `TMDB_API_TOKEN`, `REQUEST_DB_PATH` i
-`CLIENT_IP_HMAC_KEY`. Android build dobiva samo javni
-`SERIES_REQUEST_API_BASE_URL=https://...` kao Gradle property, environment
-varijablu ili lokalnu postavku. Ako URL nije konfiguriran, watchlist i
-postojeći offline podaci rade, a nova pretraga/monitoring ostaju nedostupni.
+Backend je dostupan na `https://mexxhr.pythonanywhere.com` i ta javna adresa
+zadana je vrijednost `SERIES_REQUEST_API_BASE_URL` za Android build. Može se
+nadjačati Gradle propertyjem, environment varijablom ili lokalnom postavkom.
+`GITHUB_TOKEN`, `TMDB_API_TOKEN` i ostali backend credentials ostaju server-side.
 Android više ne ugrađuje TMDB token. Backend služi fiksne read-only TMDB
 metadata rute za search/details; TMDB i dalje nije official lifecycle izvor.
 Deployment, trust granice, limiti, privatnost i retry pravila opisani su u

@@ -51,7 +51,10 @@ own `GITHUB_TOKEN` gets Contents:write only in the monitored workflow.
    makes the worker exit in a controlled unavailable state; watchlist use remains
    local. The same backend serves two fixed read-only TMDB metadata routes for
    Android search/details, with its `TMDB_API_TOKEN` held server-side. These
-   routes have the same rate limits and do not assert lifecycle facts. Never
+   routes use a separate hourly SQLite quota (120 requests per client and 3000
+   globally), so interactive searches cannot exhaust the stricter dispatch
+   quota (10 per client and 200 globally). Both classes retain daily IP HMAC
+   pseudonyms and return `Retry-After` on HTTP 429. They do not assert lifecycle facts. Never
    build either backend credential or TMDB token into Android.
 
 ## Deployment configuration
