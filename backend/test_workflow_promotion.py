@@ -10,6 +10,23 @@ WORKFLOWS = ROOT / ".github" / "workflows"
 
 
 class PromotionWorkflowBoundaryTests(unittest.TestCase):
+    def test_provider_coverage_audit_workflow_is_read_only(self):
+        source = (WORKFLOWS / "provider-coverage-audit.yml").read_text(encoding="utf-8")
+        triggers = source.split("on:\n", 1)[1].split("\npermissions:", 1)[0]
+        self.assertEqual(triggers.strip(), "workflow_dispatch:")
+        permissions = source.split("permissions:\n", 1)[1].split("\njobs:", 1)[0]
+        self.assertEqual(permissions.strip(), "contents: read")
+        self.assertIn("persist-credentials: false", source)
+        self.assertIn("PYTHONDONTWRITEBYTECODE: '1'", source)
+        self.assertLess(source.index("Official Data regression tests"),
+                        source.index("Audit official provider coverage"))
+        self.assertIn("provider_audit.py --all", source)
+        self.assertIn("git diff --exit-code HEAD", source)
+        self.assertIn("git ls-files --others --exclude-standard", source)
+        self.assertNotIn("secrets.", source)
+        self.assertNotIn("git push", source)
+        self.assertNotIn("contents: write", source)
+
     def test_all_data_writers_share_non_cancelling_concurrency(self):
         for filename in (
             "process-series-request.yml",

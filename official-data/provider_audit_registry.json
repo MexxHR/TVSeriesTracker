@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "providers": [
+    {
+      "provider": "DISNEY_PLUS",
+      "officialDomains": ["press.disneyplus.com"],
+      "tests": [{
+        "series": "Percy Jackson and the Olympians",
+        "aliases": ["Percy Jackson and the Olympians"],
+        "discoveryUrl": "https://press.disneyplus.com/news",
+        "articleUrl": "https://press.disneyplus.com/news/disney-plus-percy-jackson-and-the-olympians-season-two-announcement"
+      }],
+      "notes": ["Official ownership and runner accessibility must be reconfirmed by the manual audit."]
+    },
+    {
+      "provider": "HULU",
+      "officialDomains": ["press.hulu.com"],
+      "tests": [{
+        "series": "Deli Boys",
+        "aliases": ["Deli Boys"],
+        "discoveryUrl": "https://press.hulu.com/shows/deli-boys/press-releases/",
+        "articleUrl": "https://press.hulu.com/pressrelease/hulus-critically-acclaimed-comedy-series-deli-boys-renewed-for-a-second-season/"
+      }],
+      "notes": ["The first-party Deli Boys press-release index and its linked announcement are probed separately."]
+    },
+    {
+      "provider": "FX",
+      "officialDomains": ["fxnetworks.com"],
+      "tests": [{
+        "series": "The Lowdown",
+        "aliases": ["The Lowdown"],
+        "discoveryUrl": "https://www.fxnetworks.com/shows/the-lowdown/headlines",
+        "articleUrl": "https://www.fxnetworks.com/shows/the-lowdown/season-two-renewal"
+      }],
+      "notes": ["FX show headline index and linked first-party article are probed separately."]
+    },
+    {
+      "provider": "PEACOCK_NBC",
+      "officialDomains": ["nbcuniversal.com"],
+      "tests": [{
+        "series": "Love Island USA",
+        "aliases": ["Love Island USA"],
+        "discoveryUrl": "https://www.nbcuniversal.com/newsroom",
+        "articleUrl": "https://www.nbcuniversal.com/article/peacock-renews-love-island-usa-season-eight-and-announces-premiere-dates-upcoming-slate"
+      }],
+      "notes": ["Probe is a corporate editorial index; parser season binding must be evaluated on the fetched article."]
+    },
+    {
+      "provider": "AMC",
+      "officialDomains": ["amcglobalmedia.com"],
+      "tests": [{
+        "series": "Dark Winds",
+        "aliases": ["Dark Winds"],
+        "discoveryUrl": "https://www.amcglobalmedia.com/press-/",
+        "articleUrl": "https://www.amcglobalmedia.com/2023/09/19/dark-winds-renewed-for-season-three-on-amc-and-amc/"
+      }],
+      "notes": ["Corporate first-party announcement and press index are probed independently."]
+    },
+    {
+      "provider": "STARZ",
+      "officialDomains": ["starz.com", "investors.starz.com"],
+      "tests": [],
+      "notes": ["No confirmed public first-party series-announcement test case is configured; further research is required."]
+    },
+    {
+      "provider": "HBO_MAX_WBD",
+      "officialDomains": ["press.wbd.com"],
+      "tests": [{
+        "series": "Curb Your Enthusiasm",
+        "aliases": ["Curb Your Enthusiasm"],
+        "discoveryUrl": "https://press.wbd.com/us/property/curb-your-enthusiasm/media-releases",
+        "articleUrl": "https://press.wbd.com/us/media-release/hbo-0/curb-your-enthusiasm/hbo-renews-curb-your-enthusiasm-twelfth-season"
+      }],
+      "notes": ["WBD pressroom access blocks have been observed before; no access-control bypass is attempted."]
+    }
+  ]
+}
