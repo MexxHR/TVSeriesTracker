@@ -24,7 +24,21 @@ jobs:
         run: |
           set -euo pipefail
           python official-data/automation/provider_audit.py --qualify --all > "$RUNNER_TEMP/provider-discovery-qualification.json"
-          python -m json.tool "$RUNNER_TEMP/provider-discovery-qualification.json" > /dev/null
+          python - "$RUNNER_TEMP/provider-discovery-qualification.json" <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+          report = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+          expected = {"FX", "HULU", "DISNEY_PLUS", "AMC"}
+          rows = report.get("providers")
+          if (report.get("reportType") != "provider_discovery_qualification"
+                  or not report.get("environment", {}).get("githubActions")
+                  or not isinstance(rows, list)
+                  or {row.get("provider") for row in rows} != expected
+                  or any(row.get("caseCount", 0) < 3 or len(row.get("tests", [])) != row["caseCount"]
+                         for row in rows)):
+              raise SystemExit("Qualification report integrity check failed")
+          PY
       - name: Summarize qualification
         run: |
           python - "$RUNNER_TEMP/provider-discovery-qualification.json" <<'PY' | tee -a "$GITHUB_STEP_SUMMARY"
@@ -34,10 +48,11 @@ jobs:
           report = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
           print("### Provider Discovery Qualification")
           print("")
-          print("| Provider | Recommendation | Cases passed / total |")
-          print("| --- | --- | ---: |")
+          print("| Provider | Recommendation | Cases passed / total | Failed case IDs |")
+          print("| --- | --- | ---: | --- |")
           for row in report["providers"]:
-              print(f"| {row['provider']} | {row['recommendation']} | {row['passedCaseCount']} / {row['caseCount']} |")
+              failures = ", ".join(case["caseId"] for case in row["tests"] if not case["passed"]) or "—"
+              print(f"| {row['provider']} | {row['recommendation']} | {row['passedCaseCount']} / {row['caseCount']} | {failures} |")
           print("")
           print("Review the JSON artifact before any provider-adapter decision. Failed cases are qualification results.")
           PY
