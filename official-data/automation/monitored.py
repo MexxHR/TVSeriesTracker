@@ -55,10 +55,13 @@ def scoped_article(article: dict, aliases: list[str]) -> dict:
     input for newly discovered sources, where neighboring show coverage can
     otherwise contaminate a generic index or editorial page.
     """
-    patterns = [re.compile(r"(?<![\w])" + re.escape(alias) + r"(?![\w])", re.I) for alias in aliases]
+    punctuation = str.maketrans({"\u2018": "'", "\u2019": "'"})
+    patterns = [re.compile(r"(?<![\w])" + re.escape(alias.translate(punctuation)) + r"(?![\w])", re.I)
+                for alias in aliases]
     def belongs(clause: str) -> bool:
+        comparable = clause.translate(punctuation)
         for alias, pattern in zip(aliases, patterns):
-            for match in pattern.finditer(clause):
+            for match in pattern.finditer(comparable):
                 if (not alias.casefold().startswith("the ") and
                         re.search(r"\bthe\s+$", clause[:match.start()], re.I)):
                     continue
@@ -66,6 +69,10 @@ def scoped_article(article: dict, aliases: list[str]) -> dict:
         return False
     chunks = re.split(r"[\n.!?]+", article["body"])
     return {**article, "body": "\n".join(chunk for chunk in chunks if belongs(chunk))}
+
+
+def official_article_heading_identity(page: update.Page, aliases: list[str]) -> bool:
+    return discovery.announcement_article_identity(page, aliases)
 
 
 def load_registry(path: Path = MONITORED) -> tuple[dict, bytes]:
@@ -247,6 +254,7 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
     facts = []
     parsed = 0
     eligible_source_urls: set[str] = set()
+    source_checks = []
     validation_reason = None
     merged = None
     source_evidence = []
@@ -258,21 +266,32 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
         try:
             for candidate in eligible:
                 url = candidate["candidateUrl"]
-                if not update.allowed(url, domains):
+                candidate_allowed = update.allowed(url, domains)
+                check = {"candidateUrl": url, "candidateDomainAllowed": candidate_allowed,
+                         "parserEligible": candidate.get("factualParserEligible") is True}
+                source_checks.append(check)
+                if not candidate_allowed:
                     raise update.AutomationError("Eligible candidate outside allowlist")
                 raw, final = fetcher(url, domains)
-                if not update.allowed(final, domains):
+                final_allowed = update.allowed(final, domains)
+                check.update(finalUrl=final, redirectDomainAllowed=final_allowed)
+                if not final_allowed:
                     raise update.AutomationError("Eligible candidate redirect outside allowlist")
                 eligible_source_urls.update((url, final))
-                if provider in ("NETFLIX", "APPLE"):
+                if provider in ("NETFLIX", "APPLE", "AMC", "DISNEY_PLUS"):
                     # The page may have changed since discovery. Recheck the
                     # visible heading, including the title boundary, before
                     # treating any sentence as evidence for this series.
                     page = update.parse_page(raw)
-                    heading = discovery.normalize(page.heading.strip() or page.title.strip())
-                    if not any(heading == discovery.normalize(name) or
-                               heading.startswith(discovery.normalize(name) + " ")
-                               for name in entry["aliases"]):
+                    if provider in ("AMC", "DISNEY_PLUS"):
+                        identity_matches = official_article_heading_identity(page, entry["aliases"])
+                    else:
+                        heading = discovery.normalize(page.heading.strip() or page.title.strip())
+                        identity_matches = any(heading == discovery.normalize(name) or
+                                               heading.startswith(discovery.normalize(name) + " ")
+                                               for name in entry["aliases"])
+                    check["headlineBoundToMetadataTitle"] = identity_matches
+                    if not identity_matches:
                         raise update.AutomationError("Discovered page identity changed")
                 article = update.ADAPTERS[provider].parse(raw, final)
                 article["publicationDate"] = publication_date_from_html(raw)
@@ -318,7 +337,12 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
                 "parsedSourceCount": parsed, "pipelineState": state, "parserResult": "failed",
                 "validationResult": "failed", "validationReason": validation_reason,
                 "verifiedFacts": {}, "sourceEvidence": [], "candidateUrls": report.get("candidateUrls") or [],
-                "dryRun": dry_run, "registryChange": "none"}
+                "dryRun": dry_run, "registryChange": "none", "routeSignals": report.get("routeSignals", []),
+                "candidateDiagnostics": [{key: candidate.get(key) for key in (
+                    "candidateUrl", "factualParserEligible", "evidenceLevel", "discoveryMethod", "discoveryProvenance", "discoveryRoot", "sourceAuthority", "identityMatchedName", "requestedUrl", "finalUrl", "redirectWithinOfficialBoundary")
+                    if key in candidate} for candidate in candidates],
+                "sourceChecks": source_checks,
+                "selectedOfficialUrl": source_checks[0].get("finalUrl") if source_checks else None}
     verified = {key: merged.get(key) for key in FACT_FIELDS} if state == "VERIFIED_FACTS" else {}
     parser_result = "facts" if state == "VERIFIED_FACTS" else "no_facts" if state == "NO_VERIFIED_FACTS" else \
                     "failed" if state == "VALIDATION_FAILED" else "skipped" if not eligible else "unavailable"
@@ -346,6 +370,13 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
               "parserResult": parser_result,
               "validationResult": validation_result,
               "dryRun": dry_run, "registryChange": action,
+              "routeSignals": report.get("routeSignals", []),
+              "candidateDiagnostics": [{key: candidate.get(key) for key in (
+                  "candidateUrl", "factualParserEligible", "evidenceLevel", "discoveryMethod", "discoveryProvenance", "discoveryRoot", "sourceAuthority", "identityMatchedName", "requestedUrl", "finalUrl", "redirectWithinOfficialBoundary")
+                  if key in candidate} for candidate in candidates],
+              "sourceChecks": source_checks,
+              "selectedOfficialUrl": source_checks[0].get("finalUrl") if source_checks else None,
+              "eligibleSourceUrls": sorted(eligible_source_urls),
               "oldRecord": current if dry_run and changed else None,
               "proposedRecord": row if dry_run and changed else None}
     if validation_reason:

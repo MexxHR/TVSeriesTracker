@@ -8,7 +8,7 @@ from check_release_artifacts import check
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT.parent
-VERSION = "V2.7.1.2"
+VERSION = "V2.7.2"
 APK = OUT / f"TV-Series-Tracker-{VERSION}-debug.apk"
 ZIP = OUT / f"TVSeriesTracker-{VERSION}.zip"
 TOP = ["build.gradle.kts", "app/build.gradle.kts", "gradle.properties", "gradlew", "gradlew.bat",
@@ -38,6 +38,7 @@ def package():
     for directory in DIRS:
         files.extend(path for path in (ROOT / directory).rglob("*") if path.is_file()
                      and not set(path.relative_to(ROOT).parts) & SKIP_NAMES
+                     and not any(part.startswith(".env") for part in path.relative_to(ROOT).parts)
                      and path.relative_to(ROOT).as_posix() not in PRESERVE_LIVE_STATE
                      and path.suffix not in {".pyc", ".apk", ".jks", ".p12", ".keystore"})
     with ZipFile(ZIP, "w", ZIP_DEFLATED) as archive:

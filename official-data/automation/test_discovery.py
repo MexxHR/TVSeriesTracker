@@ -32,8 +32,9 @@ class DiscoveryTests(unittest.TestCase):
     def discover(self, pages, metadata=None):
         return d.discover(metadata or self.meta, self.registry, self.fake(pages), self.specs)
 
-    def test_central_registry_has_five_providers(self):
-        self.assertEqual(set(self.specs), {"PARAMOUNT", "NETFLIX", "APPLE", "AMAZON", "WBD"})
+    def test_central_registry_has_qualified_new_providers_only(self):
+        self.assertEqual(set(self.specs), {"PARAMOUNT", "NETFLIX", "APPLE", "AMAZON", "WBD",
+                                           "AMC", "DISNEY_PLUS"})
 
     def test_provider_registry_rejects_unofficial_seed(self):
         with tempfile.TemporaryDirectory() as tmp:

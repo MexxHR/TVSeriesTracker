@@ -9,13 +9,21 @@ import os
 from pathlib import Path
 import re
 import unicodedata
-from urllib.parse import urljoin, urlparse
+from html.parser import HTMLParser
+import xml.etree.ElementTree as ET
+from urllib.parse import urlencode, urljoin, urlparse
 
 import update
 
 PROVIDERS = update.ROOT / "official-data" / "discovery_providers.json"
 MAX_SEEDS = 5
 MAX_LINKS = 4
+MAX_SITEMAP_BYTES = 1_000_000
+MAX_SITEMAP_CHILDREN = 8
+MAX_SITEMAP_URLS = 2_500
+MAX_SITEMAP_ARTICLES = 20
+MAX_AMC_SEARCH_RESULTS = 20
+AMC_SEARCH_HOME = "https://www.amcglobalmedia.com/"
 
 
 def provider_specs() -> dict:
@@ -31,6 +39,7 @@ def provider_specs() -> dict:
 
 
 def normalize(value: str) -> str:
+    value = value.replace("\u2018", "'").replace("\u2019", "'")
     folded = unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode("ascii").casefold()
     return re.sub(r"[^a-z0-9]+", " ", folded).strip()
 
@@ -46,14 +55,18 @@ def metadata_names(metadata: dict) -> list[str]:
 def route_provider(metadata: dict, specs: dict) -> tuple[str | None, list[str], str | None]:
     signals: dict[str, list[str]] = {}
     for provider, spec in specs.items():
-        names = {normalize(n) for n in spec["routingNames"]}
-        for field in ("networks", "productionCompanies"):
+        strict_network = provider in ("AMC", "DISNEY_PLUS")
+        # Preserve '+': Disney is not Disney+, and AMC+ is not AMC.
+        normalize_route = (lambda value: " ".join(unicodedata.normalize("NFKC", value).casefold().split())) if strict_network else normalize
+        names = {normalize_route(n) for n in spec["routingNames"]}
+        fields = ("networks",) if provider in ("AMC", "DISNEY_PLUS") else ("networks", "productionCompanies")
+        for field in fields:
             for item in metadata.get(field) or []:
                 label = item.get("name", "") if isinstance(item, dict) else item
-                if isinstance(label, str) and normalize(label) in names:
+                if isinstance(label, str) and normalize_route(label) in names:
                     signals.setdefault(provider, []).append(f"{field}:{label}")
         homepage = metadata.get("homepage") or ""
-        if isinstance(homepage, str) and update.allowed(homepage, spec["officialDomains"]):
+        if provider not in ("AMC", "DISNEY_PLUS") and isinstance(homepage, str) and update.allowed(homepage, spec["officialDomains"]):
             signals.setdefault(provider, []).append("official_homepage")
     if len(signals) != 1:
         return None, [], "ambiguous_provider" if signals else "unknown_provider"
@@ -143,6 +156,111 @@ def article_identity(page: update.Page, names: list[str]) -> bool:
     return any(heading.startswith(normalize(name) + " " + cue + " ") for name in names for cue in permitted)
 
 
+def announcement_article_identity(page: update.Page, names: list[str]) -> bool:
+    """Require the exact TMDB title phrase in the article heading plus a season claim cue."""
+    heading = normalize(page.heading.strip() or page.title.strip())
+    if not heading:
+        return False
+    has_title = any(re.search(rf"(?<![a-z0-9]){re.escape(normalize(name))}(?![a-z0-9])", heading)
+                    for name in names)
+    cues = ("season", "renewed", "renewal", "final season", "premieres", "premiere",
+            "returns", "returning", "debut")
+    return has_title and any(cue in heading for cue in cues)
+
+
+def _announcement_structure(url: str, page: update.Page, provider: str) -> bool:
+    path = urlparse(url).path.casefold()
+    body = normalize("".join(page.parts[:300]))
+    path_ok = bool(re.match(r"^/\d{4}/\d{2}/\d{2}/", path)) if provider == "AMC" else path.startswith("/news/")
+    return path_ok and len(body) >= 80 and any(term in body for term in ("season", "renewed", "premiere", "premieres", "final"))
+
+
+class _AmcSearchForm(HTMLParser):
+    """Extract the same first-party GET search contract qualified in provider_audit."""
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.forms: list[dict] = []
+        self.current: dict | None = None
+
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        if tag == "form":
+            self.current = {"action": attrs.get("action", ""),
+                            "method": (attrs.get("method") or "get").casefold(), "inputs": []}
+            self.forms.append(self.current)
+        elif tag == "input" and self.current is not None:
+            self.current["inputs"].append({"name": attrs.get("name"),
+                                           "type": (attrs.get("type") or "text").casefold()})
+
+    def handle_endtag(self, tag):
+        if tag == "form":
+            self.current = None
+
+
+def _amc_search_url(raw: str, final_url: str, domains: list[str], title: str) -> str | None:
+    parser = _AmcSearchForm()
+    parser.feed(raw)
+    for form in parser.forms:
+        if form["method"] != "get" or not any(item["name"] == "s" for item in form["inputs"]):
+            continue
+        action = urljoin(final_url, form["action"] or final_url)
+        if not update.allowed(action, domains):
+            continue
+        result = action + ("&" if "?" in action else "?") + urlencode({"s": title})
+        if len(result) <= 2048:
+            return result
+    return None
+
+
+def _title_path_match(url: str, names: list[str]) -> bool:
+    parts = set(re.findall(r"[a-z0-9]+", urlparse(url).path.casefold()))
+    stop = {"the", "and", "for", "with", "from", "that", "this", "series", "show"}
+    return any((words := {word for word in re.findall(r"[a-z0-9]+", re.sub(r"[\u2019']s\b", "s", name.casefold()))
+                          if len(word) > 2 and word not in stop}) and words.issubset(parts)
+               for name in names)
+
+
+def _amc_article_link(url: str, domains: list[str], names: list[str]) -> bool:
+    path = urlparse(url).path
+    return (update.allowed(url, domains) and
+            bool(re.match(r"^/\d{4}/\d{2}/\d{2}/", path)) and _title_path_match(url, names))
+
+
+def _disney_article_link(url: str, domains: list[str], names: list[str]) -> bool:
+    return update.allowed(url, domains) and urlparse(url).path.casefold().startswith("/news/") and _title_path_match(url, names)
+
+
+def _disney_sitemap_links(raw: str, domains: list[str], names: list[str]) -> tuple[list[str], list[str]]:
+    """Bounded equivalent of provider_audit's Disney sitemap traversal."""
+    if len(raw.encode("utf-8")) > MAX_SITEMAP_BYTES or "<!DOCTYPE" in raw.upper() or "<!ENTITY" in raw.upper():
+        return [], []
+    try:
+        root = ET.fromstring(raw)
+    except ET.ParseError:
+        return [], []
+    ns = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
+    if root.tag == ns + "sitemapindex":
+        children = root.findall(ns + "sitemap")
+        if len(children) > MAX_SITEMAP_CHILDREN:
+            return [], []
+        maps = [child.findtext(ns + "loc") for child in children]
+        return ([url for url in maps if url and update.allowed(url, domains) and
+                 urlparse(url).path.casefold().endswith(".xml")], [])
+    if root.tag != ns + "urlset":
+        return [], []
+    entries = root.findall(ns + "url")
+    if len(entries) > MAX_SITEMAP_URLS:
+        return [], []
+    articles = []
+    for entry in entries:
+        loc = entry.findtext(ns + "loc")
+        if loc and _disney_article_link(loc, domains, names) and loc not in articles:
+            articles.append(loc)
+            if len(articles) >= MAX_SITEMAP_ARTICLES:
+                break
+    return [], articles
+
+
 def paramount_listing_identity(url: str, page: update.Page, names: list[str]) -> bool:
     """Press Express uses a branded document title, often without a sole H1."""
     path = urlparse(url).path.rstrip("/").lower()
@@ -208,7 +326,9 @@ def discover(metadata: dict, registry: dict, fetcher=update.fetch, specs: dict |
     pending = [(url, spec["mechanism"], None) for url in seed_urls]
     seen = set()
     fetched_links = 0
-    while pending and len(seen) < MAX_SEEDS + MAX_LINKS:
+    fetch_budget = (1 + MAX_SITEMAP_CHILDREN + MAX_SITEMAP_ARTICLES if provider == "DISNEY_PLUS" else
+                    2 + MAX_AMC_SEARCH_RESULTS if provider == "AMC" else MAX_SEEDS + MAX_LINKS)
+    while pending and len(seen) < fetch_budget:
         url, method, parent = pending.pop(0)
         if url in seen:
             continue
@@ -222,6 +342,19 @@ def discover(metadata: dict, registry: dict, fetcher=update.fetch, specs: dict |
                 report["rejectedCandidates"].append({"url": url, "reasons": ["redirect_outside_allowlist"]})
                 report["warnings"].append(f"Rejected redirect outside official domain: {url}")
                 continue
+            if provider == "AMC" and method == "official AMC search form":
+                search_url = _amc_search_url(raw, final, domains, title.strip())
+                if search_url and search_url not in seen and not any(row[0] == search_url for row in pending):
+                    pending.append((search_url, "official AMC site search", final))
+                continue
+            is_sitemap = provider == "DISNEY_PLUS" and urlparse(final).path.casefold().endswith(".xml")
+            if is_sitemap:
+                sitemap_children, article_urls = _disney_sitemap_links(raw, domains, names)
+                for link in sitemap_children + article_urls:
+                    link_method = "official Disney+ sitemap" if link in sitemap_children else "official article link"
+                    if link not in seen and not any(row[0] == link for row in pending):
+                        pending.append((link, link_method, final))
+                continue
             page = update.parse_page(raw)
         except (update.ProviderUnavailable, update.AutomationError, ValueError) as exc:
             reason = safe_failure(exc)
@@ -230,24 +363,37 @@ def discover(metadata: dict, registry: dict, fetcher=update.fetch, specs: dict |
             if isinstance(exc, update.ProviderUnavailable) and reason != "HTTP 404":
                 report.setdefault("unavailableUrls", []).append(url)
             continue
+        if provider == "AMC" and method == "official AMC site search":
+            for link in page.links:
+                linked = urljoin(final, link)
+                if (_amc_article_link(linked, domains, names) and linked not in seen and
+                        not any(row[0] == linked for row in pending)):
+                    pending.append((linked, "official article link", final))
+                    fetched_links += 1
+                    if fetched_links >= MAX_AMC_SEARCH_RESULTS:
+                        break
+            continue
         is_article = method == "official article link"
         is_release = method == "official individual release"
+        provider_article = provider in ("AMC", "DISNEY_PLUS") and is_article
         identity = (branded_index_identity(page, names, provider) or
                     (provider == "PARAMOUNT" and not is_release and paramount_listing_identity(final, page, names)) or
                     (is_article and article_identity(page, names)) or
+                    (provider_article and announcement_article_identity(page, names)) or
                     (is_release and parent is not None and paramount_release_link(final, parent) and
                      any(re.search(rf"(?<![a-z0-9]){re.escape(normalize(name))}(?![a-z0-9])", normalize(page.heading)) for name in names)))
-        structure = release_structure(final, page, provider)
+        structure = _announcement_structure(final, page, provider) if provider_article else release_structure(final, page, provider)
         homepage_match = homepage_identity(page, metadata.get("homepage") or "", spec["officialDomains"])
         network_routed = any(s.startswith("networks:") for s in signals)
         page_type = ("official_article" if is_article else "individual_release" if is_release else
                      "show_release_listing" if provider == "PARAMOUNT" and structure else
                      "show_news_index" if provider in ("APPLE", "NETFLIX", "WBD") else "generic_index")
-        editorial = is_article and article_page_type(page, provider)
-        conflict = any(term in normalize(page.heading) for term in ("spinoff", "spin off", "remake"))
+        editorial = (is_article and article_page_type(page, provider)) or (provider_article and structure and identity)
+        conflict = any(term in normalize(page.heading) for term in ("spinoff", "spin off", "remake", "different series"))
         eligible = bool(identity and network_routed and not conflict and (
             (not is_article and not is_release and structure and homepage_match and page_type != "generic_index") or
             (provider == "NETFLIX" and editorial and homepage_match) or
+            (provider_article and editorial and network_routed) or
             (is_release and parent and paramount_release_link(final, parent) and editorial is False)))
         if eligible:
             level = "STRONG"
@@ -261,7 +407,8 @@ def discover(metadata: dict, registry: dict, fetcher=update.fetch, specs: dict |
         if not identity: reasons.append("series_identity_not_confirmed")
         if conflict: reasons.append("conflicting_identity_signal")
         if not structure and not editorial and not is_release: reasons.append("release_structure_not_detected")
-        if not homepage_match: reasons.append("homepage_id_not_matched")
+        if not homepage_match and provider not in ("AMC", "DISNEY_PLUS"):
+            reasons.append("homepage_id_not_matched")
         if not network_routed: reasons.append("network_routing_not_confirmed")
         if is_article and not editorial: reasons.append("article_structure_not_confirmed")
         if page_type == "generic_index": reasons.append("generic_index_not_parser_eligible")
@@ -270,6 +417,17 @@ def discover(metadata: dict, registry: dict, fetcher=update.fetch, specs: dict |
                      "sourceIdentityConfidence": "CONFIRMED" if identity else "INSUFFICIENT", "evidenceLevel": level, "identityValidated": identity,
                      "releaseStructure": structure, "homepageIdMatched": homepage_match,
                      "factualParserEligible": eligible, "reasons": reasons}
+        if provider_article:
+            candidate.update({"discoveryProvenance": "amc_official_site_search" if provider == "AMC" else "disney_official_sitemap",
+                              "discoveryRoot": parent, "sourceAuthority": "official_provider_announcement",
+                              "identityMatchedName": next((name for name in names if
+                                  re.search(rf"(?<![a-z0-9]){re.escape(normalize(name))}(?![a-z0-9])",
+                                            normalize(page.heading.strip() or page.title.strip()))), None),
+                              "requestedUrl": url, "finalUrl": final,
+                              "redirectWithinOfficialBoundary": True})
+        if provider_article and conflict:
+            level = "INSUFFICIENT"
+            reasons.append("conflicting_identity_signal")
         if level != "INSUFFICIENT" and final not in report["candidateUrls"]:
             report["candidateUrls"].append(final)
             report["candidates"].append(candidate)

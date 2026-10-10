@@ -39,5 +39,19 @@
       "https://press.wbd.com/na/property/{slug}/media-releases"
     ],
     "mechanism": "official WBD property media-release listing"
+  },
+  "AMC": {
+    "routingNames": ["AMC"],
+    "officialDomains": ["amcglobalmedia.com"],
+    "candidateDomains": ["amcglobalmedia.com"],
+    "seeds": ["https://www.amcglobalmedia.com/"],
+    "mechanism": "official AMC search form"
+  },
+  "DISNEY_PLUS": {
+    "routingNames": ["Disney+", "Disney Plus"],
+    "officialDomains": ["press.disneyplus.com"],
+    "candidateDomains": ["press.disneyplus.com"],
+    "seeds": ["https://press.disneyplus.com/sitemap.xml"],
+    "mechanism": "official Disney+ sitemap"
   }
 }

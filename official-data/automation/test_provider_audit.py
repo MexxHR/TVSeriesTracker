@@ -216,14 +216,19 @@ class ProviderAuditTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             pa._safe_output_path(str(next(iter(pa.PROTECTED_PATHS))))
 
-    def test_known_audit_probes_do_not_enter_production_discovery_allowlist(self):
+    def test_only_qualified_audit_providers_enter_production_discovery_allowlist(self):
         audit_registry = json.loads(pa.REGISTRY.read_text(encoding="utf-8"))
         discovery_registry = json.loads((pa.ROOT / "official-data" / "discovery_providers.json").read_text(encoding="utf-8"))
         production_domains = {domain for spec in discovery_registry.values() for domain in spec["officialDomains"]}
         audit_domains = {domain for item in audit_registry["providers"] for domain in item["officialDomains"]}
         self.assertTrue(audit_domains - production_domains)
-        self.assertNotIn("DISNEY_PLUS", discovery_registry)
-        self.assertNotIn("press.disneyplus.com", production_domains)
+        self.assertIn("AMC", discovery_registry)
+        self.assertIn("DISNEY_PLUS", discovery_registry)
+        self.assertIn("press.disneyplus.com", production_domains)
+        self.assertNotIn("FX", discovery_registry)
+        self.assertNotIn("HULU", discovery_registry)
+        self.assertNotIn("fxnetworks.com", production_domains)
+        self.assertNotIn("press.hulu.com", production_domains)
 
 
 if __name__ == "__main__":

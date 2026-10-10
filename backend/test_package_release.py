@@ -45,6 +45,7 @@ class PackageReleaseTest(unittest.TestCase):
         (self.root / "local.properties").write_text("LOCAL_TEST_KEY=not-exported\n", encoding="utf-8")
         (self.root / "official-data/official_series_data.json").write_text("{}", encoding="utf-8")
         (self.root / "app/src/debug.keystore").write_bytes(b"test keystore")
+        (self.root / "backend/.env.production").write_bytes(b"test environment settings")
         (self.root / "backend/build/cache.bin").parent.mkdir(parents=True, exist_ok=True)
         (self.root / "backend/build/cache.bin").write_bytes(b"test build cache")
         release.package()
@@ -57,6 +58,7 @@ class PackageReleaseTest(unittest.TestCase):
             self.assertNotIn("official-data/official_series_data.json", names)
             self.assertNotIn("local.properties", names)
             self.assertNotIn("app/src/debug.keystore", names)
+            self.assertNotIn("backend/.env.production", names)
             self.assertNotIn("backend/build/cache.bin", names)
 
     def test_optional_gitignore_is_included_when_present(self):

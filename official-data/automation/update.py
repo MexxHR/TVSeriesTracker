@@ -158,6 +158,57 @@ class Adapter:
         return {"title": title, "body": body, "url": url, "sourceName": self.source_name}
 
 
+class _PrimaryEditorialText(HTMLParser):
+    """Collect editorial text while excluding navigation and related-content blocks."""
+    BLOCKS = {"p", "h1", "h2", "h3", "h4", "li", "blockquote", "div", "section", "article"}
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.blocks: list[str] = []
+        self.current: list[str] = []
+        self.stack: list[tuple[str, bool]] = []
+
+    def _flush(self):
+        value = re.sub(r"\s+", " ", " ".join(self.current)).strip()
+        if value:
+            self.blocks.append(value)
+        self.current = []
+
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        labels = (attrs.get("class", "") + " " + attrs.get("id", "")).casefold()
+        skip = tag in ("head", "nav", "footer", "aside", "script", "style") or any(
+            marker in labels for marker in ("related", "recommend", "carousel", "breadcrumb", "site-footer"))
+        self.stack.append((tag, skip))
+        if tag in self.BLOCKS:
+            self._flush()
+
+    def handle_endtag(self, tag):
+        if tag in self.BLOCKS:
+            self._flush()
+        if any(existing == tag for existing, _ in self.stack):
+            index = len(self.stack) - 1 - [existing for existing, _ in self.stack[::-1]].index(tag)
+            self.stack = self.stack[:index]
+
+    def handle_data(self, data):
+        if not any(skipped for _, skipped in self.stack):
+            self.current.append(data)
+
+    def text(self) -> str:
+        self._flush()
+        return "\n".join(self.blocks)
+
+
+class EditorialArticleAdapter(Adapter):
+    """Parser for official newsroom articles whose pages include related stories."""
+    def parse(self, raw: str, url: str) -> dict:
+        article = super().parse(raw, url)
+        text = _PrimaryEditorialText()
+        text.feed(raw)
+        article["body"] = text.text()[:25000]
+        return article
+
+
 class ParamountAdapter(Adapter):
     name, source_name = "PARAMOUNT", "Paramount Press Express"
 
@@ -200,8 +251,16 @@ class AmazonAdapter(Adapter):
         return [urljoin(base, link) for link in page.links if "/news/entertainment/" in link and "fallout" in link.lower()]
 
 
-ADAPTERS = {a.name: a for a in (ParamountAdapter(), NetflixAdapter(), AppleAdapter(), WbdAdapter(), AmazonAdapter())}
-PROVIDER_DOMAINS = {"PARAMOUNT": "paramountpressexpress.com", "NETFLIX": "netflix.com", "APPLE": "apple.com", "WBD": "press.wbd.com", "AMAZON": "aboutamazon.com"}
+class AmcAdapter(EditorialArticleAdapter):
+    name, source_name = "AMC", "AMC Networks"
+
+
+class DisneyPlusAdapter(EditorialArticleAdapter):
+    name, source_name = "DISNEY_PLUS", "Disney+ Press"
+
+
+ADAPTERS = {a.name: a for a in (ParamountAdapter(), NetflixAdapter(), AppleAdapter(), WbdAdapter(), AmazonAdapter(), AmcAdapter(), DisneyPlusAdapter())}
+PROVIDER_DOMAINS = {"PARAMOUNT": "paramountpressexpress.com", "NETFLIX": "netflix.com", "APPLE": "apple.com", "WBD": "press.wbd.com", "AMAZON": "aboutamazon.com", "AMC": "amcglobalmedia.com", "DISNEY_PLUS": "press.disneyplus.com"}
 EXTRA_DOMAINS = {225891: ["paramountplus.com"]}
 
 
