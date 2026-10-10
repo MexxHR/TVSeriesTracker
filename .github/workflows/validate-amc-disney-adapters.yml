@@ -1,0 +1,83 @@
+name: Validate AMC and Disney+ production adapters (read-only)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Snapshot protected live data
+        run: |
+          sha256sum \
+            official-data/official_series_data.json \
+            official-data/history/changes.jsonl \
+            official-data/sources.json \
+            official-data/monitored_series.json \
+            official-data/history/monitored_changes.jsonl \
+            > "$RUNNER_TEMP/protected-before.sha256"
+      - name: Official Data regression tests
+        run: python -m unittest discover -s official-data/automation -p 'test_*.py' -q
+      - name: Preview actual monitored pipeline for AMC and Disney+
+        env:
+          TMDB_API_TOKEN: ${{ secrets.TMDB_API_TOKEN }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          import sys
+
+          sys.path.insert(0, 'official-data/automation')
+          import monitored
+
+          cases = [('AMC', 128904), ('DISNEY_PLUS', 103540)]
+          results = []
+          for expected_provider, tmdb_id in cases:
+              result = monitored.process(tmdb_id, dry_run=True)
+              results.append({'expectedProvider': expected_provider, 'result': result})
+          report = {'schemaVersion': 1, 'reportType': 'production_adapter_read_only_preview',
+                    'results': results}
+          output = Path(os.environ['RUNNER_TEMP']) / 'amc-disney-production-adapter-preview.json'
+          output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          with Path(os.environ['GITHUB_STEP_SUMMARY']).open('a', encoding='utf-8') as summary:
+              summary.write('### AMC and Disney+ production adapter preview\n\n')
+              summary.write('| Provider | TMDB ID | Monitored state | Parser | Validation | Proposed change |\n')
+              summary.write('| --- | ---: | --- | --- | --- | --- |\n')
+              for row in results:
+                  item = row['result']
+                  summary.write(f"| {row['expectedProvider']} | {item['tmdbId']} | "
+                                f"{item['pipelineState']} | {item.get('parserResult', 'unknown')} | "
+                                f"{item.get('validationResult', 'unknown')} | "
+                                f"{item.get('registryChange', 'none')} |\n")
+              summary.write('\nRead the JSON artifact for routing, discovery provenance, official URL, '
+                            'parser evidence and validation details. No monitored or production data was written.\n')
+          if any(row['result'].get('provider') != row['expectedProvider'] or
+                 row['result'].get('pipelineState') != 'VERIFIED_FACTS' or
+                 row['result'].get('validationResult') != 'passed'
+                 for row in results):
+              raise SystemExit('Production adapter preview did not verify both providers')
+          PY
+      - name: Verify protected data and checkout unchanged
+        if: always()
+        run: |
+          sha256sum -c "$RUNNER_TEMP/protected-before.sha256"
+          git diff --exit-code HEAD
+          test -z "$(git ls-files --others --exclude-standard)"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: amc-disney-production-adapter-preview
+          path: ${{ runner.temp }}/amc-disney-production-adapter-preview.json
+          if-no-files-found: warn
