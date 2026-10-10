@@ -1,0 +1,52 @@
+name: Provider Discovery Qualification
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Official Data regression tests
+        run: python -m unittest discover -s official-data/automation -p 'test_*.py' -q
+      - name: Qualify candidate providers on GitHub runner
+        run: |
+          set -euo pipefail
+          python official-data/automation/provider_audit.py --qualify --all > "$RUNNER_TEMP/provider-discovery-qualification.json"
+          python -m json.tool "$RUNNER_TEMP/provider-discovery-qualification.json" > /dev/null
+      - name: Summarize qualification
+        run: |
+          python - "$RUNNER_TEMP/provider-discovery-qualification.json" <<'PY' | tee -a "$GITHUB_STEP_SUMMARY"
+          import json
+          import sys
+          from pathlib import Path
+          report = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+          print("### Provider Discovery Qualification")
+          print("")
+          print("| Provider | Recommendation | Cases passed / total |")
+          print("| --- | --- | ---: |")
+          for row in report["providers"]:
+              print(f"| {row['provider']} | {row['recommendation']} | {row['passedCaseCount']} / {row['caseCount']} |")
+          print("")
+          print("Review the JSON artifact before any provider-adapter decision. Failed cases are qualification results.")
+          PY
+      - name: Verify qualification left checkout clean
+        run: |
+          git diff --exit-code HEAD
+          test -z "$(git ls-files --others --exclude-standard)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: provider-discovery-qualification
+          path: ${{ runner.temp }}/provider-discovery-qualification.json
+          if-no-files-found: error

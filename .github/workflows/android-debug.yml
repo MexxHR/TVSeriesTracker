@@ -34,8 +34,8 @@ jobs:
           SERIES_REQUEST_API_BASE_URL: ${{ vars.SERIES_REQUEST_API_BASE_URL }}
         run: ./gradlew :app:testDebugUnitTest :app:assembleDebug
       - name: Name APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk TV-Series-Tracker-V2.7.0-debug.apk
+        run: cp app/build/outputs/apk/debug/app-debug.apk TV-Series-Tracker-V2.7.1-debug.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: TV-Series-Tracker-V2.7.0-debug
-          path: TV-Series-Tracker-V2.7.0-debug.apk
+          name: TV-Series-Tracker-V2.7.1-debug
+          path: TV-Series-Tracker-V2.7.1-debug.apk
