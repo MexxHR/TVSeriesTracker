@@ -135,6 +135,10 @@ Prvo pokrenite **Android debug APK**, zatim ručni workflow **Validate The Audac
 
 Nakon prihvaćenog AMC live E2E otvorite **GitHub Actions → Validate Disney+ candidate (read-only) → Run workflow**, unesite pozitivan decimalni `tmdb_id` TV serije i preuzmite JSON artifact `disney-plus-candidate-<tmdbId>-preview.json`. Workflow koristi postojeći TMDB routing, Disney+ discovery i monitored dry-run; naslov dolazi iz TMDB-a. Ne očekuje unaprijed status ni sezonu. Artifact sadrži metapodatke, routing, kandidate i izvorne provjere, parser/validation rezultat, predloženi monitored zapis i neovisnu rekonstrukciju ako postoje verificirane činjenice. Ne-Disney+ routing prijavljuje se bez prisilnog preusmjeravanja. Preporuka za live E2E moguća je tek nakon strogog verificiranja i neovisne rekonstrukcije; izostanak službenih činjenica ne mijenja produkcijske podatke. Workflow provjerava hashove svih pet live Official Data datoteka prije i poslije. Pregledajte artifact sa stvarnog GitHub runnera prije bilo kakvog Android zahtjeva za taj ID.
 
+## Disney+ Discovery Coverage Diagnostics
+
+Ručni workflow **Disney+ Discovery Coverage Diagnostics** uspoređuje postojeći produkcijski Disney+ discovery za Percy Jackson (103540), Your Friendly Neighborhood Spider-Man (138503) i X-Men '97 (138502) s odvojenim, ograničenim dijagnostičkim pregledom službenog Disney+ Press sitemap-a. Pokrenite ga u GitHub Actions i pregledajte artifact `disney-plus-discovery-coverage-diagnostics.json`. Dodatno uočeni URL-ovi služe samo za objašnjenje mogućih rupa u pokrivenosti: ne ulaze u monitored verified facts ni u promociju. Workflow je read-only, uspoređuje hashove pet live datoteka prije i poslije te ne mijenja monitored ili canonical podatke.
+
 ## Struktura
 
 - `data/Series.kt` — domenski model i legacy katalog naslova/postera; demo statusi uklanjaju se prije UI-a
