@@ -2,6 +2,11 @@ name: Validate Disney+ candidate (read-only)
 
 on:
   workflow_dispatch:
+    inputs:
+      tmdb_id:
+        description: 'TMDB TV series ID'
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -18,6 +23,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Validate requested TMDB ID
+        id: candidate
+        env:
+          RAW_TMDB_ID: ${{ inputs.tmdb_id }}
+        run: |
+          TMDB_ID=$(python official-data/automation/disney_candidate_probe.py --validate-id)
+          echo "tmdb_id=$TMDB_ID" >> "$GITHUB_OUTPUT"
       - name: Snapshot protected live data
         run: |
           sha256sum \
@@ -32,6 +44,7 @@ jobs:
       - name: Preview real Disney+ production path
         env:
           TMDB_API_TOKEN: ${{ secrets.TMDB_API_TOKEN }}
+          TMDB_ID: ${{ steps.candidate.outputs.tmdb_id }}
         run: python official-data/automation/disney_candidate_probe.py
       - name: Verify protected data and checkout unchanged
         if: always()
@@ -42,6 +55,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: disney-plus-candidate-preview
-          path: ${{ runner.temp }}/disney-plus-candidate-preview.json
+          name: disney-plus-candidate-${{ steps.candidate.outputs.tmdb_id }}-preview
+          path: ${{ runner.temp }}/disney-plus-candidate-${{ steps.candidate.outputs.tmdb_id }}-preview.json
           if-no-files-found: warn
