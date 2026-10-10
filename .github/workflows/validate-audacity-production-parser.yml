@@ -1,0 +1,103 @@
+name: Validate The Audacity production parser (read-only)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Snapshot protected live data
+        run: |
+          sha256sum \
+            official-data/official_series_data.json \
+            official-data/history/changes.jsonl \
+            official-data/sources.json \
+            official-data/monitored_series.json \
+            official-data/history/monitored_changes.jsonl \
+            > "$RUNNER_TEMP/protected-before.sha256"
+      - name: Official Data regression tests
+        run: python -m unittest discover -s official-data/automation -p 'test_*.py' -q
+      - name: Preview actual production parser and independent reconstruction
+        env:
+          TMDB_API_TOKEN: ${{ secrets.TMDB_API_TOKEN }}
+        run: |
+          python - <<'PY'
+          import datetime as dt
+          import json
+          import os
+          from pathlib import Path
+          import sys
+
+          sys.path.insert(0, 'official-data/automation')
+          import discovery
+          import monitored
+          import promotion
+
+          tmdb_id = 258036
+          result = monitored.process(tmdb_id, dry_run=True)
+          row = result.get('proposedRecord')
+          reconstruction = {'result': 'not_run'}
+          if row and result.get('provider') == 'AMC' and result.get('pipelineState') == 'VERIFIED_FACTS':
+              domains = discovery.provider_specs()['AMC']['officialDomains']
+              facts = promotion._validate_evidence(row, domains)
+              summary = promotion._facts_summary(facts, row, dt.date.fromisoformat(row['lastChecked']))
+              reconstruction = {
+                  'result': 'passed',
+                  'status': summary['status'],
+                  'nextSeasonNumber': summary['nextSeasonNumber'],
+                  'releaseDate': summary['releaseDate'],
+                  'releaseYear': summary['releaseYear'],
+                  'sourceUrl': summary['sourceUrl'],
+              }
+          report = {'schemaVersion': 1, 'reportType': 'audacity_production_parser_read_only_preview',
+                    'monitoredPreview': result, 'independentReconstruction': reconstruction}
+          output = Path(os.environ['RUNNER_TEMP']) / 'audacity-production-parser-preview.json'
+          output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          with Path(os.environ['GITHUB_STEP_SUMMARY']).open('a', encoding='utf-8') as summary:
+              summary.write('### The Audacity read-only production-path preview\n\n')
+              summary.write(f"Monitored state: {result.get('pipelineState')}  \n")
+              summary.write(f"Parser: {result.get('parserResult')}  \n")
+              summary.write(f"Validation: {result.get('validationResult')}  \n")
+              summary.write(f"Independent reconstruction: {reconstruction['result']}  \n")
+              summary.write('No monitored or production data was written.\n')
+          verified = result.get('verifiedFacts') or {}
+          if not (result.get('provider') == 'AMC' and
+                  result.get('discoveryResult') == 'candidate_found' and
+                  result.get('pipelineState') == 'VERIFIED_FACTS' and
+                  result.get('parserResult') == 'facts' and
+                  result.get('validationResult') == 'passed' and
+                  verified.get('status') == 'RENEWED' and
+                  verified.get('nextSeasonNumber') == 2 and
+                  verified.get('releaseDate') is None and
+                  verified.get('releaseYear') == 2027 and
+                  reconstruction['result'] == 'passed' and
+                  reconstruction['status'] == verified['status'] and
+                  reconstruction['nextSeasonNumber'] == verified['nextSeasonNumber'] and
+                  reconstruction['releaseDate'] == verified['releaseDate'] and
+                  reconstruction['releaseYear'] == verified['releaseYear']):
+              raise SystemExit('The Audacity production parser preview did not verify')
+          PY
+      - name: Verify protected data and checkout unchanged
+        if: always()
+        run: |
+          sha256sum -c "$RUNNER_TEMP/protected-before.sha256"
+          git diff --exit-code HEAD
+          test -z "$(git ls-files --others --exclude-standard)"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: audacity-production-parser-preview
+          path: ${{ runner.temp }}/audacity-production-parser-preview.json
+          if-no-files-found: warn

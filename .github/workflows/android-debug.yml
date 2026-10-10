@@ -43,8 +43,8 @@ jobs:
           python backend/package_release.py
           python -c 'from backend.check_apk_signing import certificate_digest; print("APK v2 signer SHA-256:", certificate_digest("app/build/outputs/apk/debug/app-debug.apk"))'
       - name: Name APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk TV-Series-Tracker-V2.7.2-debug.apk
+        run: cp app/build/outputs/apk/debug/app-debug.apk TV-Series-Tracker-V2.7.2.1-debug.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: TV-Series-Tracker-V2.7.2-debug
-          path: TV-Series-Tracker-V2.7.2-debug.apk
+          name: TV-Series-Tracker-V2.7.2.1-debug
+          path: TV-Series-Tracker-V2.7.2.1-debug.apk
