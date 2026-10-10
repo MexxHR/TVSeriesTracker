@@ -17,6 +17,8 @@ jobs:
           distribution: temurin
           java-version: '17'
       - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools'
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
@@ -32,10 +34,15 @@ jobs:
         env:
           OFFICIAL_DATA_URL: ${{ vars.OFFICIAL_DATA_URL }}
           SERIES_REQUEST_API_BASE_URL: ${{ vars.SERIES_REQUEST_API_BASE_URL }}
-        run: ./gradlew :app:testDebugUnitTest :app:assembleDebug
+        run: ./gradlew clean :app:testDebugUnitTest :app:assembleDebug
+      - name: Verify APK and package credentials
+        run: |
+          test -s app/build/outputs/apk/debug/app-debug.apk
+          python backend/package_release.py
+          python -c 'from backend.check_apk_signing import certificate_digest; print("APK v2 signer SHA-256:", certificate_digest("app/build/outputs/apk/debug/app-debug.apk"))'
       - name: Name APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk TV-Series-Tracker-V2.7.1.1-debug.apk
+        run: cp app/build/outputs/apk/debug/app-debug.apk TV-Series-Tracker-V2.7.1.2-debug.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: TV-Series-Tracker-V2.7.1.1-debug
-          path: TV-Series-Tracker-V2.7.1.1-debug.apk
+          name: TV-Series-Tracker-V2.7.1.2-debug
+          path: TV-Series-Tracker-V2.7.1.2-debug.apk
