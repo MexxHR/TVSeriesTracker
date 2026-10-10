@@ -11,8 +11,9 @@ OUT = ROOT.parent
 VERSION = "V2.7.1.2"
 APK = OUT / f"TV-Series-Tracker-{VERSION}-debug.apk"
 ZIP = OUT / f"TVSeriesTracker-{VERSION}.zip"
-TOP = [".gitignore", "build.gradle.kts", "app/build.gradle.kts", "gradle.properties", "gradlew", "gradlew.bat",
+TOP = ["build.gradle.kts", "app/build.gradle.kts", "gradle.properties", "gradlew", "gradlew.bat",
        "README.md", "settings.gradle.kts"]
+OPTIONAL_TOP = [".gitignore"]
 DIRS = [".github/workflows", "app/src", "backend", "gradle/wrapper", "official-data"]
 SKIP_NAMES = {"__pycache__", ".gradle", ".gradle-user", "build", "local.properties", ".pytest_cache"}
 PRESERVE_LIVE_STATE = {
@@ -28,8 +29,12 @@ def package():
     source_apk = ROOT / "app/build/outputs/apk/debug/app-debug.apk"
     if not source_apk.is_file():
         raise FileNotFoundError(source_apk)
-    copyfile(source_apk, APK)
     files = [ROOT / name for name in TOP]
+    for path in files:
+        if not path.is_file():
+            raise FileNotFoundError(path)
+    files.extend(ROOT / name for name in OPTIONAL_TOP if (ROOT / name).is_file())
+    copyfile(source_apk, APK)
     for directory in DIRS:
         files.extend(path for path in (ROOT / directory).rglob("*") if path.is_file()
                      and not set(path.relative_to(ROOT).parts) & SKIP_NAMES
