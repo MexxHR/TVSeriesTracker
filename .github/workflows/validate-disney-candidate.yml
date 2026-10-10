@@ -1,0 +1,47 @@
+name: Validate Disney+ candidate (read-only)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Snapshot protected live data
+        run: |
+          sha256sum \
+            official-data/official_series_data.json \
+            official-data/history/changes.jsonl \
+            official-data/sources.json \
+            official-data/monitored_series.json \
+            official-data/history/monitored_changes.jsonl \
+            > "$RUNNER_TEMP/protected-before.sha256"
+      - name: Official Data regression tests
+        run: python -m unittest discover -s official-data/automation -p 'test_*.py' -q
+      - name: Preview real Disney+ production path
+        env:
+          TMDB_API_TOKEN: ${{ secrets.TMDB_API_TOKEN }}
+        run: python official-data/automation/disney_candidate_probe.py
+      - name: Verify protected data and checkout unchanged
+        if: always()
+        run: |
+          sha256sum -c "$RUNNER_TEMP/protected-before.sha256"
+          git diff --exit-code HEAD
+          test -z "$(git ls-files --others --exclude-standard)"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: disney-plus-candidate-preview
+          path: ${{ runner.temp }}/disney-plus-candidate-preview.json
+          if-no-files-found: warn
