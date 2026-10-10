@@ -1,0 +1,51 @@
+name: Provider Coverage Audit
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Official Data regression tests
+        run: python -m unittest discover -s official-data/automation -p 'test_*.py' -q
+      - name: Audit official provider coverage on GitHub runner
+        run: |
+          set -euo pipefail
+          python official-data/automation/provider_audit.py --all > "$RUNNER_TEMP/provider-coverage-audit.json"
+          python -m json.tool "$RUNNER_TEMP/provider-coverage-audit.json" > /dev/null
+      - name: Summarize provider recommendations
+        run: |
+          python - "$RUNNER_TEMP/provider-coverage-audit.json" <<'PY' | tee -a "$GITHUB_STEP_SUMMARY"
+          import json
+          import sys
+          report = json.load(open(sys.argv[1], encoding="utf-8"))
+          print("### Provider Coverage Audit")
+          print("")
+          print("| Provider | Recommendation |")
+          print("| --- | --- |")
+          for provider in report["providers"]:
+              print(f"| {provider['provider']} | {provider['recommendation']} |")
+          print("")
+          print("Full JSON is attached as a workflow artifact. A blocked provider is an audit result.")
+          PY
+      - name: Verify audit left checkout clean
+        run: |
+          git diff --exit-code HEAD
+          test -z "$(git ls-files --others --exclude-standard)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: provider-coverage-audit
+          path: ${{ runner.temp }}/provider-coverage-audit.json
+          if-no-files-found: error
