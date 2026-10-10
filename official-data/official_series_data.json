@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-10T07:22:35Z",
+  "generatedAt": "2026-10-10T15:34:12Z",
   "series": [
     {
       "tmdbId": 97951,
@@ -157,6 +157,18 @@
       "sourceUrl": "https://www.paramountpressexpress.com/paramount-television-studios/shows/mobland/releases/?view=113212-the-harrigans-arent-going-anywhere-mobland-renewed-for-season-three-on-paramount",
       "announcementDate": "2026-09-03",
       "lastChecked": "2026-09-26"
+    },
+    {
+      "tmdbId": 258036,
+      "title": "The Audacity",
+      "nextSeasonNumber": 2,
+      "sourceName": "AMC Networks",
+      "sourceUrl": "https://www.amcglobalmedia.com/2026/06/22/amc-global-medias-critically-acclaimed-drama-the-audacity-commences-season-2-production/",
+      "announcementDate": "2026-06-22",
+      "status": "RENEWED",
+      "releaseDate": null,
+      "releaseYear": 2027,
+      "lastChecked": "2026-10-10"
     },
     {
       "tmdbId": 299167,
