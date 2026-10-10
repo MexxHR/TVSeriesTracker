@@ -81,6 +81,62 @@ class PromotionTests(unittest.TestCase):
                                  production_registry=self.registry_path,
                                  monitored_registry=self.monitored_path)
 
+    def running_point_row(self):
+        return json.loads((Path(__file__).parent / "fixtures" / "running_point_monitored.json")
+                          .read_text(encoding="utf-8"))
+
+    def promote_running_point(self, *, dry_run=False):
+        return promotion.promote(244623, dry_run=dry_run, now=self.now,
+                                 production_data=self.data_path,
+                                 production_audit=self.audit_path,
+                                 production_registry=self.registry_path,
+                                 monitored_registry=self.monitored_path)
+
+    def test_running_point_live_evidence_promotes_once_then_no_change(self):
+        row = self.running_point_row()
+        self.write_monitored([row])
+        first = self.promote_running_point()
+        self.assertEqual(first["promotionState"], "PROMOTED", first)
+        self.assertEqual(first["proposedProductionRecord"]["status"], "RENEWED")
+        self.assertEqual(first["proposedProductionRecord"]["nextSeasonNumber"], 3)
+        self.assertEqual(first["proposedProductionRecord"]["sourceUrl"], row["verifiedFacts"]["sourceUrl"])
+        after = (self.data_path.read_bytes(), self.audit_path.read_bytes())
+        second = self.promote_running_point()
+        self.assertEqual(second["promotionState"], "NO_CHANGE", second)
+        self.assertFalse(second["wouldPublish"])
+        self.assertEqual(second["changedFields"], [])
+        self.assertEqual(after, (self.data_path.read_bytes(), self.audit_path.read_bytes()))
+
+    def test_running_point_evidence_order_and_duplicates_do_not_change_source(self):
+        row = self.running_point_row()
+        expected_source = row["verifiedFacts"]["sourceUrl"]
+        original = row["sourceEvidence"]
+        for evidence in (original, list(reversed(original)),
+                         original[2:] + original[:2], original + [copy.deepcopy(original[0])]):
+            with self.subTest(order=[item["sourceUrl"] for item in evidence]):
+                variant = copy.deepcopy(row)
+                variant["sourceEvidence"] = evidence
+                self.write_monitored([variant])
+                result = self.promote_running_point(dry_run=True)
+                self.assertEqual(result["promotionState"], "PROMOTABLE", result)
+                self.assertEqual(result["proposedProductionRecord"]["sourceUrl"], expected_source)
+
+    def test_running_point_mismatch_names_field_and_fails_closed(self):
+        row = self.running_point_row()
+        row["verifiedFacts"]["sourceUrl"] = row["candidateUrls"][0]
+        self.write_monitored([row])
+        before = (self.data_path.read_bytes(), self.audit_path.read_bytes())
+        result = self.promote_running_point()
+        self.assertEqual(result["promotionState"], "VALIDATION_FAILED", result)
+        self.assertTrue(result["fatal"])
+        self.assertFalse(result["promotionEligible"])
+        self.assertFalse(result["wouldPublish"])
+        self.assertEqual(result["validationMismatch"]["fields"], ["sourceUrl"])
+        self.assertEqual(result["validationMismatch"]["monitored"]["sourceUrl"], row["candidateUrls"][0])
+        self.assertEqual(result["validationMismatch"]["rebuilt"]["sourceUrl"],
+                         "https://www.netflix.com/tudum/running-point")
+        self.assertEqual(before, (self.data_path.read_bytes(), self.audit_path.read_bytes()))
+
     def test_verified_facts_is_eligible_for_independent_gate(self):
         result = self.promote(dry_run=True)
         self.assertTrue(result["promotionEligible"], result)

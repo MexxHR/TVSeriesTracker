@@ -243,6 +243,38 @@ class MonitoredTests(unittest.TestCase):
         self.run_process(report=report, meta=meta, dry=False, fetcher=lambda *_: self.fail("parser"))
         self.assertEqual([r["tmdbId"] for r in json.loads(self.path.read_text())["series"]], [95396, 111110])
 
+    def test_equivalent_official_sources_ignore_candidate_order(self):
+        article = self.article
+        landing = self.index
+        pages = {article: '<h1>One Piece Season 3</h1><p>One Piece was renewed for Season 3.</p>',
+                 landing: '<h1>One Piece Season 3</h1><p>One Piece was renewed for Season 3.</p>'}
+        selected = []
+        for urls in ((article, landing), (landing, article)):
+            report = self.report([self.candidate(url) for url in urls])
+            result = self.run_process(report=report, fetcher=lambda url, _: (pages[url], url))
+            self.assertEqual(result["pipelineState"], "VERIFIED_FACTS", result)
+            selected.append(result["verifiedFacts"])
+        self.assertEqual(selected[0], selected[1])
+        self.assertEqual(selected[0]["sourceUrl"], landing)
+
+    def test_running_point_two_tudum_sources_stay_verified_in_either_order(self):
+        row = json.loads((Path(__file__).parent / "fixtures" / "running_point_monitored.json")
+                         .read_text(encoding="utf-8"))
+        meta = {"tmdbId": 244623, "title": "Running Point",
+                "networks": [{"name": "Netflix"}],
+                "homepage": "https://www.netflix.com/title/81484575"}
+        urls = row["candidateUrls"]
+        pages = {
+            urls[0]: '<h1>Running Point Season 3</h1><p>And now, the LA Waves will play another season: Running Point has been renewed for Season 3.</p>',
+            urls[1]: '<h1>Running Point Season 3</h1><p>Running Point Gets Renewed for Season 3. Running Point has been renewed for Season 3.</p>',
+        }
+        for order in (urls, list(reversed(urls))):
+            with self.subTest(order=order):
+                result = self.run_process(report=self.report([self.candidate(url) for url in order]),
+                                          meta=meta, fetcher=lambda url, _: (pages[url], url))
+                self.assertEqual(result["pipelineState"], "VERIFIED_FACTS", result)
+                self.assertEqual(result["verifiedFacts"], row["verifiedFacts"])
+
     def test_schema_validation_rejects_fake_domain(self):
         self.run_process(dry=False)
         data = json.loads(self.path.read_text())

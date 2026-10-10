@@ -1,0 +1,93 @@
+{
+  "tmdbId": 244623,
+  "title": "Running Point",
+  "provider": "NETFLIX",
+  "discoveryState": "VERIFIED_FACTS",
+  "candidateUrls": [
+    "https://www.netflix.com/tudum/articles/running-point-season-2-news-release-date-photos",
+    "https://www.netflix.com/tudum/running-point"
+  ],
+  "verifiedFacts": {
+    "status": "RENEWED",
+    "nextSeasonNumber": 3,
+    "releaseDate": null,
+    "releaseYear": null,
+    "sourceName": "Netflix Tudum",
+    "sourceUrl": "https://www.netflix.com/tudum/running-point",
+    "announcementDate": null
+  },
+  "sourceEvidence": [
+    {
+      "status": "RENEWED",
+      "nextSeasonNumber": 3,
+      "releaseDate": null,
+      "releaseYear": null,
+      "sourceName": "Netflix Tudum",
+      "sourceUrl": "https://www.netflix.com/tudum/articles/running-point-season-2-news-release-date-photos",
+      "announcementDate": null,
+      "rule": "explicit-renewal",
+      "factType": "LIFECYCLE",
+      "evidenceText": "And now, the LA Waves will play another season: Running Point has been renewed for Season 3",
+      "publicationDateSource": "none"
+    },
+    {
+      "status": "RENEWED",
+      "nextSeasonNumber": 3,
+      "releaseDate": null,
+      "releaseYear": null,
+      "sourceName": "Netflix Tudum",
+      "sourceUrl": "https://www.netflix.com/tudum/articles/running-point-season-2-news-release-date-photos",
+      "announcementDate": null,
+      "rule": "explicit-renewal",
+      "factType": "LIFECYCLE",
+      "evidenceText": "Thankfully, Netflix announced Running Point has been renewed for Season 3",
+      "publicationDateSource": "none"
+    },
+    {
+      "status": "RENEWED",
+      "nextSeasonNumber": 3,
+      "releaseDate": null,
+      "releaseYear": null,
+      "sourceName": "Netflix Tudum",
+      "sourceUrl": "https://www.netflix.com/tudum/articles/running-point-season-2-news-release-date-photos",
+      "announcementDate": null,
+      "rule": "explicit-renewal",
+      "factType": "LIFECYCLE",
+      "evidenceText": "Running Point Gets Renewed for Season 3 Kate Hudson and Justin Theroux face off again in Mindy Kaling’s comedy series",
+      "publicationDateSource": "none"
+    },
+    {
+      "status": "RENEWED",
+      "nextSeasonNumber": 3,
+      "releaseDate": null,
+      "releaseYear": null,
+      "sourceName": "Netflix Tudum",
+      "sourceUrl": "https://www.netflix.com/tudum/running-point",
+      "announcementDate": null,
+      "rule": "explicit-renewal",
+      "factType": "LIFECYCLE",
+      "evidenceText": "Running Point Gets Renewed for Season 3 Kate Hudson and Justin Theroux face off again in Mindy Kaling’s comedy series",
+      "publicationDateSource": "none"
+    },
+    {
+      "status": "RENEWED",
+      "nextSeasonNumber": 3,
+      "releaseDate": null,
+      "releaseYear": null,
+      "sourceName": "Netflix Tudum",
+      "sourceUrl": "https://www.netflix.com/tudum/running-point",
+      "announcementDate": null,
+      "rule": "explicit-renewal",
+      "factType": "LIFECYCLE",
+      "evidenceText": "Running Point Gets Renewed for Season 3 Kate Hudson and Justin Theroux face off again in Mindy Kaling’s comedy series",
+      "publicationDateSource": "none"
+    }
+  ],
+  "parserResult": "facts",
+  "validationResult": "passed",
+  "eligibleSourceUrls": [
+    "https://www.netflix.com/tudum/articles/running-point-season-2-news-release-date-photos",
+    "https://www.netflix.com/tudum/running-point"
+  ],
+  "lastChecked": "2026-10-09"
+}

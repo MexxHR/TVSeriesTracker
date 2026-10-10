@@ -425,9 +425,28 @@ def validate_dataset(data: dict, registry: dict, old: dict | None = None, *,
         raise AutomationError("Destructive deletion")
 
 
+def canonical_fact_order(facts: list[dict]) -> list[dict]:
+    """Rank verified evidence independently of discovery and parser order.
+
+    Keep the existing season/status/date priority. Equivalent assertions use
+    stable official URL and fact fields as tie breakers; no source is promoted
+    merely because it appeared first in a fetch or persisted evidence array.
+    """
+    priority = {"RELEASE_DATE_CONFIRMED": 0, "RENEWED": 1, "FINAL_SEASON": 3, "CANCELED": 4}
+    return sorted(facts, key=lambda f: (
+        f["nextSeasonNumber"], priority[f["status"]], bool(f["releaseDate"]),
+        f["announcementDate"] or "", f["sourceUrl"], f["sourceName"],
+        f.get("releaseDate") or "", f.get("releaseYear") or 0,
+        f.get("rule") or "", f.get("evidenceText") or "",
+    ), reverse=True)
+
+
 def merge(old: dict | None, facts: list[dict], today: dt.date) -> tuple[dict | None, dict | None]:
     if not facts:
         return old, None
+    # Trusted daily updates retain their established merge preference. The
+    # monitored and independent-promotion callers first apply the shared
+    # canonical_fact_order to remove input-order ties in their evidence set.
     priority = {"RELEASE_DATE_CONFIRMED": 0, "RENEWED": 1, "FINAL_SEASON": 3, "CANCELED": 4}
     facts = sorted(facts, key=lambda f: (f["nextSeasonNumber"], priority[f["status"]], bool(f["releaseDate"]), f["announcementDate"] or ""), reverse=True)
     if old:

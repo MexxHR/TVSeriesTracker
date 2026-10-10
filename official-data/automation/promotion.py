@@ -5,23 +5,41 @@ import copy
 import datetime as dt
 import json
 from pathlib import Path
+from urllib.parse import urlsplit
 
 import discovery
 import monitored
 import update
 
 
+class EvidenceMismatch(update.AutomationError):
+    def __init__(self, fields: list[str], monitored_values: dict, rebuilt_values: dict):
+        super().__init__("verifiedFacts do not match the independently rebuilt evidence")
+        def safe(key: str, value):
+            if key == "sourceUrl" and isinstance(value, str):
+                parts = urlsplit(value)
+                return f"{parts.scheme}://{parts.hostname or ''}{parts.path}"
+            return value
+        self.diagnostic = {"fields": fields,
+                           "monitored": {key: safe(key, monitored_values.get(key)) for key in fields},
+                           "rebuilt": {key: safe(key, rebuilt_values.get(key)) for key in fields}}
+
+
 def _answer(tmdb_id: int, state: str, *, title=None, monitored_state=None,
             reason: str, dry_run: bool, promotion_eligible: bool = False,
             old=None, proposed=None, changed_fields=None, source_urls=None,
-            validation_result="not_applicable", fatal=False) -> dict:
-    return {"tmdbId": tmdb_id, "title": title, "monitoredState": monitored_state,
+            validation_result="not_applicable", fatal=False,
+            validation_mismatch=None) -> dict:
+    result = {"tmdbId": tmdb_id, "title": title, "monitoredState": monitored_state,
             "promotionEligible": promotion_eligible, "promotionState": state,
             "promotionReason": reason, "oldProductionRecord": old,
             "proposedProductionRecord": proposed, "changedFields": changed_fields or [],
             "sourceUrls": source_urls or [], "validationResult": validation_result,
             "dryRun": dry_run, "wouldPublish": bool(proposed is not None and changed_fields),
             "fatal": fatal}
+    if validation_mismatch is not None:
+        result["validationMismatch"] = validation_mismatch
+    return result
 
 
 def _validate_evidence(row: dict, domains: list[str]) -> list[dict]:
@@ -71,7 +89,7 @@ def _validate_evidence(row: dict, domains: list[str]) -> list[dict]:
                             fact.get("rule") not in ("explicit-premiere", "explicit-release-year")}
         if "CANCELED" in lifecycle_states and len(lifecycle_states) > 1:
             raise update.AutomationError(f"Conflicting lifecycle evidence for {row['title']} season {season}")
-    return facts
+    return update.canonical_fact_order(facts)
 
 
 def _facts_summary(facts: list[dict], row: dict, today: dt.date) -> dict:
@@ -92,8 +110,10 @@ def _facts_summary(facts: list[dict], row: dict, today: dt.date) -> dict:
     fields = monitored.FACT_FIELDS
     expected = {key: candidate.get(key) for key in fields}
     actual = row.get("verifiedFacts")
-    if not isinstance(actual, dict) or any(actual.get(key) != expected.get(key) for key in fields):
-        raise update.AutomationError("verifiedFacts do not match the independently rebuilt evidence")
+    actual = actual if isinstance(actual, dict) else {}
+    mismatched = [key for key in fields if actual.get(key) != expected.get(key)]
+    if mismatched:
+        raise EvidenceMismatch(mismatched, actual, expected)
     return candidate
 
 
@@ -219,4 +239,5 @@ def promote(tmdb_id: int, dry_run: bool = False, *, now: dt.datetime | None = No
         state_name = "CONFLICT" if isinstance(exc, update.AutomationError) and "Conflicting" in str(exc) else "VALIDATION_FAILED"
         return _answer(tmdb_id, state_name, title=title, monitored_state=state,
                        reason=str(exc), dry_run=dry_run, promotion_eligible=False,
-                       validation_result="failed", fatal=True)
+                       validation_result="failed", fatal=True,
+                       validation_mismatch=exc.diagnostic if isinstance(exc, EvidenceMismatch) else None)

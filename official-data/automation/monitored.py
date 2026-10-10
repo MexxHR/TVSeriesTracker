@@ -280,6 +280,7 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
                 facts.extend(update.detect(scoped_article(article, entry["aliases"]), entry, today,
                                          extended_final=True, strict_binding=True))
             update.validate_facts(facts, entry)
+            facts = update.canonical_fact_order(facts)
             if facts:
                 for season in {f["nextSeasonNumber"] for f in facts}:
                     states = {f["status"] for f in facts if f["nextSeasonNumber"] == season and f["rule"] != "explicit-premiere"}
