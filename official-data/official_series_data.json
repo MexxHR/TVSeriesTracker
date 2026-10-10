@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-09T18:16:57Z",
+  "generatedAt": "2026-10-10T07:22:35Z",
   "series": [
     {
       "tmdbId": 97951,
@@ -133,6 +133,18 @@
       "sourceUrl": "https://www.netflix.com/tudum/articles/the-gentlemen-season-3-release-date-cast-news",
       "announcementDate": "2026-09-10",
       "lastChecked": "2026-09-26"
+    },
+    {
+      "tmdbId": 244623,
+      "title": "Running Point",
+      "nextSeasonNumber": 3,
+      "sourceName": "Netflix Tudum",
+      "sourceUrl": "https://www.netflix.com/tudum/running-point",
+      "announcementDate": null,
+      "status": "RENEWED",
+      "releaseDate": null,
+      "releaseYear": null,
+      "lastChecked": "2026-10-10"
     },
     {
       "tmdbId": 247718,
