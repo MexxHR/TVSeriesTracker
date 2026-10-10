@@ -158,6 +158,23 @@
         "https://www.netflix.com/tudum/running-point"
       ],
       "lastChecked": "2026-10-09"
+    },
+    {
+      "tmdbId": 258036,
+      "title": "The Audacity",
+      "provider": "AMC",
+      "discoveryState": "NO_VERIFIED_FACTS",
+      "candidateUrls": [
+        "https://www.amcglobalmedia.com/2026/06/22/amc-global-medias-critically-acclaimed-drama-the-audacity-commences-season-2-production/"
+      ],
+      "verifiedFacts": {},
+      "sourceEvidence": [],
+      "parserResult": "no_facts",
+      "validationResult": "not_applicable",
+      "eligibleSourceUrls": [
+        "https://www.amcglobalmedia.com/2026/06/22/amc-global-medias-critically-acclaimed-drama-the-audacity-commences-season-2-production/"
+      ],
+      "lastChecked": "2026-10-10"
     }
   ]
 }
