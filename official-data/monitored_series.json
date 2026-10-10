@@ -163,14 +163,75 @@
       "tmdbId": 258036,
       "title": "The Audacity",
       "provider": "AMC",
-      "discoveryState": "NO_VERIFIED_FACTS",
+      "discoveryState": "VERIFIED_FACTS",
       "candidateUrls": [
         "https://www.amcglobalmedia.com/2026/06/22/amc-global-medias-critically-acclaimed-drama-the-audacity-commences-season-2-production/"
       ],
-      "verifiedFacts": {},
-      "sourceEvidence": [],
-      "parserResult": "no_facts",
-      "validationResult": "not_applicable",
+      "verifiedFacts": {
+        "status": "RENEWED",
+        "nextSeasonNumber": 2,
+        "releaseDate": null,
+        "releaseYear": 2027,
+        "sourceName": "AMC Networks",
+        "sourceUrl": "https://www.amcglobalmedia.com/2026/06/22/amc-global-medias-critically-acclaimed-drama-the-audacity-commences-season-2-production/",
+        "announcementDate": "2026-06-22"
+      },
+      "sourceEvidence": [
+        {
+          "status": "RENEWED",
+          "nextSeasonNumber": 2,
+          "releaseDate": null,
+          "releaseYear": null,
+          "sourceName": "AMC Networks",
+          "sourceUrl": "https://www.amcglobalmedia.com/2026/06/22/amc-global-medias-critically-acclaimed-drama-the-audacity-commences-season-2-production/",
+          "announcementDate": "2026-06-22",
+          "rule": "explicit-production-start",
+          "factType": "LIFECYCLE",
+          "evidenceText": "production of the much anticipated eight-episode second season of The Audacity is underway in Vancouver, Canada, with the series returning to AMC and AMC+ in 2027",
+          "publicationDateSource": "structured_metadata"
+        },
+        {
+          "status": "RENEWED",
+          "nextSeasonNumber": 2,
+          "releaseDate": null,
+          "releaseYear": null,
+          "sourceName": "AMC Networks",
+          "sourceUrl": "https://www.amcglobalmedia.com/2026/06/22/amc-global-medias-critically-acclaimed-drama-the-audacity-commences-season-2-production/",
+          "announcementDate": "2026-06-22",
+          "rule": "explicit-production-start",
+          "factType": "LIFECYCLE",
+          "evidenceText": "AMC Global Media's Critically Acclaimed Drama, The Audacity, Commences Season 2 Production",
+          "publicationDateSource": "structured_metadata"
+        },
+        {
+          "status": "RENEWED",
+          "nextSeasonNumber": 2,
+          "releaseDate": null,
+          "releaseYear": null,
+          "sourceName": "AMC Networks",
+          "sourceUrl": "https://www.amcglobalmedia.com/2026/06/22/amc-global-medias-critically-acclaimed-drama-the-audacity-commences-season-2-production/",
+          "announcementDate": "2026-06-22",
+          "rule": "explicit-production-start",
+          "factType": "LIFECYCLE",
+          "evidenceText": "AMC Global Media's Critically Acclaimed Drama, The Audacity, Commences Season 2 Production",
+          "publicationDateSource": "structured_metadata"
+        },
+        {
+          "status": "RENEWED",
+          "nextSeasonNumber": 2,
+          "releaseDate": null,
+          "releaseYear": 2027,
+          "sourceName": "AMC Networks",
+          "sourceUrl": "https://www.amcglobalmedia.com/2026/06/22/amc-global-medias-critically-acclaimed-drama-the-audacity-commences-season-2-production/",
+          "announcementDate": "2026-06-22",
+          "rule": "explicit-release-year",
+          "factType": "RELEASE_YEAR",
+          "evidenceText": "production of the much anticipated eight-episode second season of The Audacity is underway in Vancouver, Canada, with the series returning to AMC and AMC+ in 2027",
+          "publicationDateSource": "structured_metadata"
+        }
+      ],
+      "parserResult": "facts",
+      "validationResult": "passed",
       "eligibleSourceUrls": [
         "https://www.amcglobalmedia.com/2026/06/22/amc-global-medias-critically-acclaimed-drama-the-audacity-commences-season-2-production/"
       ],
