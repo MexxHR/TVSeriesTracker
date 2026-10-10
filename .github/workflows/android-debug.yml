@@ -30,6 +30,8 @@ jobs:
             mkdir -p "$HOME/.android"
             printf '%s' "$ANDROID_DEBUG_KEYSTORE_BASE64" | base64 --decode > "$HOME/.android/debug.keystore"
           fi
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
       - name: Test and build debug APK
         env:
           OFFICIAL_DATA_URL: ${{ vars.OFFICIAL_DATA_URL }}
