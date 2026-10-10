@@ -286,10 +286,16 @@ def detect(article: dict, entry: dict, today: dt.date, extended_final: bool = Fa
     announced = (dt.date.fromisoformat(article["publicationDate"]) if article.get("publicationDate")
                  else None) if strict_binding else announcement_date(body)
     chunks = [heading] + re.split(r"[\n.!?]+", body)
-    aliases = [a.casefold() for a in entry["aliases"]]
+    # Publisher copy commonly uses typographic apostrophes in an otherwise
+    # exact series title. Normalize only that punctuation for strict binding.
+    apostrophes = str.maketrans({"\u2018": "'", "\u2019": "'"})
+    aliases = [a.translate(apostrophes).casefold() if strict_binding else a.casefold()
+               for a in entry["aliases"]]
     facts = []
     for chunk in chunks:
         s = re.sub(r"\s+", " ", chunk).strip()
+        if strict_binding:
+            s = s.translate(apostrophes)
         if not any(a in s.casefold() for a in aliases):
             continue
         season = season_in(s)
@@ -301,6 +307,17 @@ def detect(article: dict, entry: dict, today: dt.date, extended_final: bool = Fa
             final = re.search(rf"\b(?:{NUM}\s+and\s+final\s+season|season\s+{NUM}\s+.{{0,25}}\bfinal\s+season|final\s+season\s+{NUM})\b", s, re.I)
             canceled = re.search(rf"\b(?:season\s+{NUM}|{NUM}\s+season)\b.{{0,35}}\b(?:cancelled|canceled|will not (?:return|continue))\b", s, re.I)
             renewed = re.search(rf"\b(?:renewed|greenlit|greenlighted)\s+for\s+(?:a\s+)?(?:season\s+{NUM}|{NUM}\s+season)\b", s, re.I)
+            if not renewed:
+                # Some official releases use “renewed <exact series title>
+                # for a fourth season”. Require the configured title as the
+                # verb's direct object in this same sentence.
+                objects = "|".join(re.escape(a) for a in sorted(set(aliases), key=len, reverse=True))
+                renewed = re.search(
+                    rf"\b(?:renewed|greenlit|greenlighted)\s+(?:the\s+)?(?:{objects})\s+for\s+"
+                    rf"(?:a\s+)?(?:season\s+{NUM}|{NUM}\s+season)\b", s, re.I)
+                if renewed and re.search(r"\b(?:not|never|denies?|rumou?rs?|false)\b.{0,20}$",
+                                         s[:renewed.start()], re.I):
+                    renewed = None
             match = None
             if final:
                 status, rule, match = "FINAL_SEASON", "explicit-final-season", final

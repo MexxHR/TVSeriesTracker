@@ -8,7 +8,7 @@ from check_release_artifacts import check
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT.parent
-VERSION = "V2.7.1"
+VERSION = "V2.7.1.1"
 APK = OUT / f"TV-Series-Tracker-{VERSION}-debug.apk"
 ZIP = OUT / f"TVSeriesTracker-{VERSION}.zip"
 TOP = [".gitignore", "build.gradle.kts", "app/build.gradle.kts", "gradle.properties", "gradlew", "gradlew.bat",

@@ -16,8 +16,9 @@ from pathlib import Path
 import re
 import socket
 import sys
+import xml.etree.ElementTree as ET
 from urllib.error import HTTPError, URLError
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urlencode, urljoin, urlparse
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 import update
@@ -31,6 +32,13 @@ MAX_QUALIFICATION_DEPTH = 12
 MAX_QUALIFICATION_PAGES = 20
 MAX_QUALIFICATION_LINKS_PER_PAGE = 60
 MAX_PROVIDER_QUALIFICATION_FETCHES = 80
+MAX_OFFICIAL_SEARCH_RESULTS = 20
+MAX_SITEMAP_BYTES = 1_000_000
+MAX_SITEMAP_URLS = 2_500
+MAX_SITEMAP_CHILDREN = 8
+MAX_SITEMAP_ARTICLE_CANDIDATES = 20
+AMC_SEARCH_HOME = "https://www.amcglobalmedia.com/"
+HULU_SEARCH_HOME = "https://press.hulu.com/"
 RECOMMENDATIONS = (
     "READY_FOR_IMPLEMENTATION",
     "FETCHABLE_BUT_DISCOVERY_NEEDS_WORK",
@@ -154,7 +162,8 @@ def fetch_url(url: str, domains: list[str]) -> tuple[dict, str | None]:
         return {**base, "status": "rejected", "failureCategory": "OFFICIAL_DOMAIN_REJECTED"}, None
     redirects = BoundedRedirect(domains)
     opener = build_opener(redirects)
-    request = Request(url, headers={"User-Agent": "TVSeriesTrackerProviderAudit/1.0", "Accept": "text/html"})
+    request = Request(url, headers={"User-Agent": "TVSeriesTrackerProviderAudit/1.0",
+                                    "Accept": "application/xml, text/xml" if urlparse(url).path.endswith(".xml") else "text/html"})
     try:
         with opener.open(request, timeout=TIMEOUT_SECONDS) as response:
             final = response.geturl()
@@ -172,12 +181,21 @@ def fetch_url(url: str, domains: list[str]) -> tuple[dict, str | None]:
                          "finalUrl": _public_url(final), "redirectCount": redirects.count,
                          "redirectsWithinBoundary": True, "contentType": content_type,
                          "responseBytes": len(payload), "failureCategory": "RESPONSE_TOO_LARGE"}, None)
-            if content_type not in ("text/html", "application/xhtml+xml"):
+            xml_response = urlparse(final).path.endswith(".xml")
+            if (content_type not in ("text/html", "application/xhtml+xml")
+                    and not (xml_response and content_type in ("application/xml", "text/xml"))):
                 return ({**base, "status": "failed", "httpStatus": status,
                          "initialHttpStatus": redirects.statuses[0] if redirects.statuses else status, "finalStatus": status,
                          "finalUrl": _public_url(final), "redirectCount": redirects.count,
                          "redirectsWithinBoundary": True, "contentType": content_type,
                          "responseBytes": len(payload), "failureCategory": "UNSUPPORTED_CONTENT"}, None)
+            if xml_response and len(payload) > MAX_SITEMAP_BYTES:
+                return ({**base, "status": "failed", "httpStatus": status,
+                         "initialHttpStatus": redirects.statuses[0] if redirects.statuses else status,
+                         "finalStatus": status, "finalUrl": _public_url(final),
+                         "redirectCount": redirects.count, "redirectsWithinBoundary": True,
+                         "contentType": content_type, "responseBytes": len(payload),
+                         "failureCategory": "SITEMAP_TOO_LARGE"}, None)
             return ({**base, "status": "fetched", "httpStatus": status,
                      "initialHttpStatus": redirects.statuses[0] if redirects.statuses else status, "finalStatus": status,
                      "finalUrl": _public_url(final), "redirectCount": redirects.count,
@@ -452,6 +470,28 @@ class _QualificationText(HTMLParser):
         return "\n".join(self.blocks)
 
 
+class _AmcSearchForm(HTMLParser):
+    """Read only the site's visible GET search form and its named query input."""
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.forms: list[dict] = []
+        self.current: dict | None = None
+
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        if tag == "form":
+            self.current = {"action": attrs.get("action", ""),
+                            "method": (attrs.get("method") or "get").casefold(),
+                            "inputs": []}
+            self.forms.append(self.current)
+        elif tag == "input" and self.current is not None:
+            self.current["inputs"].append({"name": attrs.get("name"), "type": (attrs.get("type") or "text").casefold()})
+
+    def handle_endtag(self, tag):
+        if tag == "form":
+            self.current = None
+
+
 def _qualification_links(raw: str, base_url: str, domains: list[str], aliases: list[str], target_url: str) -> list[str]:
     parser = _QualificationLinks()
     parser.feed(raw)
@@ -488,6 +528,51 @@ def _qualification_links(raw: str, base_url: str, domains: list[str], aliases: l
     return [url for _, url in sorted(set(scored), key=lambda item: (-item[0], item[1]))]
 
 
+def _sitemap_links(raw: str, domains: list[str], aliases: list[str]) -> tuple[list[str], str | None]:
+    """Read bounded first-party sitemap locs; never derive URLs from the known article."""
+    if len(raw.encode("utf-8")) > MAX_SITEMAP_BYTES:
+        return [], "SITEMAP_TOO_LARGE"
+    if "<!DOCTYPE" in raw.upper() or "<!ENTITY" in raw.upper():
+        return [], "INVALID_SITEMAP"
+    try:
+        root = ET.fromstring(raw)
+    except ET.ParseError:
+        return [], "INVALID_SITEMAP"
+    namespace = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
+    if root.tag == namespace + "sitemapindex":
+        children = root.findall(namespace + "sitemap")
+        if len(children) > MAX_SITEMAP_CHILDREN:
+            return [], "SITEMAP_CHILD_LIMIT"
+        links = []
+        for child in children:
+            loc = child.findtext(namespace + "loc")
+            if loc and update.allowed(loc, domains) and urlparse(loc).path.endswith(".xml"):
+                links.append(loc)
+        return list(dict.fromkeys(links)), None
+    if root.tag != namespace + "urlset":
+        return [], "INVALID_SITEMAP"
+    entries = root.findall(namespace + "url")
+    if len(entries) > MAX_SITEMAP_URLS:
+        return [], "SITEMAP_URL_LIMIT"
+    stop = {"the", "and", "for", "with", "from", "that", "this", "series", "show"}
+    word_sets = [{word for word in re.findall(r"[a-z0-9]+", alias.casefold())
+                  if len(word) > 2 and word not in stop} for alias in aliases]
+    matches = []
+    for entry in entries:
+        loc = entry.findtext(namespace + "loc")
+        if not loc or not update.allowed(loc, domains):
+            continue
+        path = urlparse(loc).path.casefold()
+        # Disney Press places editorial announcements under /news/. Media
+        # galleries and show assets in the same sitemap are not candidates.
+        if not path.startswith("/news/"):
+            continue
+        words = set(re.findall(r"[a-z0-9]+", path))
+        if any(alias_words and alias_words <= words for alias_words in word_sets):
+            matches.append(loc)
+    return list(dict.fromkeys(matches))[:MAX_SITEMAP_ARTICLE_CANDIDATES], None
+
+
 def _budget_fetch(fetcher, budget: dict, url: str, domains: list[str]):
     if budget["remaining"] <= 0:
         return ({"status": "not_attempted", "httpStatus": None, "finalUrl": None,
@@ -496,40 +581,113 @@ def _budget_fetch(fetcher, budget: dict, url: str, domains: list[str]):
     return fetcher(url, domains)
 
 
-def _qualification_candidates(case: dict, domains: list[str], fetcher, budget: dict) -> tuple[list[dict], list[dict]]:
+def _official_search_candidates(case: dict, domains: list[str], fetcher, budget: dict,
+                                provider_id: str) -> tuple[list[dict], list[dict]]:
+    """Use a provider's first-party GET search only after validating its form."""
+    search_homes = {"AMC": AMC_SEARCH_HOME, "HULU": HULU_SEARCH_HOME}
+    home = search_homes.get(provider_id)
+    if not home or not update.allowed(home, domains) or len(case.get("series", "")) > 200:
+        return [], []
+    source = provider_id.lower() + "_official_site_search"
+    home_result, home_raw = _budget_fetch(fetcher, budget, home, domains)
+    fetches = [{"url": _public_url(home), "fetch": home_result, "depth": 0,
+                "source": source + "_form"}]
+    if not home_raw or home_result.get("status") != "fetched":
+        return fetches, []
+    home_final = home_result.get("finalUrl") or home
+    if not update.allowed(home_final, domains):
+        return fetches, []
+    parser = _AmcSearchForm()
+    parser.feed(home_raw)
+    search_url = None
+    for form in parser.forms:
+        if form["method"] != "get" or not any(item["name"] == "s" for item in form["inputs"]):
+            continue
+        action = urljoin(home_final, form["action"] or home_final)
+        if update.allowed(action, domains):
+            search_url = action + ("&" if "?" in action else "?") + urlencode({"s": case["series"]})
+            break
+    if not search_url or len(search_url) > 2048:
+        return fetches, []
+    results_fetch, results_raw = _budget_fetch(fetcher, budget, search_url, domains)
+    fetches.append({"url": _public_url(search_url), "fetch": results_fetch, "depth": 1,
+                    "source": source})
+    if not results_raw or results_fetch.get("status") != "fetched":
+        return fetches, []
+    results_final = results_fetch.get("finalUrl") or search_url
+    if not update.allowed(results_final, domains):
+        return fetches, []
+    links = _qualification_links(results_raw, results_final, domains,
+                                 case.get("aliases") or [case["series"]], case["articleUrl"])
+    target = _canonical_url(case["articleUrl"])
+    # Follow links presented by the official search response only. The known
+    # article URL is a comparison target; it is never constructed or requested
+    # unless the fetched response linked to it.
+    for link in links[:MAX_OFFICIAL_SEARCH_RESULTS]:
+        if not update.allowed(link, domains):
+            continue
+        article_fetch, article_raw = _budget_fetch(fetcher, budget, link, domains)
+        fetches.append({"url": _public_url(link), "fetch": article_fetch, "depth": 2,
+                        "source": source + "_result"})
+        if not article_raw or article_fetch.get("status") != "fetched":
+            continue
+        final_url = article_fetch.get("finalUrl") or link
+        if update.allowed(final_url, domains) and (
+                _canonical_url(link) == target or _canonical_url(final_url) == target):
+            return fetches, [{"url": link, "finalUrl": final_url, "fetch": article_fetch,
+                              "raw": article_raw, "depth": 2, "source": source}]
+    return fetches, []
+
+
+def _qualification_candidates(case: dict, domains: list[str], fetcher, budget: dict,
+                              provider_id: str | None = None) -> tuple[list[dict], list[dict]]:
     """Walk only bounded, linked first-party pages; never seed from articleUrl."""
     target = _canonical_url(case["articleUrl"])
-    queue: list[tuple[str, int]] = []
+    queue: list[tuple[str, int, str]] = []
     for root in _case_roots(case):
         if _canonical_url(root) == target or not update.allowed(root, domains):
             continue
-        queue.append((root, 0))
+        queue.append((root, 0, "official_root"))
     seen: set[str] = set()
     fetches: list[dict] = []
     found: list[dict] = []
     while queue and len(seen) < MAX_QUALIFICATION_PAGES:
-        current, depth = queue.pop(0)
+        current, depth, source = queue.pop(0)
         key = _canonical_url(current)
         if key in seen:
             continue
         seen.add(key)
         result, raw = _budget_fetch(fetcher, budget, current, domains)
-        fetches.append({"url": _public_url(current), "fetch": result, "depth": depth})
+        fetches.append({"url": _public_url(current), "fetch": result, "depth": depth, "source": source})
         if not raw or result.get("status") != "fetched":
             continue
         final_url = result.get("finalUrl") or current
         if not update.allowed(final_url, domains):
             continue
         if key == target or _canonical_url(final_url) == target:
-            found.append({"url": current, "finalUrl": final_url, "fetch": result, "raw": raw, "depth": depth})
+            found.append({"url": current, "finalUrl": final_url, "fetch": result, "raw": raw,
+                          "depth": depth, "source": source})
             break
         if depth >= MAX_QUALIFICATION_DEPTH:
             continue
-        links = _qualification_links(raw, final_url, domains, case.get("aliases") or [case["series"]], case["articleUrl"])
+        if provider_id == "DISNEY_PLUS" and urlparse(final_url).path.endswith(".xml"):
+            links, sitemap_failure = _sitemap_links(raw, domains, case.get("aliases") or [case["series"]])
+            if sitemap_failure:
+                result["failureCategory"] = sitemap_failure
+            next_source = "official_sitemap"
+        else:
+            links = _qualification_links(raw, final_url, domains,
+                                         case.get("aliases") or [case["series"]], case["articleUrl"])
+            next_source = "official_link_traversal"
         direct = [link for link in links if _canonical_url(link) == target]
-        next_links = [(link, depth + 1) for link in direct + [link for link in links if link not in direct][:MAX_QUALIFICATION_LINKS_PER_PAGE]
+        next_links = [(link, depth + 1, next_source) for link in direct + [link for link in links if link not in direct][:MAX_QUALIFICATION_LINKS_PER_PAGE]
                       if _canonical_url(link) not in seen]
         queue[0:0] = next_links
+    if not found and provider_id in ("AMC", "HULU"):
+        search_fetches, search_found = _official_search_candidates(case, domains, fetcher, budget,
+                                                                  provider_id)
+        fetches.extend(search_fetches)
+        found.extend(search_found)
     return fetches, found
 
 
@@ -641,7 +799,7 @@ def qualify_provider(provider: dict, fetcher=fetch_url, *, github_actions: bool 
             traversal, found = [], []
             failure = "INVALID_OR_MISSING_DISCOVERY_ROOT"
         else:
-            traversal, found = _qualification_candidates(case, domains, fetcher, budget)
+            traversal, found = _qualification_candidates(case, domains, fetcher, budget, provider["provider"])
             failure = None
         discovered = bool(found)
         content = (_qualification_content(found[0]["raw"], found[0]["finalUrl"], case, today)
@@ -683,6 +841,7 @@ def qualify_provider(provider: dict, fetcher=fetch_url, *, github_actions: bool 
                        "discoveredFromRoot": discovered,
                        "discoveredUrl": _public_url(found[0]["url"]) if found else None,
                        "discoveredFinalUrl": _public_url(found[0]["finalUrl"]) if found else None,
+                       "discoveryProvenance": found[0].get("source", "official_link_traversal") if found else None,
                        "redirects": ({"count": found[0]["fetch"].get("redirectCount", 0),
                                       "withinOfficialBoundary": found[0]["fetch"].get("redirectsWithinBoundary")}
                                      if found else None),

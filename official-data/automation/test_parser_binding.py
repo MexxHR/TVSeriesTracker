@@ -132,6 +132,39 @@ class StrictBindingTests(unittest.TestCase):
         self.assertEqual(fact["factType"], "LIFECYCLE")
         self.assertIn("renewed for Season 3", fact["evidenceText"])
 
+    def test_direct_object_renewal_binds_exact_series_and_season(self):
+        entry = {"tmdbId": 1, "title": "Anne Rice's Interview with the Vampire",
+                 "aliases": ["Anne Rice's Interview with the Vampire", "Interview with the Vampire"]}
+        raw = (FIXTURES / "amc_interview_direct_object_renewal.html").read_text(encoding="utf-8")
+        article = u.ADAPTERS["NETFLIX"].parse(raw, "https://www.amcglobalmedia.com/example")
+        facts = u.detect(article, entry, TODAY, strict_binding=True)
+        self.assertEqual([(f["status"], f["nextSeasonNumber"], f["rule"]) for f in facts],
+                         [("RENEWED", 4, "explicit-renewal")])
+
+    def test_direct_object_renewal_rejects_other_series_and_split_sentences(self):
+        entry = {"tmdbId": 1, "title": "Interview with the Vampire",
+                 "aliases": ["Interview with the Vampire"]}
+        for body in (
+            "AMC renewed Mayfair Witches for a fourth season. Interview with the Vampire remains popular.",
+            "AMC renewed Interview with the Vampire. A fourth season is planned.",
+            "Interview with the Vampire appears in this article. AMC renewed Mayfair Witches for a fourth season.",
+            "AMC has not renewed Interview with the Vampire for a fourth season.",
+        ):
+            with self.subTest(body=body):
+                article = {"title": "AMC programming news", "body": body,
+                           "url": "https://www.amcglobalmedia.com/example",
+                           "sourceName": "AMC", "publicationDate": None}
+                self.assertEqual(u.detect(article, entry, TODAY, strict_binding=True), [])
+
+    def test_direct_object_renewal_does_not_join_unrelated_card(self):
+        entry = {"tmdbId": 1, "title": "Interview with the Vampire",
+                 "aliases": ["Interview with the Vampire"]}
+        raw = ("<html><h1>Interview with the Vampire news</h1>"
+               "<main><p>Interview with the Vampire cast update.</p></main>"
+               "<aside><p>AMC renewed Mayfair Witches for a fourth season.</p></aside></html>")
+        article = u.ADAPTERS["NETFLIX"].parse(raw, "https://www.amcglobalmedia.com/example")
+        self.assertEqual(u.detect(article, entry, TODAY, strict_binding=True), [])
+
     def test_premiere_provenance(self):
         fact = detect("ONE PIECE Season 3 premieres August 2, 2027.")[0]
         self.assertEqual((fact["status"], fact["rule"]), ("RELEASE_DATE_CONFIRMED", "explicit-premiere"))
