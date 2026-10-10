@@ -300,10 +300,12 @@ def announcement_date(body: str) -> dt.date | None:
     return dt.date.fromisoformat(d) if d else None
 
 
-def premiere_date_in(sentence: str, announced: dt.date | None, strict_binding: bool = False) -> tuple[str | None, int | None, int | None]:
+def premiere_date_in(sentence: str, announced: dt.date | None, strict_binding: bool = False,
+                     aliases: list[str] | None = None) -> tuple[str | None, int | None, int | None]:
     # Read a date only after an explicit premiere/streaming verb in this same
     # series-and-season sentence. Publication and production dates are unrelated.
-    verbs = list(re.finditer(r"\b(?:premieres?|returns?|debuts?|arrives?|streams?|streaming)\b", sentence, re.I))
+    return_verb = r"return(?:s|ing)?" if strict_binding else r"returns?"
+    verbs = list(re.finditer(rf"\b(?:premieres?|{return_verb}|debuts?|arrives?|streams?|streaming)\b", sentence, re.I))
     if not verbs:
         return None, None, None
     season_refs = list(re.finditer(rf"(?:{SEASON}|\b{NUM}\b\s+and\s+final\s+season\b)", sentence, re.I))
@@ -321,6 +323,30 @@ def premiere_date_in(sentence: str, announced: dt.date | None, strict_binding: b
         if not near or max(near[0].start() - verb.end(), verb.start() - near[0].end(), 0) > 85:
             continue
         if strict_binding:
+            if re.match(r"return(?:s|ing)?\b", verb.group(), re.I):
+                # A bare "returning" can refer to another show mentioned in
+                # the same sentence. Bind it to a title in its own comma
+                # clause, or to an explicit "the series" anaphor with no
+                # intervening competing title.
+                clause_start = max(sentence.rfind(",", 0, verb.start()),
+                                   sentence.rfind(";", 0, verb.start()),
+                                   sentence.rfind(":", 0, verb.start())) + 1
+                clause = sentence[clause_start:verb.start()]
+                title_in_clause = any(alias.casefold() in clause.casefold() for alias in (aliases or []))
+                generic_series = bool(re.search(r"\b(?:the|this|our)\s+(?:series|show|drama)\b", clause, re.I))
+                competing_clause = clause
+                for alias in aliases or []:
+                    competing_clause = re.sub(re.escape(alias), " ", competing_clause, flags=re.I)
+                other_title = bool(re.search(r"\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+\b", competing_clause))
+                if other_title or (not title_in_clause and not generic_series):
+                    continue
+                negation_context = sentence[max(0, verb.start() - 70):min(next_verb, verb.start() + 80)]
+                if re.search(r"\b(?:not|never|no longer|doesn't|don't|isn't|aren't|wasn't|weren't|"
+                             r"won't|will not|will never|cannot|can't|could not|might not|may|might|could|"
+                             r"potentially|possibly|reportedly|allegedly|rumou?red|expected to|plans? to|"
+                             r"planned to|scheduled to)\b",
+                             negation_context, re.I):
+                    continue
             # A different season between this reference and the date makes
             # the binding ambiguous. Never borrow the article's headline season.
             date_pos = verb.start() + (month.start() if month else year.start())
@@ -333,6 +359,78 @@ def premiere_date_in(sentence: str, announced: dt.date | None, strict_binding: b
             return date, release_year, season
         return None, int(year.group(1)), season
     return None, None, None
+
+
+def explicit_production_start(text: str, aliases: list[str]) -> tuple[re.Match | None, int | None]:
+    """Match an explicit start of production for a named, numbered season.
+
+    Production can establish that a later season is underway, but a generic
+    production mention, plan, cast/crew update, or production for another show
+    cannot. Keep the series and season adjacent to the production assertion.
+    """
+    season_refs = list(re.finditer(rf"(?:{SEASON}|\b{NUM}\b\s+and\s+final\s+season\b)", text, re.I))
+    # Multiple seasons in one sentence make the production target unclear.
+    if len(season_refs) != 1:
+        return None, None
+    season_ref = season_refs[0]
+    season = season_in(season_ref.group())
+    # Starting production of a first season does not prove a renewal.
+    if season is None or season < 2:
+        return None, None
+    title_refs = [m for alias in aliases for m in re.finditer(re.escape(alias), text, re.I)]
+    production_refs = list(re.finditer(r"\bproduction\b", text, re.I))
+    if not title_refs or not production_refs:
+        return None, None
+
+    # Only accept direct title/season pairing, or the common "production of
+    # Season N of TITLE" construction. This prevents borrowing a nearby show
+    # title or season from cast biographies and unrelated article clauses.
+    paired = any(
+        (title.end() <= season_ref.start() and season_ref.start() - title.end() <= 24) or
+        (season_ref.end() <= title.start() and title.start() - season_ref.end() <= 24)
+        for title in title_refs
+    )
+    production_of_title_season = any(
+        prod.start() < season_ref.start() < title.start() and
+        season_ref.start() - prod.end() <= 75 and title.start() - season_ref.end() <= 30
+        for prod in production_refs for title in title_refs
+    )
+    if not (paired or production_of_title_season):
+        return None, None
+
+    # Require production to have actually started or be underway. Future plans,
+    # expectations, generic credits, and ongoing discussion do not qualify.
+    title_pattern = "(?:" + "|".join(re.escape(alias) for alias in sorted(aliases, key=len, reverse=True)) + ")"
+    season_pattern = rf"(?:{SEASON})"
+    # Keep the assertion structure explicit: production of the season of this
+    # title is underway, or this title's season production is underway.
+    underway_patterns = (
+        rf"\bproduction\s+(?:of|for)\s+.{{0,70}}?{season_pattern}\s+(?:of\s+)?{title_pattern}"
+        rf"\s+(?:is|has been|was)\s+(?:now\s+)?underway\b",
+        rf"{title_pattern}\s*.{{0,12}}?{season_pattern}\s+production\s+"
+        rf"(?:is|has been|was)\s+(?:now\s+)?underway\b",
+    )
+    underway = next((m for pattern in underway_patterns if (m := re.search(pattern, text, re.I))), None)
+    headline_order = re.search(
+        rf"{title_pattern}.{{0,16}}?\b(?:commenced|commences|began|begins|started|starts)\s+"
+        rf"(?:the\s+)?{season_pattern}\s+production\b", text, re.I)
+    matches = [m for m in (underway, headline_order) if m]
+    if not matches:
+        return None, None
+    action = min(matches, key=lambda m: m.start())
+    # The actual action must be connected to the paired title/season span.
+    if abs(action.start() - season_ref.start()) > 85:
+        return None, None
+    if not any(abs(action.start() - prod.start()) <= 45 for prod in production_refs):
+        return None, None
+    context = text[max(0, action.start() - 70):min(len(text), action.end() + 45)]
+    if re.search(r"\b(?:not|never|has not|have not|had not|hasn't|haven't|hadn't|"
+                 r"isn't|aren't|wasn't|weren't|won't|will not|expected to|plans? to|"
+                 r"planned to|scheduled to|may|might|could|rumou?red|reportedly|allegedly)\b"
+                 r".{0,80}\b(?:underway|in progress|begun|started|commenced|commences|begins|starts)\b",
+                 context, re.I):
+        return None, None
+    return action, season
 
 
 def detect(article: dict, entry: dict, today: dt.date, extended_final: bool = False,
@@ -391,6 +489,10 @@ def detect(article: dict, entry: dict, today: dt.date, extended_final: bool = Fa
                     status = rule = None
                 else:
                     season = season_in(match.group())
+            if not match:
+                production, production_season = explicit_production_start(s, aliases)
+                if production:
+                    status, rule, match, season = "RENEWED", "explicit-production-start", production, production_season
         elif (re.search(rf"\b(?:{NUM}\s+and\s+final\s+season|season\s+{NUM}\s+.{0,18}final|final\s+season\s+{NUM})\b", s, re.I)
                 or (extended_final and re.search(rf"\bseason\s+{NUM}\s+.{{0,18}}\bfinal\s+season\b", s, re.I))):
             status, rule = "FINAL_SEASON", "explicit-final-season"
@@ -400,7 +502,7 @@ def detect(article: dict, entry: dict, today: dt.date, extended_final: bool = Fa
             status, rule = "RENEWED", "explicit-renewal"
         date, year, date_season = (None, None, None)
         if status != "CANCELED":
-            date, year, date_season = premiere_date_in(s, announced, strict_binding)
+            date, year, date_season = premiere_date_in(s, announced, strict_binding, aliases)
             if date and rule == "explicit-renewal" and not re.search(r"\b(?:renewed|greenlit|greenlighted)\b", s, re.I):
                 # "returns for Season Three on August 2" announces a premiere,
                 # not a new lifecycle decision that should own canonical source.
@@ -409,7 +511,15 @@ def detect(article: dict, entry: dict, today: dt.date, extended_final: bool = Fa
                   "sourceName": article["sourceName"], "sourceUrl": article["url"],
                   "announcementDate": announced.isoformat() if announced else None}
         if strict_binding:
-            common["evidenceText"] = s[:200]
+            excerpt = s[:200]
+            # A long production announcement may put the season/name before a
+            # release-year clause. Preserve an exact contiguous excerpt with
+            # both ends so independent promotion can reparse the same facts.
+            if len(s) > 200 and rule == "explicit-production-start":
+                production_at = re.search(r"\b(?:production|filming|shooting)\b", s, re.I)
+                if production_at and len(s[production_at.start():]) <= 200:
+                    excerpt = s[production_at.start():]
+            common["evidenceText"] = excerpt
         if status:
             facts.append({**common, "nextSeasonNumber": season, "status": status,
                           "releaseDate": None, "releaseYear": None, "rule": rule,

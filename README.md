@@ -1,4 +1,4 @@
-# TV Series Tracker V2.7.2
+# TV Series Tracker V2.7.2.1
 
 Android aplikacija za praćenje TV serija. TMDB pruža pretragu, postere i osnovne podatke o seriji. Zaseban Official Data JSON daje verificirane službene statuse, datume i izvore. Room čuva watchlist i oba cachea. TMDB status i datumi nikada ne određuju službeni status u aplikaciji. V1 demo statusi više se ne prikazuju kao stvarni statusi.
 
@@ -101,15 +101,15 @@ APK nastaje u `app/build/outputs/apk/debug/app-debug.apk`. `./gradlew :app:testD
 
 ## GitHub Actions APK
 
-Pushajte cijeli projekt u GitHub repozitorij. `OFFICIAL_DATA_URL` variable potreban je samo ako želite nadjačati zadani URL. `SERIES_REQUEST_API_BASE_URL` je javna build konfiguracija za backend; backend secrets ne idu u Android build. U kartici **Actions** odaberite **Android debug APK** i **Run workflow**. Nakon uspješnog builda preuzmite artifact `TV-Series-Tracker-V2.7.2-debug`, raspakirajte ga i instalirajte APK na telefon. Workflow radi i na push u `main` te na pull request.
+Pushajte cijeli projekt u GitHub repozitorij. `OFFICIAL_DATA_URL` variable potreban je samo ako želite nadjačati zadani URL. `SERIES_REQUEST_API_BASE_URL` je javna build konfiguracija za backend; backend secrets ne idu u Android build. U kartici **Actions** odaberite **Android debug APK** i **Run workflow**. Nakon uspješnog builda preuzmite artifact `TV-Series-Tracker-V2.7.2.1-debug`, raspakirajte ga i instalirajte APK na telefon. Workflow radi i na push u `main` te na pull request.
 
-**Nadogradnja bez brisanja podataka:** Android zahtijeva isti potpis za prethodni i V2.7.2 APK. GitHub Actions na novom runneru inače generira novi debug ključ; za Actions APK koji mora ažurirati postojeću instalaciju dodajte repository secret `ANDROID_DEBUG_KEYSTORE_BASE64` sa Base64 sadržajem **istog** `debug.keystore` kojim je potpisan instalirani APK. Workflow ga koristi samo ako je secret postavljen.
+**Nadogradnja bez brisanja podataka:** Android zahtijeva isti potpis za prethodni i V2.7.2.1 APK. GitHub Actions na novom runneru inače generira novi debug ključ; za Actions APK koji mora ažurirati postojeću instalaciju dodajte repository secret `ANDROID_DEBUG_KEYSTORE_BASE64` sa Base64 sadržajem **istog** `debug.keystore` kojim je potpisan instalirani APK. Workflow ga koristi samo ako je secret postavljen.
 
-**Dopuna postojećeg maina:** V2.7.2 ZIP namjerno ne sadrži pet live Official Data datoteka: canonical JSON, produkcijski audit, `sources.json`, monitored registry i monitored audit. GitHub main već ima prihvaćene produkcijske i monitored zapise, uključujući Running Point. Prenesite kod kao dopunu postojećem mainu i sačuvajte svih pet postojećih datoteka. ZIP nije samostalan novi checkout. Ova kvalifikacija ne mijenja postojeće Actions varijable `OFFICIAL_DATA_PROMOTION_ENABLED` ni `OFFICIAL_DATA_LIVE_ENABLED`.
+**Dopuna postojećeg maina:** V2.7.2.1 ZIP namjerno ne sadrži pet live Official Data datoteka: canonical JSON, produkcijski audit, `sources.json`, monitored registry i monitored audit. GitHub main već ima prihvaćene produkcijske i monitored zapise, uključujući The Audacity `NO_VERIFIED_FACTS` zapis. Lokalna kopija monitora u ovom dopunskom projektu može biti starija; prenesite samo kod i sačuvajte svih pet datoteka na mainu. ZIP nije samostalan novi checkout. Postojeće Actions varijable `OFFICIAL_DATA_PROMOTION_ENABLED` i `OFFICIAL_DATA_LIVE_ENABLED` ostaju nepromijenjene.
 
 ## V2.7.0 Official Provider Coverage Audit
 
-Ručni GitHub workflow **Provider Coverage Audit** pokreće zaseban read-only alat na stvarnom GitHub runneru. Ispituje samo odvojeni audit registry službenih domena, bilježi HTTP pristup, strukturu i prikladnost postojećem parseru te objavljuje JSON kao workflow artifact. Ne mijenja `discovery_providers.json`, `sources.json`, canonical JSON, monitored registry ni audite; ne aktivira novog produkcijskog providera. Lokalni rezultat nije potvrda dostupnosti na GitHub runneru. Za prihvaćanje providera prvo pregledajte GitHub artifact i službene izvore. V2.7.2 ZIP i dalje izostavlja svih pet živih podatkovnih datoteka; prenesite ga kao dopunu postojećem mainu.
+Ručni GitHub workflow **Provider Coverage Audit** pokreće zaseban read-only alat na stvarnom GitHub runneru. Ispituje samo odvojeni audit registry službenih domena, bilježi HTTP pristup, strukturu i prikladnost postojećem parseru te objavljuje JSON kao workflow artifact. Ne mijenja `discovery_providers.json`, `sources.json`, canonical JSON, monitored registry ni audite; ne aktivira novog produkcijskog providera. Lokalni rezultat nije potvrda dostupnosti na GitHub runneru. Za prihvaćanje providera prvo pregledajte GitHub artifact i službene izvore. V2.7.2.1 ZIP i dalje izostavlja svih pet živih podatkovnih datoteka; prenesite ga kao dopunu postojećem mainu.
 
 ## V2.7.1.1 Provider Discovery Qualification
 
@@ -123,7 +123,13 @@ V2.7.1.2 ispravio je Android CI: `setup-android@v3` instalira `platform-tools` b
 
 AMC i Disney+ prošli su stvarnu GitHub-runner kvalifikaciju s tri neovisna slučaja svaki. V2.7.2 ih uključuje u postojeći produkcijski discovery i monitored staging, uz službene domene, ograničeni AMC press/search i Disney+ sitemap, strogi parser te postojeću neovisnu promocijsku validaciju. Uspješno mapiranje providera samo po sebi ne potvrđuje činjenice; bez dovoljno službenog dokaza monitored stanje ostaje neprovjereno. FX i Hulu ostaju isključeni i predviđeni su za zasebno učvršćivanje u V2.7.3.
 
-Nakon uploada najprije pokrenite **Android debug APK**, zatim ručni read-only workflow **Validate AMC and Disney+ production adapters (read-only)**. Pregledajte JSON artifact `amc-disney-production-adapter-preview` prije bilo kakvog stvarnog Android zahtjeva. Sam workflow ne zapisuje monitored ni produkcijske podatke.
+Stvarni GitHub runner potvrdio je Android debug build i read-only AMC/Disney+ produkcijski preview. Potonji workflow ne zapisuje monitored ni produkcijske podatke.
+
+## V2.7.2.1 The Audacity parser hotfix
+
+Prvi stvarni Android → backend → GitHub monitored zahtjev za The Audacity (TMDB 258036) pronašao je službeni AMC članak, ali je strogi parser vratio `NO_VERIFIED_FACTS`: članak govori o započetoj produkciji druge sezone, a postojeće lifecycle pravilo prepoznavalo je samo izričitu obnovu ili zeleno svjetlo. V2.7.2.1 dodaje ograničen, generički obrazac za službenu najavu jasno vezane produkcije imenovane sezone. Ne mijenja AMC discovery, provider mapping, Disney+ ili granicu neovisne promocije.
+
+Prvo pokrenite **Android debug APK**, zatim ručni workflow **Validate The Audacity production parser (read-only)** i pregledajte artifact `audacity-production-parser-preview`. Taj workflow koristi stvarni production discovery i monitored `dry_run`, zasebno rekonstruira činjenice za promocijsku provjeru te provjerava da je pet live datoteka ostalo nepromijenjeno. Tek nakon uspješnog pregleda ponovite obični Android zahtjev za TMDB 258036. Live monitored zapis na GitHub mainu treba prirodno prijeći iz `NO_VERIFIED_FACTS` u `VERIFIED_FACTS`; nemojte ga ručno uređivati.
 
 ## Struktura
 
