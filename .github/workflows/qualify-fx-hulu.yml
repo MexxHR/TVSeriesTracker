@@ -1,0 +1,51 @@
+name: FX + Hulu Provider Qualification
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Snapshot protected Official Data files
+        run: |
+          set -euo pipefail
+          sha256sum \
+            official-data/official_series_data.json \
+            official-data/history/changes.jsonl \
+            official-data/sources.json \
+            official-data/monitored_series.json \
+            official-data/history/monitored_changes.jsonl \
+            > "$RUNNER_TEMP/fx-hulu-protected-before.sha256"
+      - name: Official Data qualification and regression tests
+        run: python -m unittest discover -s official-data/automation -p 'test_*.py' -q
+      - name: Backend workflow regression tests
+        run: python -m unittest discover -s backend -p 'test_*.py' -q
+      - name: Qualify FX and Hulu on the GitHub runner
+        run: |
+          set -euo pipefail
+          python official-data/automation/fx_hulu_qualification.py --output "$RUNNER_TEMP/fx-hulu-provider-qualification.json" | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Verify protected files and checkout stayed unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/fx-hulu-protected-before.sha256"
+          git diff --exit-code HEAD
+          test -z "$(git ls-files --others --exclude-standard)"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fx-hulu-provider-qualification
+          path: ${{ runner.temp }}/fx-hulu-provider-qualification.json
+          if-no-files-found: error
