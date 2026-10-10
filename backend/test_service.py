@@ -323,6 +323,16 @@ class SecretPatternTest(unittest.TestCase):
 
 
 class WorkflowBoundaryTest(unittest.TestCase):
+    def test_android_ci_avoids_legacy_sdk_tools_and_checks_apk(self):
+        root = Path(__file__).resolve().parents[1]
+        workflow = (root / '.github/workflows/android-debug.yml').read_text(encoding='utf-8')
+        self.assertIn('android-actions/setup-android@v3\n        with:\n          packages: \'platform-tools\'', workflow)
+        self.assertNotIn("packages: 'tools", workflow)
+        self.assertIn('./gradlew clean :app:testDebugUnitTest :app:assembleDebug', workflow)
+        self.assertIn('python backend/package_release.py', workflow)
+        self.assertIn('certificate_digest("app/build/outputs/apk/debug/app-debug.apk")', workflow)
+        self.assertIn('actions/upload-artifact@v4', workflow)
+
     def test_all_production_writers_share_non_canceling_queue(self):
         root = Path(__file__).resolve().parents[1]
         for name in ('process-series-request.yml', 'process-discovered-series.yml', 'update-official-data.yml'):
