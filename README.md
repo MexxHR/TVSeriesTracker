@@ -1,4 +1,4 @@
-# TV Series Tracker V2.7.2.1
+# TV Series Tracker V2.7.3
 
 Android aplikacija za praćenje TV serija. TMDB pruža pretragu, postere i osnovne podatke o seriji. Zaseban Official Data JSON daje verificirane službene statuse, datume i izvore. Room čuva watchlist i oba cachea. TMDB status i datumi nikada ne određuju službeni status u aplikaciji. V1 demo statusi više se ne prikazuju kao stvarni statusi.
 
@@ -101,15 +101,15 @@ APK nastaje u `app/build/outputs/apk/debug/app-debug.apk`. `./gradlew :app:testD
 
 ## GitHub Actions APK
 
-Pushajte cijeli projekt u GitHub repozitorij. `OFFICIAL_DATA_URL` variable potreban je samo ako želite nadjačati zadani URL. `SERIES_REQUEST_API_BASE_URL` je javna build konfiguracija za backend; backend secrets ne idu u Android build. U kartici **Actions** odaberite **Android debug APK** i **Run workflow**. Nakon uspješnog builda preuzmite artifact `TV-Series-Tracker-V2.7.2.1-debug`, raspakirajte ga i instalirajte APK na telefon. Workflow radi i na push u `main` te na pull request.
+Pushajte cijeli projekt u GitHub repozitorij. `OFFICIAL_DATA_URL` variable potreban je samo ako želite nadjačati zadani URL. `SERIES_REQUEST_API_BASE_URL` je javna build konfiguracija za backend; backend secrets ne idu u Android build. U kartici **Actions** odaberite **Android debug APK** i **Run workflow**. Nakon uspješnog builda preuzmite artifact `TV-Series-Tracker-V2.7.3-debug`, raspakirajte ga i instalirajte APK na telefon. Workflow radi i na push u `main` te na pull request.
 
-**Nadogradnja bez brisanja podataka:** Android zahtijeva isti potpis za prethodni i V2.7.2.1 APK. GitHub Actions na novom runneru inače generira novi debug ključ; za Actions APK koji mora ažurirati postojeću instalaciju dodajte repository secret `ANDROID_DEBUG_KEYSTORE_BASE64` sa Base64 sadržajem **istog** `debug.keystore` kojim je potpisan instalirani APK. Workflow ga koristi samo ako je secret postavljen.
+**Nadogradnja bez brisanja podataka:** Android zahtijeva isti potpis za prethodni i V2.7.3 APK. GitHub Actions na novom runneru inače generira novi debug ključ; za Actions APK koji mora ažurirati postojeću instalaciju dodajte repository secret `ANDROID_DEBUG_KEYSTORE_BASE64` sa Base64 sadržajem **istog** `debug.keystore` kojim je potpisan instalirani APK. Workflow ga koristi samo ako je secret postavljen.
 
-**Dopuna postojećeg maina:** V2.7.2.1 ZIP namjerno ne sadrži pet live Official Data datoteka: canonical JSON, produkcijski audit, `sources.json`, monitored registry i monitored audit. GitHub main već ima prihvaćene produkcijske i monitored zapise, uključujući The Audacity `NO_VERIFIED_FACTS` zapis. Lokalna kopija monitora u ovom dopunskom projektu može biti starija; prenesite samo kod i sačuvajte svih pet datoteka na mainu. ZIP nije samostalan novi checkout. Postojeće Actions varijable `OFFICIAL_DATA_PROMOTION_ENABLED` i `OFFICIAL_DATA_LIVE_ENABLED` ostaju nepromijenjene.
+**Dopuna postojećeg maina:** V2.7.3 ZIP namjerno ne sadrži pet live Official Data datoteka: canonical JSON, produkcijski audit, `sources.json`, monitored registry i monitored audit. GitHub main već ima prihvaćene produkcijske i monitored zapise. Lokalna kopija monitora u ovom dopunskom projektu može biti starija; prenesite samo kod i sačuvajte svih pet datoteka na mainu. ZIP nije samostalan novi checkout. Postojeće Actions varijable `OFFICIAL_DATA_PROMOTION_ENABLED` i `OFFICIAL_DATA_LIVE_ENABLED` ostaju nepromijenjene.
 
 ## V2.7.0 Official Provider Coverage Audit
 
-Ručni GitHub workflow **Provider Coverage Audit** pokreće zaseban read-only alat na stvarnom GitHub runneru. Ispituje samo odvojeni audit registry službenih domena, bilježi HTTP pristup, strukturu i prikladnost postojećem parseru te objavljuje JSON kao workflow artifact. Ne mijenja `discovery_providers.json`, `sources.json`, canonical JSON, monitored registry ni audite; ne aktivira novog produkcijskog providera. Lokalni rezultat nije potvrda dostupnosti na GitHub runneru. Za prihvaćanje providera prvo pregledajte GitHub artifact i službene izvore. V2.7.2.1 ZIP i dalje izostavlja svih pet živih podatkovnih datoteka; prenesite ga kao dopunu postojećem mainu.
+Ručni GitHub workflow **Provider Coverage Audit** pokreće zaseban read-only alat na stvarnom GitHub runneru. Ispituje samo odvojeni audit registry službenih domena, bilježi HTTP pristup, strukturu i prikladnost postojećem parseru te objavljuje JSON kao workflow artifact. Ne mijenja `discovery_providers.json`, `sources.json`, canonical JSON, monitored registry ni audite; ne aktivira novog produkcijskog providera. Lokalni rezultat nije potvrda dostupnosti na GitHub runneru. Za prihvaćanje providera prvo pregledajte GitHub artifact i službene izvore. V2.7.3 ZIP i dalje izostavlja svih pet živih podatkovnih datoteka; prenesite ga kao dopunu postojećem mainu.
 
 ## V2.7.1.1 Provider Discovery Qualification
 
@@ -138,6 +138,12 @@ Nakon prihvaćenog AMC live E2E otvorite **GitHub Actions → Validate Disney+ c
 ## Disney+ Discovery Coverage Diagnostics
 
 Ručni workflow **Disney+ Discovery Coverage Diagnostics** uspoređuje postojeći produkcijski Disney+ discovery za Percy Jackson (103540), Your Friendly Neighborhood Spider-Man (138503) i X-Men '97 (138502) s odvojenim, ograničenim dijagnostičkim pregledom službenog Disney+ Press sitemap-a. Pokrenite ga u GitHub Actions i pregledajte artifact `disney-plus-discovery-coverage-diagnostics.json`. Dodatno uočeni URL-ovi služe samo za objašnjenje mogućih rupa u pokrivenosti: ne ulaze u monitored verified facts ni u promociju. Workflow je read-only, uspoređuje hashove pet live datoteka prije i poslije te ne mijenja monitored ili canonical podatke.
+
+## V2.7.3 FX i Hulu kvalifikacija
+
+FX i Hulu ostaju samo u read-only kvalifikaciji; nisu uključeni u produkcijski Android request routing ili automatsku promociju. Kvalifikacija koristi stvarne službene FX/Hulu izvore, strogi parser i zasebnu provjeru činjenica. Parser prepoznaje izričitu, uz naslov i broj sezone vezanu obnovu tipa „serija je preuzeta za drugu sezonu”. Odvojene oznake „FINAL SEASON” i „Season 5” na FX stranici za Mayans M.C. i dalje ne daju automatski verificiranu činjenicu. Dvosmislen dokaz ostaje neprovjeren; lažno negativan ishod sigurniji je od lažno pozitivnog.
+
+Pokrenite **GitHub Actions → FX + Hulu Provider Qualification → Run workflow** na `main` i pregledajte artifact `fx-hulu-provider-qualification` s datotekom `fx-hulu-provider-qualification.json`. Trenutačni FX testni skup nema pozitivnu najavu s opće površine providera: Lowdown koristi korijen pojedine serije, a Mayans M.C. i Snowfall su serijske stranice. Pravilo zahtijeva tri neovisne najave s opće površine, pa prolaz tih slučajeva sam po sebi ne ispunjava prag. Povijesni Hulu slučaj The Handmaid's Tale ima zaseban discovery gap. Samo stvarni GitHub runner može potvrditi dostupnost službenih površina i ishode kvalifikacije. Eventualna produkcijska aktivacija zahtijeva zaseban kasniji korak. Workflow ne piše monitored ni canonical podatke i provjerava SHA-256 pet live datoteka prije i poslije.
 
 ## Struktura
 

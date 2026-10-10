@@ -23,12 +23,12 @@ class DisneyCoverageWorkflowTest(unittest.TestCase):
                           'git add', '--promote-monitored', 'continue-on-error'):
             self.assertNotIn(forbidden, workflow)
 
-    def test_version_remains_v2721(self):
+    def test_version_metadata_v273(self):
         root = Path(__file__).resolve().parents[1]
         gradle = (root / 'app/build.gradle.kts').read_text(encoding='utf-8')
         room = (root / 'app/src/main/java/com/example/tvseriestracker/data/TrackingDatabase.kt').read_text(encoding='utf-8')
-        self.assertIn('versionCode = 27', gradle)
-        self.assertIn('versionName = "2.7.2.1"', gradle)
+        self.assertIn('versionCode = 28', gradle)
+        self.assertIn('versionName = "2.7.3"', gradle)
         self.assertIn('version = 3', room)
 
 

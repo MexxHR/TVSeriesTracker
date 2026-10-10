@@ -475,6 +475,37 @@ def detect(article: dict, entry: dict, today: dt.date, extended_final: bool = Fa
                 if renewed and re.search(r"\b(?:not|never|denies?|rumou?rs?|false)\b.{0,20}$",
                                          s[:renewed.start()], re.I):
                     renewed = None
+            if not renewed:
+                # Official press copy also uses the explicit passive
+                # construction "TITLE has been picked up for a second
+                # season". Keep the configured series as the grammatical
+                # subject so another show's pickup in the same sentence
+                # cannot borrow this entry's identity.
+                objects = "|".join(re.escape(a) for a in sorted(set(aliases), key=len, reverse=True))
+                renewed = re.search(
+                    rf"\b(?:{objects})\s+(?:(?:has|have)\s+been|was|were)\s+picked\s+up\s+for\s+"
+                    rf"(?:a\s+)?(?:season\s+{NUM}|{NUM}\s+season)\b", s, re.I)
+                if renewed:
+                    # Reject only local claim-level hedging or retraction.
+                    # Publisher attribution such as "Hulu announced that" is
+                    # allowed; denial/rumor phrases immediately governing the
+                    # title or immediately following the claim are not.
+                    prefix = s[max(0, renewed.start() - 80):renewed.start()]
+                    suffix = s[renewed.end():renewed.end() + 60]
+                    negated_prefix = re.search(
+                        r"\b(?:(?:it|this)\s+(?:is|was)\s+(?:false|untrue|rumou?red|unconfirmed)\s+that|"
+                        r"(?:rumou?rs?|reports?)\s+(?:that|claiming)|"
+                        r"(?:the\s+)?(?:studio|network|publisher|company|spokesperson|representative)\s+"
+                        r"(?:denied|disputed|refuted)\s+that|"
+                        r"[A-Z][\w&.’'-]*(?:\s+[A-Z][\w&.’'-]*){0,3}\s+"
+                        r"(?:denied|disputed|refuted)\s+that)\s*$", prefix, re.I)
+                    negated_suffix = re.match(
+                        r"\s*(?:[,;]\s*)?(?:is|are|was|were)\s+"
+                        r"(?:false|untrue|not\s+true)\b|"
+                        r"\s*[,;]?\s*according\s+to\s+(?:unconfirmed|unsubstantiated|unverified|"
+                        r"rumou?red)\s+(?:reports?|sources?)\b", suffix, re.I)
+                    if negated_prefix or negated_suffix:
+                        renewed = None
             match = None
             if final:
                 status, rule, match = "FINAL_SEASON", "explicit-final-season", final
