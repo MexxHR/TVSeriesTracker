@@ -131,6 +131,10 @@ Prvi stvarni Android → backend → GitHub monitored zahtjev za The Audacity (T
 
 Prvo pokrenite **Android debug APK**, zatim ručni workflow **Validate The Audacity production parser (read-only)** i pregledajte artifact `audacity-production-parser-preview`. Taj workflow koristi stvarni production discovery i monitored `dry_run`, zasebno rekonstruira činjenice za promocijsku provjeru te provjerava da je pet live datoteka ostalo nepromijenjeno. Tek nakon uspješnog pregleda ponovite obični Android zahtjev za TMDB 258036. Live monitored zapis na GitHub mainu treba prirodno prijeći iz `NO_VERIFIED_FACTS` u `VERIFIED_FACTS`; nemojte ga ručno uređivati.
 
+## Disney+ kandidat: read-only provjera
+
+Nakon prihvaćenog AMC live E2E, ručni workflow **Validate Disney+ candidate (read-only)** dijagnostički obrađuje TMDB 138503 kroz postojeći production TMDB routing, Disney+ discovery i monitored dry-run. Ne očekuje unaprijed status ni sezonu. JSON artifact `disney-plus-candidate-preview.json` sadrži metapodatke, routing, kandidate i izvorne provjere, parser/validation rezultat, predloženi monitored zapis i neovisnu rekonstrukciju ako postoje verificirane činjenice. Workflow provjerava hashove svih pet live Official Data datoteka prije i poslije. Pregledajte artifact sa stvarnog GitHub runnera prije bilo kakvog Android zahtjeva za taj ID.
+
 ## Struktura
 
 - `data/Series.kt` — domenski model i legacy katalog naslova/postera; demo statusi uklanjaju se prije UI-a
