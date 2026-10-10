@@ -1,4 +1,4 @@
-# TV Series Tracker V2.7.0
+# TV Series Tracker V2.7.1
 
 Android aplikacija za praćenje TV serija. TMDB pruža pretragu, postere i osnovne podatke o seriji. Zaseban Official Data JSON daje verificirane službene statuse, datume i izvore. Room čuva watchlist i oba cachea. TMDB status i datumi nikada ne određuju službeni status u aplikaciji. V1 demo statusi više se ne prikazuju kao stvarni statusi.
 
@@ -101,15 +101,19 @@ APK nastaje u `app/build/outputs/apk/debug/app-debug.apk`. `./gradlew :app:testD
 
 ## GitHub Actions APK
 
-Pushajte cijeli projekt u GitHub repozitorij. `OFFICIAL_DATA_URL` variable potreban je samo ako želite nadjačati zadani URL. `SERIES_REQUEST_API_BASE_URL` je javna build konfiguracija za backend; backend secrets ne idu u Android build. U kartici **Actions** odaberite **Android debug APK** i **Run workflow**. Nakon uspješnog builda preuzmite artifact `TV-Series-Tracker-V2.7.0-debug`, raspakirajte ga i instalirajte APK na telefon. Workflow radi i na push u `main` te na pull request.
+Pushajte cijeli projekt u GitHub repozitorij. `OFFICIAL_DATA_URL` variable potreban je samo ako želite nadjačati zadani URL. `SERIES_REQUEST_API_BASE_URL` je javna build konfiguracija za backend; backend secrets ne idu u Android build. U kartici **Actions** odaberite **Android debug APK** i **Run workflow**. Nakon uspješnog builda preuzmite artifact `TV-Series-Tracker-V2.7.1-debug`, raspakirajte ga i instalirajte APK na telefon. Workflow radi i na push u `main` te na pull request.
 
-**Nadogradnja bez brisanja podataka:** Android zahtijeva isti potpis za prethodni i V2.7.0 APK. GitHub Actions na novom runneru inače generira novi debug ključ; za Actions APK koji mora ažurirati postojeću instalaciju dodajte repository secret `ANDROID_DEBUG_KEYSTORE_BASE64` sa Base64 sadržajem **istog** `debug.keystore` kojim je potpisan instalirani APK. Workflow ga koristi samo ako je secret postavljen.
+**Nadogradnja bez brisanja podataka:** Android zahtijeva isti potpis za prethodni i V2.7.1 APK. GitHub Actions na novom runneru inače generira novi debug ključ; za Actions APK koji mora ažurirati postojeću instalaciju dodajte repository secret `ANDROID_DEBUG_KEYSTORE_BASE64` sa Base64 sadržajem **istog** `debug.keystore` kojim je potpisan instalirani APK. Workflow ga koristi samo ako je secret postavljen.
 
-**Dopuna postojećeg maina:** V2.7.0 ZIP namjerno ne sadrži pet live Official Data datoteka: canonical JSON, produkcijski audit, `sources.json`, monitored registry i monitored audit. GitHub main već ima prihvaćene produkcijske i monitored zapise, uključujući Running Point. Prenesite kod kao dopunu postojećem mainu i sačuvajte svih pet postojećih datoteka. ZIP nije samostalan novi checkout. Ovaj audit ne mijenja postojeće Actions varijable `OFFICIAL_DATA_PROMOTION_ENABLED` ni `OFFICIAL_DATA_LIVE_ENABLED`.
+**Dopuna postojećeg maina:** V2.7.1 ZIP namjerno ne sadrži pet live Official Data datoteka: canonical JSON, produkcijski audit, `sources.json`, monitored registry i monitored audit. GitHub main već ima prihvaćene produkcijske i monitored zapise, uključujući Running Point. Prenesite kod kao dopunu postojećem mainu i sačuvajte svih pet postojećih datoteka. ZIP nije samostalan novi checkout. Ova kvalifikacija ne mijenja postojeće Actions varijable `OFFICIAL_DATA_PROMOTION_ENABLED` ni `OFFICIAL_DATA_LIVE_ENABLED`.
 
 ## V2.7.0 Official Provider Coverage Audit
 
-Ručni GitHub workflow **Provider Coverage Audit** pokreće zaseban read-only alat na stvarnom GitHub runneru. Ispituje samo odvojeni audit registry službenih domena, bilježi HTTP pristup, strukturu i prikladnost postojećem parseru te objavljuje JSON kao workflow artifact. Ne mijenja `discovery_providers.json`, `sources.json`, canonical JSON, monitored registry ni audite; ne aktivira novog produkcijskog providera. Lokalni rezultat nije potvrda dostupnosti na GitHub runneru. Za prihvaćanje V2.7.1 providera prvo pregledajte GitHub artifact i službene izvore. V2.7.0 ZIP i dalje izostavlja svih pet živih podatkovnih datoteka; prenesite ga kao dopunu postojećem mainu.
+Ručni GitHub workflow **Provider Coverage Audit** pokreće zaseban read-only alat na stvarnom GitHub runneru. Ispituje samo odvojeni audit registry službenih domena, bilježi HTTP pristup, strukturu i prikladnost postojećem parseru te objavljuje JSON kao workflow artifact. Ne mijenja `discovery_providers.json`, `sources.json`, canonical JSON, monitored registry ni audite; ne aktivira novog produkcijskog providera. Lokalni rezultat nije potvrda dostupnosti na GitHub runneru. Za prihvaćanje providera prvo pregledajte GitHub artifact i službene izvore. V2.7.1 ZIP i dalje izostavlja svih pet živih podatkovnih datoteka; prenesite ga kao dopunu postojećem mainu.
+
+## V2.7.1 Provider Discovery Qualification
+
+Ručni workflow **Provider Discovery Qualification** provjerava FX, Hulu, Disney+ i AMC kroz više službenih slučajeva. Poznati URL članka služi za usporedbu, ali se discovery pokreće samo sa službene početne površine. Rezultat razlikuje dohvat poznatog članka, pronalazak poveznice, ishod postojećeg strogog parsera i sigurnost negativnih/dvosmislenih primjera. Lokalni prolaz može biti samo kandidat; status s GitHub runnera treba pregledati u artifactu `provider-discovery-qualification` prije odluke o produkcijskom adapteru. Upute i ograničenja su u `official-data/automation/PROVIDER_QUALIFICATION.md`.
 
 ## Struktura
 

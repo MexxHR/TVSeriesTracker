@@ -4,74 +4,62 @@
     {
       "provider": "DISNEY_PLUS",
       "officialDomains": ["press.disneyplus.com"],
-      "tests": [{
-        "series": "Percy Jackson and the Olympians",
-        "aliases": ["Percy Jackson and the Olympians"],
-        "discoveryUrl": "https://press.disneyplus.com/news",
-        "articleUrl": "https://press.disneyplus.com/news/disney-plus-percy-jackson-and-the-olympians-season-two-announcement"
-      }],
-      "notes": ["Official ownership and runner accessibility must be reconfirmed by the manual audit."]
+      "tests": [
+        {"caseId":"disney-percy-s2","kind":"positive","series":"Percy Jackson and the Olympians","aliases":["Percy Jackson and the Olympians"],"discoveryUrl":"https://press.disneyplus.com/news","discoveryRoots":["https://press.disneyplus.com/news"],"articleUrl":"https://press.disneyplus.com/news/disney-plus-percy-jackson-and-the-olympians-season-two-announcement","expected":{"titleMarkers":["Percy Jackson"],"factTypes":["LIFECYCLE"],"status":"RENEWED","season":2}},
+        {"caseId":"disney-wizards-s2","kind":"positive","series":"Wizards Beyond Waverly Place","aliases":["Wizards Beyond Waverly Place"],"discoveryUrl":"https://press.disneyplus.com/news","discoveryRoots":["https://press.disneyplus.com/news"],"articleUrl":"https://press.disneyplus.com/news/disney-branded-television-renews-wizards-beyond-waverly-place-for-season-two","expected":{"titleMarkers":["Wizards Beyond Waverly Place"],"factTypes":["LIFECYCLE"],"status":"RENEWED","season":2}},
+        {"caseId":"disney-proud-final-s4","kind":"positive","series":"The Proud Family: Louder and Prouder","aliases":["The Proud Family: Louder and Prouder","The Proud Family"],"discoveryUrl":"https://press.disneyplus.com/news","discoveryRoots":["https://press.disneyplus.com/news"],"articleUrl":"https://press.disneyplus.com/news/disney-plus-the-proud-family-louder-and-prouder","expected":{"titleMarkers":["Proud Family"],"factTypes":["LIFECYCLE"],"status":"FINAL_SEASON","season":4}}
+      ],
+      "notes": ["Independent official news cases; known article URLs are ground truth only."]
     },
     {
       "provider": "HULU",
       "officialDomains": ["press.hulu.com"],
-      "tests": [{
-        "series": "Deli Boys",
-        "aliases": ["Deli Boys"],
-        "discoveryUrl": "https://press.hulu.com/shows/deli-boys/press-releases/",
-        "articleUrl": "https://press.hulu.com/pressrelease/hulus-critically-acclaimed-comedy-series-deli-boys-renewed-for-a-second-season/"
-      }],
-      "notes": ["The first-party Deli Boys press-release index and its linked announcement are probed separately."]
+      "tests": [
+        {"caseId":"hulu-deli-boys-s2","kind":"ambiguity","rootScope":"series","series":"Deli Boys","aliases":["Deli Boys"],"discoveryUrl":"https://press.hulu.com/shows/deli-boys/press-releases/","discoveryRoots":["https://press.hulu.com/shows/deli-boys/press-releases/"],"articleUrl":"https://press.hulu.com/pressrelease/hulus-critically-acclaimed-comedy-series-deli-boys-renewed-for-a-second-season/","expected":{"titleMarkers":["Deli Boys"],"factTypes":["LIFECYCLE"],"status":"RENEWED","season":2,"forbiddenStatuses":["FINAL_SEASON"]}},
+        {"caseId":"hulu-difficult-people-s2","kind":"positive","series":"Difficult People","aliases":["Difficult People"],"discoveryUrl":"https://press.hulu.com/news/","discoveryRoots":["https://press.hulu.com/news/"],"articleUrl":"https://press.hulu.com/pressrelease/hulu-renews-difficult-people-for-season-two/","expected":{"titleMarkers":["Difficult People"],"factTypes":["LIFECYCLE"],"status":"RENEWED","season":2}},
+        {"caseId":"hulu-handmaids-tale-s3","kind":"positive","series":"The Handmaid's Tale","aliases":["The Handmaid's Tale","The Handmaid’s Tale"],"discoveryUrl":"https://press.hulu.com/news/","discoveryRoots":["https://press.hulu.com/news/"],"articleUrl":"https://press.hulu.com/pressrelease/hulu-surges-past-20-million-u-s-subscribers-and-announces-plans-to-offer-advertising-in-live-tv-this-quarter/","expected":{"factTypes":["LIFECYCLE"],"status":"RENEWED","season":3}},
+        {"caseId":"hulu-shrill-final-s3","kind":"positive","series":"Shrill","aliases":["Shrill"],"discoveryUrl":"https://press.hulu.com/news/","discoveryRoots":["https://press.hulu.com/news/"],"articleUrl":"https://press.hulu.com/pressrelease/hulu-presents-upcoming-original-series-the-handmaids-tale-season-four-the-final-season-of-shrill-and-marvels-m-o-d-o-k-at-2021-television-critics-association-winter-press-tour/","expected":{"factTypes":["LIFECYCLE"],"status":"FINAL_SEASON","season":3}},
+        {"caseId":"hulu-reasonable-doubt-cast","kind":"negative","rootScope":"series","series":"Reasonable Doubt","aliases":["Reasonable Doubt"],"discoveryUrl":"https://press.hulu.com/shows/reasonable-doubt/press-releases/","discoveryRoots":["https://press.hulu.com/shows/reasonable-doubt/press-releases/"],"articleUrl":"https://press.hulu.com/pressrelease/la-la-anthony-rutina-wesley-taylor-polidore-williams-devaughn-nixon-and-alexxis-lemire-join-season-4-of-hulus-hit-legal-drama-reasonable-doubt-as-recurring-guest-stars/","expected":{"titleMarkers":["Reasonable Doubt"],"factTypes":[]}}
+      ],
+      "notes": ["Deli Boys actor biography mentions another show's final season; title-bound facts must exclude that status."]
     },
     {
       "provider": "FX",
       "officialDomains": ["fxnetworks.com"],
-      "tests": [{
-        "series": "The Lowdown",
-        "aliases": ["The Lowdown"],
-        "discoveryUrl": "https://www.fxnetworks.com/shows/the-lowdown/headlines",
-        "articleUrl": "https://www.fxnetworks.com/shows/the-lowdown/season-two-renewal"
-      }],
-      "notes": ["FX show headline index and linked first-party article are probed separately."]
+      "tests": [
+        {"caseId":"fx-lowdown-s2","kind":"positive","rootScope":"series","series":"The Lowdown","aliases":["The Lowdown"],"discoveryUrl":"https://www.fxnetworks.com/shows/the-lowdown/headlines","discoveryRoots":["https://www.fxnetworks.com/shows/the-lowdown/headlines"],"articleUrl":"https://www.fxnetworks.com/shows/the-lowdown/season-two-renewal","expected":{"titleMarkers":["Lowdown"],"factTypes":["LIFECYCLE"],"status":"RENEWED","season":2}},
+        {"caseId":"fx-mayans-final-s5","kind":"positive","sourceStructure":"series_page","series":"Mayans M.C.","aliases":["Mayans M.C.","Mayans MC"],"discoveryUrl":"https://www.fxnetworks.com/shows/all","discoveryRoots":["https://www.fxnetworks.com/shows/all"],"articleUrl":"https://www.fxnetworks.com/shows/mayans-mc","expected":{"titleMarkers":["Mayans"],"factTypes":["LIFECYCLE"],"status":"FINAL_SEASON","season":5}},
+        {"caseId":"fx-snowfall-final-s6","kind":"positive","sourceStructure":"series_page","series":"Snowfall","aliases":["Snowfall"],"discoveryUrl":"https://www.fxnetworks.com/shows/all","discoveryRoots":["https://www.fxnetworks.com/shows/all"],"articleUrl":"https://www.fxnetworks.com/shows/snowfall","expected":{"titleMarkers":["Snowfall"],"factTypes":["LIFECYCLE"],"status":"FINAL_SEASON","season":6}}
+      ],
+      "notes": ["Lowdown is a press article; Mayans M.C. and Snowfall are series pages, so generic press coverage remains unproven."]
     },
     {
       "provider": "PEACOCK_NBC",
       "officialDomains": ["nbcuniversal.com"],
-      "tests": [{
-        "series": "Love Island USA",
-        "aliases": ["Love Island USA"],
-        "discoveryUrl": "https://www.nbcuniversal.com/newsroom",
-        "articleUrl": "https://www.nbcuniversal.com/article/peacock-renews-love-island-usa-season-eight-and-announces-premiere-dates-upcoming-slate"
-      }],
-      "notes": ["Probe is a corporate editorial index; parser season binding must be evaluated on the fetched article."]
+      "tests": [{"series":"Love Island USA","aliases":["Love Island USA"],"discoveryUrl":"https://www.nbcuniversal.com/newsroom","articleUrl":"https://www.nbcuniversal.com/article/peacock-renews-love-island-usa-season-eight-and-announces-premiere-dates-upcoming-slate"}],
+      "notes": ["Outside V2.7.1 qualification scope; retained for V2.7 audit."]
     },
     {
       "provider": "AMC",
       "officialDomains": ["amcglobalmedia.com"],
-      "tests": [{
-        "series": "Dark Winds",
-        "aliases": ["Dark Winds"],
-        "discoveryUrl": "https://www.amcglobalmedia.com/press-/",
-        "articleUrl": "https://www.amcglobalmedia.com/2023/09/19/dark-winds-renewed-for-season-three-on-amc-and-amc/"
-      }],
-      "notes": ["Corporate first-party announcement and press index are probed independently."]
+      "tests": [
+        {"caseId":"amc-dark-winds-s5","kind":"positive","series":"Dark Winds","aliases":["Dark Winds"],"discoveryUrl":"https://www.amcglobalmedia.com/press-/","discoveryRoots":["https://www.amcglobalmedia.com/press-/"],"articleUrl":"https://www.amcglobalmedia.com/2026/02/05/amcs-critically-acclaimed-drama-dark-winds-renewed-for-a-fifth-season-ahead-of-the-season-4-premiere/","expected":{"titleMarkers":["Dark Winds"],"factTypes":["LIFECYCLE"],"status":"RENEWED","season":5}},
+        {"caseId":"amc-daryl-final-s4","kind":"positive","series":"The Walking Dead: Daryl Dixon","aliases":["The Walking Dead: Daryl Dixon","Daryl Dixon"],"discoveryUrl":"https://www.amcglobalmedia.com/press-/","discoveryRoots":["https://www.amcglobalmedia.com/press-/"],"articleUrl":"https://www.amcglobalmedia.com/2025/07/28/the-walking-dead-daryl-dixon-renewed-for-a-fourth-and-final-season/","expected":{"titleMarkers":["Daryl Dixon"],"factTypes":["LIFECYCLE"],"status":"FINAL_SEASON","season":4}},
+        {"caseId":"amc-interview-s4","kind":"positive","series":"Anne Rice's Interview with the Vampire","aliases":["Interview with the Vampire","Anne Rice's Interview with the Vampire"],"discoveryUrl":"https://www.amcglobalmedia.com/press-/","discoveryRoots":["https://www.amcglobalmedia.com/press-/"],"articleUrl":"https://www.amcglobalmedia.com/2026/07/24/amc-global-media-renews-anne-rices-interview-with-the-vampire-for-a-fourth-season-titled-anne-rices-queen-of-the-damned/","expected":{"titleMarkers":["Interview with the Vampire"],"factTypes":["LIFECYCLE"],"status":"RENEWED","season":4}}
+      ],
+      "notes": ["Official /press-/page/N/ archive supports bounded pagination; the exact page for each case must be independently observed."]
     },
     {
       "provider": "STARZ",
-      "officialDomains": ["starz.com", "investors.starz.com"],
+      "officialDomains": ["starz.com","investors.starz.com"],
       "tests": [],
-      "notes": ["No confirmed public first-party series-announcement test case is configured; further research is required."]
+      "notes": ["Outside V2.7.1 qualification scope."]
     },
     {
       "provider": "HBO_MAX_WBD",
       "officialDomains": ["press.wbd.com"],
-      "tests": [{
-        "series": "Curb Your Enthusiasm",
-        "aliases": ["Curb Your Enthusiasm"],
-        "discoveryUrl": "https://press.wbd.com/us/property/curb-your-enthusiasm/media-releases",
-        "articleUrl": "https://press.wbd.com/us/media-release/hbo-0/curb-your-enthusiasm/hbo-renews-curb-your-enthusiasm-twelfth-season"
-      }],
-      "notes": ["WBD pressroom access blocks have been observed before; no access-control bypass is attempted."]
+      "tests": [{"series":"Curb Your Enthusiasm","aliases":["Curb Your Enthusiasm"],"discoveryUrl":"https://press.wbd.com/us/property/curb-your-enthusiasm/media-releases","articleUrl":"https://press.wbd.com/us/media-release/hbo-0/curb-your-enthusiasm/hbo-renews-curb-your-enthusiasm-twelfth-season"}],
+      "notes": ["Outside V2.7.1 qualification scope."]
     }
   ]
 }
