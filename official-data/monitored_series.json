@@ -227,6 +227,25 @@
       "lastChecked": "2026-10-09"
     },
     {
+      "tmdbId": 250504,
+      "title": "The Beast in Me",
+      "provider": "NETFLIX",
+      "discoveryState": "NO_VERIFIED_FACTS",
+      "candidateUrls": [
+        "https://www.netflix.com/tudum/articles/the-beast-in-me-season-2-release-date-cast-news",
+        "https://www.netflix.com/tudum/the-beast-in-me"
+      ],
+      "verifiedFacts": {},
+      "sourceEvidence": [],
+      "parserResult": "no_facts",
+      "validationResult": "not_applicable",
+      "eligibleSourceUrls": [
+        "https://www.netflix.com/tudum/articles/the-beast-in-me-season-2-release-date-cast-news",
+        "https://www.netflix.com/tudum/the-beast-in-me"
+      ],
+      "lastChecked": "2026-10-11"
+    },
+    {
       "tmdbId": 258036,
       "title": "The Audacity",
       "provider": "AMC",
