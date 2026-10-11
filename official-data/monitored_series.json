@@ -67,6 +67,73 @@
       "lastChecked": "2026-10-09"
     },
     {
+      "tmdbId": 226346,
+      "title": "Deli Boys",
+      "provider": "HULU",
+      "discoveryState": "VERIFIED_FACTS",
+      "candidateUrls": [
+        "https://press.hulu.com/pressrelease/hulus-critically-acclaimed-comedy-series-deli-boys-renewed-for-a-second-season/",
+        "https://press.hulu.com/pressrelease/hulus-critically-acclaimed-comedy-series-deli-boys-returns-for-a-second-season-on-may-28/"
+      ],
+      "verifiedFacts": {
+        "status": "RENEWED",
+        "nextSeasonNumber": 2,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Hulu Press",
+        "sourceUrl": "https://press.hulu.com/pressrelease/hulus-critically-acclaimed-comedy-series-deli-boys-renewed-for-a-second-season/",
+        "announcementDate": null
+      },
+      "sourceEvidence": [
+        {
+          "status": "RENEWED",
+          "nextSeasonNumber": 2,
+          "releaseDate": null,
+          "releaseYear": null,
+          "sourceName": "Hulu Press",
+          "sourceUrl": "https://press.hulu.com/pressrelease/hulus-critically-acclaimed-comedy-series-deli-boys-renewed-for-a-second-season/",
+          "announcementDate": null,
+          "rule": "explicit-renewal",
+          "factType": "LIFECYCLE",
+          "evidenceText": "Onyx Collective and 20th Television announced today that the critically acclaimed Hulu Original comedy series \"Deli Boys\" has been renewed for a second season",
+          "publicationDateSource": "none"
+        },
+        {
+          "status": "RENEWED",
+          "nextSeasonNumber": 2,
+          "releaseDate": null,
+          "releaseYear": null,
+          "sourceName": "Hulu Press",
+          "sourceUrl": "https://press.hulu.com/pressrelease/hulus-critically-acclaimed-comedy-series-deli-boys-renewed-for-a-second-season/",
+          "announcementDate": null,
+          "rule": "explicit-renewal",
+          "factType": "LIFECYCLE",
+          "evidenceText": "HULU'S CRITICALLY ACCLAIMED COMEDY SERIES 'DELI BOYS' RENEWED FOR A SECOND SEASON",
+          "publicationDateSource": "none"
+        },
+        {
+          "status": "RENEWED",
+          "nextSeasonNumber": 2,
+          "releaseDate": null,
+          "releaseYear": null,
+          "sourceName": "Hulu Press",
+          "sourceUrl": "https://press.hulu.com/pressrelease/hulus-critically-acclaimed-comedy-series-deli-boys-renewed-for-a-second-season/",
+          "announcementDate": null,
+          "rule": "explicit-renewal",
+          "factType": "LIFECYCLE",
+          "evidenceText": "HULU'S CRITICALLY ACCLAIMED COMEDY SERIES 'DELI BOYS' RENEWED FOR A SECOND SEASON",
+          "publicationDateSource": "none"
+        }
+      ],
+      "parserResult": "facts",
+      "validationResult": "passed",
+      "eligibleSourceUrls": [
+        "https://press.hulu.com/pressrelease/hulus-critically-acclaimed-comedy-series-deli-boys-renewed-for-a-second-season/",
+        "https://press.hulu.com/pressrelease/hulus-critically-acclaimed-comedy-series-deli-boys-returns-for-a-second-season-on-may-28/"
+      ],
+      "lastChecked": "2026-10-11"
+    },
+    {
       "tmdbId": 244623,
       "title": "Running Point",
       "provider": "NETFLIX",
