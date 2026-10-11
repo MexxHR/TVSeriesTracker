@@ -264,6 +264,8 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
         entry = {"tmdbId": tmdb_id, "title": meta["title"], "provider": provider,
                  "aliases": discovery.metadata_names(meta), "allowedDomains": domains}
         try:
+            if provider == "HULU" and discovery.route_provider(meta, discovery.provider_specs())[0] != "HULU":
+                raise update.AutomationError("Hulu requires unambiguous TMDB network routing")
             for candidate in eligible:
                 url = candidate["candidateUrl"]
                 candidate_allowed = update.allowed(url, domains)
@@ -278,12 +280,15 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
                 if not final_allowed:
                     raise update.AutomationError("Eligible candidate redirect outside allowlist")
                 eligible_source_urls.update((url, final))
-                if provider in ("NETFLIX", "APPLE", "AMC", "DISNEY_PLUS"):
+                if provider in ("NETFLIX", "APPLE", "AMC", "DISNEY_PLUS", "HULU"):
                     # The page may have changed since discovery. Recheck the
                     # visible heading, including the title boundary, before
                     # treating any sentence as evidence for this series.
                     page = update.parse_page(raw)
-                    if provider in ("AMC", "DISNEY_PLUS"):
+                    if provider == "HULU":
+                        import hulu_discovery
+                        identity_matches = hulu_discovery.article_identity(raw, entry["aliases"])
+                    elif provider in ("AMC", "DISNEY_PLUS"):
                         identity_matches = official_article_heading_identity(page, entry["aliases"])
                     else:
                         heading = discovery.normalize(page.heading.strip() or page.title.strip())

@@ -259,8 +259,12 @@ class DisneyPlusAdapter(EditorialArticleAdapter):
     name, source_name = "DISNEY_PLUS", "Disney+ Press"
 
 
-ADAPTERS = {a.name: a for a in (ParamountAdapter(), NetflixAdapter(), AppleAdapter(), WbdAdapter(), AmazonAdapter(), AmcAdapter(), DisneyPlusAdapter())}
-PROVIDER_DOMAINS = {"PARAMOUNT": "paramountpressexpress.com", "NETFLIX": "netflix.com", "APPLE": "apple.com", "WBD": "press.wbd.com", "AMAZON": "aboutamazon.com", "AMC": "amcglobalmedia.com", "DISNEY_PLUS": "press.disneyplus.com"}
+class HuluAdapter(EditorialArticleAdapter):
+    name, source_name = "HULU", "Hulu Press"
+
+
+ADAPTERS = {a.name: a for a in (ParamountAdapter(), NetflixAdapter(), AppleAdapter(), WbdAdapter(), AmazonAdapter(), AmcAdapter(), DisneyPlusAdapter(), HuluAdapter())}
+PROVIDER_DOMAINS = {"PARAMOUNT": "paramountpressexpress.com", "NETFLIX": "netflix.com", "APPLE": "apple.com", "WBD": "press.wbd.com", "AMAZON": "aboutamazon.com", "AMC": "amcglobalmedia.com", "DISNEY_PLUS": "press.disneyplus.com", "HULU": "press.hulu.com"}
 EXTRA_DOMAINS = {225891: ["paramountplus.com"]}
 
 

@@ -55,18 +55,18 @@ def metadata_names(metadata: dict) -> list[str]:
 def route_provider(metadata: dict, specs: dict) -> tuple[str | None, list[str], str | None]:
     signals: dict[str, list[str]] = {}
     for provider, spec in specs.items():
-        strict_network = provider in ("AMC", "DISNEY_PLUS")
+        strict_network = provider in ("AMC", "DISNEY_PLUS", "HULU")
         # Preserve '+': Disney is not Disney+, and AMC+ is not AMC.
         normalize_route = (lambda value: " ".join(unicodedata.normalize("NFKC", value).casefold().split())) if strict_network else normalize
         names = {normalize_route(n) for n in spec["routingNames"]}
-        fields = ("networks",) if provider in ("AMC", "DISNEY_PLUS") else ("networks", "productionCompanies")
+        fields = ("networks",) if strict_network else ("networks", "productionCompanies")
         for field in fields:
             for item in metadata.get(field) or []:
                 label = item.get("name", "") if isinstance(item, dict) else item
                 if isinstance(label, str) and normalize_route(label) in names:
                     signals.setdefault(provider, []).append(f"{field}:{label}")
         homepage = metadata.get("homepage") or ""
-        if provider not in ("AMC", "DISNEY_PLUS") and isinstance(homepage, str) and update.allowed(homepage, spec["officialDomains"]):
+        if not strict_network and isinstance(homepage, str) and update.allowed(homepage, spec["officialDomains"]):
             signals.setdefault(provider, []).append("official_homepage")
     if len(signals) != 1:
         return None, [], "ambiguous_provider" if signals else "unknown_provider"
@@ -319,6 +319,9 @@ def discover(metadata: dict, registry: dict, fetcher=update.fetch, specs: dict |
         return report
     report["provider"] = provider
     spec = specs[provider]
+    if provider == "HULU":
+        import hulu_discovery
+        return hulu_discovery.discover(metadata, spec, report, fetcher)
     domains = spec["candidateDomains"]
     slugs = list(dict.fromkeys([slug(name) for name in names] + [slug(name).removeprefix("the-") for name in names if slug(name).startswith("the-")]))
     seed_urls = list(dict.fromkeys(template.format(slug=part) for template in spec["seeds"] for part in slugs))[:MAX_SEEDS]

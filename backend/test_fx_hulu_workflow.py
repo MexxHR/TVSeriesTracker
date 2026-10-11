@@ -39,7 +39,9 @@ class FxHuluQualificationWorkflowTest(unittest.TestCase):
         helper = (ROOT / "official-data/automation/fx_hulu_qualification.py").read_text(encoding="utf-8")
         production_registry = (ROOT / "official-data/discovery_providers.json").read_text(encoding="utf-8")
         self.assertNotIn('"FX"', production_registry)
-        self.assertNotIn('"HULU"', production_registry)
+        # V2.7.4 activates Hulu separately; qualification still cannot write
+        # production data or make an activation decision. FX stays excluded.
+        self.assertIn('"HULU"', production_registry)
         self.assertIn('"fxReadyForProductionActivation": False', helper)
         self.assertIn('"huluReadyForProductionActivation": False', helper)
         self.assertIn("promotion._validate_evidence", helper)

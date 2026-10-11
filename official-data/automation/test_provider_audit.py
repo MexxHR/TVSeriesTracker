@@ -226,9 +226,9 @@ class ProviderAuditTests(unittest.TestCase):
         self.assertIn("DISNEY_PLUS", discovery_registry)
         self.assertIn("press.disneyplus.com", production_domains)
         self.assertNotIn("FX", discovery_registry)
-        self.assertNotIn("HULU", discovery_registry)
+        self.assertIn("HULU", discovery_registry)
         self.assertNotIn("fxnetworks.com", production_domains)
-        self.assertNotIn("press.hulu.com", production_domains)
+        self.assertIn("press.hulu.com", production_domains)
 
 
 if __name__ == "__main__":

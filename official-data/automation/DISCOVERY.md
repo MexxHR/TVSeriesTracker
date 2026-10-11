@@ -42,3 +42,11 @@ These are read-only source-discovery results, **not** verified lifecycle facts. 
 The provider-owned pages are [Netflix Tudum ONE PIECE](https://www.netflix.com/tudum/one-piece), [Apple Severance news](https://www.apple.com/tv-pr/originals/severance/news/), [Paramount 1923 releases](https://www.paramountpressexpress.com/paramount-plus/shows/1923/releases/), [Amazon entertainment news](https://www.aboutamazon.com/entertainment-news), and [WBD The Last of Us releases](https://press.wbd.com/us/property/last-us/media-releases). They are discovery locations; no status from them is written by this feature.
 
 Known limits: provider HTML and URL patterns can change; region restrictions can block Paramount/WBD; common or identical show titles can remain ambiguous; index truncation can miss older Amazon articles; and discovery does not establish which season a story concerns. A `SUPPORTED` candidate still needs stronger show identity and factual-evidence review before any future automatic publishing. False negatives are preferred.
+
+## V2.7.4 Hulu production discovery
+
+HULU is an additive network-only route (`Hulu`, case/Unicode/whitespace normalization only); no company, distributor, owner or homepage inference. Existing provider rules are unchanged; FX has no production registry entry. `hulu_discovery.py` supplies candidates to the existing `discovery.discover` API. It is not a separate factual or publication pipeline.
+
+Only allowlisted HTTPS `press.hulu.com` links are fetched, with existing bounded HTTP safety. At most 20 discovery fetches, five root traversal fetches, two validated GET search queries and four candidates are allowed. It reuses qualification link ranking and editorial extraction. For company-level articles, identity can be found in a fetched editorial block; navigation, related stories and search snippets never establish identity. Monitored refetch repeats identity checks before strict factual parsing.
+
+Qualification needs a known comparison article and expected status/season. Production has neither, so its contextual query is the title plus `season`; generic first-party press-release links from that search are fetched and identity-checked. No expected facts, per-title exceptions or inferred seasons enter production. Discovery strength remains only eligibility, never a verified fact.

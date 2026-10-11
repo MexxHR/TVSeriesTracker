@@ -234,3 +234,7 @@ and evidence before submitting one Android add request. Confirm monitored
 canonical single-ID diff, matching audit, and successful app refresh. Repeating
 the request after backend cooldown should yield no production rewrite or audit
 churn. Do not treat transport `queued` or `already_queued` as factual status.
+
+## V2.7.4 Hulu integration
+
+Hulu joins the existing TMDB-network discovery -> monitored -> independent promotion path. No Android/backend request contract, Room schema, monitored schema or publication engine changes. Backend remains provider-neutral. Existing main-only production workflow, exact automatic-promotion gate, shared writer concurrency, per-ID boundary, deterministic merge and audit guards remain unchanged. Activation implementation/test execution does not submit a real request or mutate live staging/canonical data.

@@ -47,6 +47,13 @@
     "seeds": ["https://www.amcglobalmedia.com/"],
     "mechanism": "official AMC search form"
   },
+  "HULU": {
+    "routingNames": ["Hulu"],
+    "officialDomains": ["press.hulu.com"],
+    "candidateDomains": ["press.hulu.com"],
+    "seeds": ["https://press.hulu.com/shows/{slug}/press-releases/", "https://press.hulu.com/news/"],
+    "mechanism": "official Hulu press links and bounded site search"
+  },
   "DISNEY_PLUS": {
     "routingNames": ["Disney+", "Disney Plus"],
     "officialDomains": ["press.disneyplus.com"],

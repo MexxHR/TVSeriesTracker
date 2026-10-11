@@ -34,7 +34,7 @@ class DiscoveryTests(unittest.TestCase):
 
     def test_central_registry_has_qualified_new_providers_only(self):
         self.assertEqual(set(self.specs), {"PARAMOUNT", "NETFLIX", "APPLE", "AMAZON", "WBD",
-                                           "AMC", "DISNEY_PLUS"})
+                                           "AMC", "DISNEY_PLUS", "HULU"})
 
     def test_provider_registry_rejects_unofficial_seed(self):
         with tempfile.TemporaryDirectory() as tmp:

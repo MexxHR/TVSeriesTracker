@@ -1,4 +1,13 @@
-# TV Series Tracker V2.7.3.2
+# TV Series Tracker V2.7.4
+
+## V2.7.4 Hulu production capability
+
+Hulu is enabled in the shared production discovery/monitored/promotion path after the user-reviewed V2.7.3.2 GitHub qualification (5/5). Routing requires TMDB network `Hulu`; production-company, distributor, ownership and homepage signals cannot route to Hulu. Evidence is restricted to HTTPS `press.hulu.com` press releases linked from official surfaces. FX remains inactive.
+
+Production reuses qualified link ranking and editorial extraction, with bounded traversal and two first-party search queries: the title, then title plus `season`. A qualification-only expected season/status or known article URL is never available in production. Search links only propose candidates; fetched editorial identity, monitored refetch checks, the unchanged strict parser and independent persisted-evidence replay are mandatory. The existing `OFFICIAL_DATA_PROMOTION_ENABLED == true` gate and shared writer safeguards apply; no flag or live data is changed by this release.
+
+Upload `TVSeriesTracker-V2.7.4.zip` as a supplement to existing main, preserving its five live data files. Review `V2.7.4_REPORT.md` and GitHub tests first. The qualification workflow stays read-only. No live Hulu E2E or APK was run for this implementation; a controlled live E2E is a separate next step after review.
+
 
 Android aplikacija za praćenje TV serija. TMDB pruža pretragu, postere i osnovne podatke o seriji. Zaseban Official Data JSON daje verificirane službene statuse, datume i izvore. Room čuva watchlist i oba cachea. TMDB status i datumi nikada ne određuju službeni status u aplikaciji. V1 demo statusi više se ne prikazuju kao stvarni statusi.
 

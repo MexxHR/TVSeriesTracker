@@ -39,7 +39,7 @@ class DiscoveryV272Tests(unittest.TestCase):
             {"tmdbId": 1, "title": "X", "homepage": "https://press.disneyplus.com/news"},
             {"tmdbId": 1, "title": "X", "networks": [{"name": "Disney"}]},
             {"tmdbId": 1, "title": "X", "networks": [{"name": "AMC+"}]},
-            {"tmdbId": 1, "title": "X", "networks": [{"name": "FX"}, {"name": "Hulu"}]},
+            {"tmdbId": 1, "title": "X", "networks": [{"name": "FX"}]},
         ):
             self.assertEqual(d.route_provider(metadata, self.specs)[0], None)
         ambiguous = {"tmdbId": 1, "title": "X", "networks": [{"name": "AMC"}, {"name": "Disney+"}]}
