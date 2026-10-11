@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-10T15:34:12Z",
+  "generatedAt": "2026-10-11T08:49:47Z",
   "series": [
     {
       "tmdbId": 97951,
@@ -121,6 +121,18 @@
       "releaseDate": null,
       "releaseYear": null,
       "lastChecked": "2026-09-28"
+    },
+    {
+      "tmdbId": 226346,
+      "title": "Deli Boys",
+      "nextSeasonNumber": 2,
+      "sourceName": "Hulu Press",
+      "sourceUrl": "https://press.hulu.com/pressrelease/hulus-critically-acclaimed-comedy-series-deli-boys-renewed-for-a-second-season/",
+      "announcementDate": null,
+      "status": "RENEWED",
+      "releaseDate": null,
+      "releaseYear": null,
+      "lastChecked": "2026-10-11"
     },
     {
       "tmdbId": 236235,
