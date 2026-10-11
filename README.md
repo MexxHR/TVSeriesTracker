@@ -1,4 +1,4 @@
-# TV Series Tracker V2.7.3.1
+# TV Series Tracker V2.7.3.2
 
 Android aplikacija za praćenje TV serija. TMDB pruža pretragu, postere i osnovne podatke o seriji. Zaseban Official Data JSON daje verificirane službene statuse, datume i izvore. Room čuva watchlist i oba cachea. TMDB status i datumi nikada ne određuju službeni status u aplikaciji. V1 demo statusi više se ne prikazuju kao stvarni statusi.
 
@@ -169,3 +169,7 @@ V2.4.0 ne mijenja Room shemu (ostaje verzija 3) ni postojeći verified dataset. 
 
 V2.4: širenje registryja i dodatni službeni discovery kanali za nove serije.
 
+
+## V2.7.3.2 quoted parser binding
+
+Strict lifecycle binding normalizes typographic quotation marks and accepts a closing title quote immediately before an explicit claim. It retains local grammatical binding and rejects partial title matches. Discovery, qualification thresholds and FX rules are unchanged. Deli Boys runner headline and typographic Shrill fixture variants have independent seven-field evidence replay coverage. The existing straight-quote Shrill fixture already passed before this fix; direct official-page text retrieval confirmed typographic quotes in both articles, while raw runner HTML segmentation still needs GitHub confirmation because local Python fetches failed. Run **FX + Hulu Provider Qualification** manually on GitHub main and review **fx-hulu-provider-qualification / fx-hulu-provider-qualification.json**. Fixture results are not production readiness. Hulu and FX remain inactive. No APK is built for this parser task.

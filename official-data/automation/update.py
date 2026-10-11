@@ -443,9 +443,10 @@ def detect(article: dict, entry: dict, today: dt.date, extended_final: bool = Fa
     announced = (dt.date.fromisoformat(article["publicationDate"]) if article.get("publicationDate")
                  else None) if strict_binding else announcement_date(body)
     chunks = [heading] + re.split(r"[\n.!?]+", body)
-    # Publisher copy commonly uses typographic apostrophes in an otherwise
-    # exact series title. Normalize only that punctuation for strict binding.
-    apostrophes = str.maketrans({"\u2018": "'", "\u2019": "'"})
+    # Publisher copy commonly uses typographic title quotes and apostrophes.
+    # Normalize only that punctuation for strict binding.
+    apostrophes = str.maketrans({"\u2018": "'", "\u2019": "'",
+                                "\u201c": '"', "\u201d": '"'})
     aliases = [a.translate(apostrophes).casefold() if strict_binding else a.casefold()
                for a in entry["aliases"]]
 
@@ -497,12 +498,15 @@ def detect(article: dict, entry: dict, today: dt.date, extended_final: bool = Fa
             return False
         claim_start, claim_end = claim.span()
         title_matches = [match for alias in aliases for match in
-                         re.finditer(re.escape(alias), sentence, re.I)]
+                         re.finditer(r"(?<!\w)" + re.escape(alias) + r"(?!\w)", sentence, re.I)]
         for title in title_matches:
             if title.start() < claim_end and claim_start < title.end():
                 return True
             if title.end() <= claim_start:
                 between = sentence[title.end():claim_start]
+                # Ignore only an immediately closing title quote, never words
+                # or clause punctuation between the title and its assertion.
+                between = re.sub(r"^['\"](?=\s)", "", between)
                 if len(between) > 120 or re.search(r"[;:]|\b(?:while|whereas|but|although|however)\b", between, re.I):
                     continue
                 other_named_title = re.search(r"\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+\b", between)
