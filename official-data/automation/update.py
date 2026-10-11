@@ -448,6 +448,103 @@ def detect(article: dict, entry: dict, today: dt.date, extended_final: bool = Fa
     apostrophes = str.maketrans({"\u2018": "'", "\u2019": "'"})
     aliases = [a.translate(apostrophes).casefold() if strict_binding else a.casefold()
                for a in entry["aliases"]]
+
+    def evidence_excerpt(sentence: str, claim: re.Match | None,
+                         additional_claim: re.Match | None = None) -> str:
+        """Keep a contiguous, replayable title-and-claim span for strict facts."""
+        if not strict_binding:
+            return sentence[:200]
+        if len(sentence) <= 200:
+            return sentence
+        if claim is None:
+            return sentence[:200]
+        folded = sentence.casefold()
+        occurrences = []
+        for alias in aliases:
+            start = folded.find(alias)
+            while start >= 0:
+                occurrences.append((start, start + len(alias)))
+                start = folded.find(alias, start + 1)
+        if not occurrences:
+            return sentence[:200]
+        # Prefer the nearest title occurrence that can fit beside the parser's
+        # explicit season/status or premiere claim.
+        claim_spans = [claim.span()]
+        if additional_claim is not None:
+            claim_spans.append(additional_claim.span())
+        claim_start = min(span[0] for span in claim_spans)
+        claim_end = max(span[1] for span in claim_spans)
+        def span_distance(item: tuple[int, int]) -> int:
+            if item[1] < claim_start:
+                return claim_start - item[1]
+            if item[0] > claim_end:
+                return item[0] - claim_end
+            return 0
+
+        title_span = min(occurrences, key=span_distance)
+        start = min(title_span[0], claim_start)
+        end = max(title_span[1], claim_end)
+        if end - start <= 200:
+            return sentence[start:end]
+        # A distant title and assertion cannot be safely bound in the persisted
+        # excerpt. Leave the original claim visible so independent replay fails
+        # closed instead of manufacturing title association.
+        return sentence[claim_start:min(claim_end, claim_start + 200)]
+
+    def strict_claim_binds_title(sentence: str, claim: re.Match | None) -> bool:
+        """Require the configured title to be locally linked to this claim."""
+        if claim is None:
+            return False
+        claim_start, claim_end = claim.span()
+        title_matches = [match for alias in aliases for match in
+                         re.finditer(re.escape(alias), sentence, re.I)]
+        for title in title_matches:
+            if title.start() < claim_end and claim_start < title.end():
+                return True
+            if title.end() <= claim_start:
+                between = sentence[title.end():claim_start]
+                if len(between) > 120 or re.search(r"[;:]|\b(?:while|whereas|but|although|however)\b", between, re.I):
+                    continue
+                other_named_title = re.search(r"\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+\b", between)
+                if other_named_title:
+                    continue
+                # Accept direct title-led claims and a short set of explicit
+                # subject constructions. Do not treat a loose keyword anywhere
+                # in the intervening text as a grammatical link.
+                direct_subject = bool(re.fullmatch(r"\s+", between))
+                possessive = bool(re.fullmatch(r"\s*['’]s\s+", between))
+                verb_subject = bool(re.fullmatch(
+                    r"\s+(?:(?:has|have|had|is|are|was|were|will|would|can|could)\s+(?:been\s+)?|"
+                    r"(?:continues?|returns?|returning|enters?|begins?|starts?)\s+(?:(?:into|in|for|with)\s+)?"
+                    r"(?:its|their|the|a|an)\s+)", between, re.I))
+                direct_renewal_heading = bool(re.fullmatch(
+                    r"\s+(?:gets\s+)?renewed\s+for\s+a\s+|\s+gets\s+", between, re.I)
+                    and re.search(r"\brenewed\s+for\s+(?:a\s+)?(?:season\s+\d+|\d+\s+season)\b",
+                                  sentence, re.I)
+                    or re.fullmatch(r"\s+renewed\s+for\s+a\s+", between, re.I)
+                    and re.search(rf"\b(?:{NUM}\s+and\s+final\s+season|final\s+season\s+{NUM})\b",
+                                  sentence[claim_start:claim_end], re.I))
+                direct_renewal_object = bool(re.fullmatch(r"\s+for\s+a\s+", between, re.I)
+                    and re.search(r"\b(?:renewed|greenlit|greenlighted)\s+(?:the\s+)?$",
+                                  sentence[:title.start()], re.I)
+                    and re.search(rf"\b(?:{NUM}\s+and\s+final\s+season|final\s+season\s+{NUM})\b",
+                                  sentence[claim_start:claim_end], re.I))
+                same_title_season_continuation = bool(re.fullmatch(
+                    rf"\s+(?:has|have|was|were)\s+been\s+renewed\s+for\s+"
+                    rf"(?:a\s+)?(?:season\s+{NUM}|{NUM}\s+season)\s*,\s*its\s+", between, re.I))
+                if (direct_subject or possessive or verb_subject or same_title_season_continuation
+                        or direct_renewal_heading or direct_renewal_object):
+                    return True
+            elif claim_end <= title.start():
+                between = sentence[claim_end:title.start()]
+                # Title-after-claim form used by Hulu: “final season of comedy
+                # series Shrill”. Do not cross clause punctuation or another
+                # coordinating claim to find the configured title.
+                if (len(between) <= 70 and not re.search(r"[,;:]|\b(?:and|while|whereas|but|although|however)\b", between, re.I)
+                        and re.fullmatch(r"\s+of\s+(?:[\w&.’'-]+\s+){0,3}['\"]?\s*", between, re.I)):
+                    return True
+        return False
+
     facts = []
     for chunk in chunks:
         s = re.sub(r"\s+", " ", chunk).strip()
@@ -506,6 +603,12 @@ def detect(article: dict, entry: dict, today: dt.date, extended_final: bool = Fa
                         r"rumou?red)\s+(?:reports?|sources?)\b", suffix, re.I)
                     if negated_prefix or negated_suffix:
                         renewed = None
+            if final and not strict_claim_binds_title(s, final):
+                final = None
+            if renewed and not strict_claim_binds_title(s, renewed):
+                renewed = None
+            if canceled and not strict_claim_binds_title(s, canceled):
+                canceled = None
             match = None
             if final:
                 status, rule, match = "FINAL_SEASON", "explicit-final-season", final
@@ -541,22 +644,38 @@ def detect(article: dict, entry: dict, today: dt.date, extended_final: bool = Fa
         common = {"tmdbId": entry["tmdbId"], "title": entry["title"],
                   "sourceName": article["sourceName"], "sourceUrl": article["url"],
                   "announcementDate": announced.isoformat() if announced else None}
+        lifecycle_excerpt = s[:200]
+        date_excerpt = lifecycle_excerpt
         if strict_binding:
-            excerpt = s[:200]
+            lifecycle_excerpt = evidence_excerpt(s, match)
+            date_excerpt = lifecycle_excerpt
+            if date_season and (date or year):
+                # For a date fact, include the title plus the date-bearing
+                # premiere clause. This spans both only when they are close
+                # enough to be safely replayed as one assertion.
+                premiere_claim = re.search(r"\b(?:premier(?:e|es|ed|ing)|return(?:s|ing)|debut(?:s|ed)?|"
+                                           r"arriv(?:es|ed)|stream(?:s|ed|ing))\b"
+                                           r".{0,100}\b(?:\w+\s+\d{1,2}(?:,\s*\d{4})?|\d{1,2}\s+\w+\s+\d{4}|\d{4})\b",
+                                           s, re.I)
+                if premiere_claim:
+                    season_refs = list(re.finditer(SEASON, s, re.I))
+                    season_claim = min(season_refs, key=lambda ref: abs(ref.start() - premiere_claim.start())) if season_refs else match
+                    date_excerpt = evidence_excerpt(s, premiere_claim, season_claim)
             # A long production announcement may put the season/name before a
             # release-year clause. Preserve an exact contiguous excerpt with
             # both ends so independent promotion can reparse the same facts.
             if len(s) > 200 and rule == "explicit-production-start":
                 production_at = re.search(r"\b(?:production|filming|shooting)\b", s, re.I)
                 if production_at and len(s[production_at.start():]) <= 200:
-                    excerpt = s[production_at.start():]
-            common["evidenceText"] = excerpt
+                    lifecycle_excerpt = s[production_at.start():]
         if status:
-            facts.append({**common, "nextSeasonNumber": season, "status": status,
+            lifecycle_fact = {**common, **({"evidenceText": lifecycle_excerpt} if strict_binding else {})}
+            facts.append({**lifecycle_fact, "nextSeasonNumber": season, "status": status,
                           "releaseDate": None, "releaseYear": None, "rule": rule,
                           **({"factType": "LIFECYCLE"} if strict_binding else {})})
         if date_season and (date or year):
-            facts.append({**common, "nextSeasonNumber": date_season,
+            date_fact = {**common, **({"evidenceText": date_excerpt} if strict_binding else {})}
+            facts.append({**date_fact, "nextSeasonNumber": date_season,
                           "status": "RELEASE_DATE_CONFIRMED" if date else "RENEWED",
                           "releaseDate": date, "releaseYear": year,
                           "rule": "explicit-premiere" if date or not strict_binding else "explicit-release-year",

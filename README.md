@@ -1,4 +1,4 @@
-# TV Series Tracker V2.7.3
+# TV Series Tracker V2.7.3.1
 
 Android aplikacija za praćenje TV serija. TMDB pruža pretragu, postere i osnovne podatke o seriji. Zaseban Official Data JSON daje verificirane službene statuse, datume i izvore. Room čuva watchlist i oba cachea. TMDB status i datumi nikada ne određuju službeni status u aplikaciji. V1 demo statusi više se ne prikazuju kao stvarni statusi.
 
@@ -144,6 +144,10 @@ Ručni workflow **Disney+ Discovery Coverage Diagnostics** uspoređuje postojeć
 FX i Hulu ostaju samo u read-only kvalifikaciji; nisu uključeni u produkcijski Android request routing ili automatsku promociju. Kvalifikacija koristi stvarne službene FX/Hulu izvore, strogi parser i zasebnu provjeru činjenica. Parser prepoznaje izričitu, uz naslov i broj sezone vezanu obnovu tipa „serija je preuzeta za drugu sezonu”. Odvojene oznake „FINAL SEASON” i „Season 5” na FX stranici za Mayans M.C. i dalje ne daju automatski verificiranu činjenicu. Dvosmislen dokaz ostaje neprovjeren; lažno negativan ishod sigurniji je od lažno pozitivnog.
 
 Pokrenite **GitHub Actions → FX + Hulu Provider Qualification → Run workflow** na `main` i pregledajte artifact `fx-hulu-provider-qualification` s datotekom `fx-hulu-provider-qualification.json`. Trenutačni FX testni skup nema pozitivnu najavu s opće površine providera: Lowdown koristi korijen pojedine serije, a Mayans M.C. i Snowfall su serijske stranice. Pravilo zahtijeva tri neovisne najave s opće površine, pa prolaz tih slučajeva sam po sebi ne ispunjava prag. Povijesni Hulu slučaj The Handmaid's Tale ima zaseban discovery gap. Samo stvarni GitHub runner može potvrditi dostupnost službenih površina i ishode kvalifikacije. Eventualna produkcijska aktivacija zahtijeva zaseban kasniji korak. Workflow ne piše monitored ni canonical podatke i provjerava SHA-256 pet live datoteka prije i poslije.
+
+## V2.7.3.1 Hulu hardening
+
+Ova dopuna učvršćuje read-only Hulu kvalifikaciju za članak o više serija. Nakon prijenosa koda na postojeći `main`, ručno pokrenite **GitHub Actions → FX + Hulu Provider Qualification → Run workflow** i preuzmite artifact `fx-hulu-provider-qualification`, datoteku `fx-hulu-provider-qualification.json`. U izvještaju usporedite discovery, parser i neovisnu rekonstrukciju za Difficult People, Shrill i The Handmaid's Tale te pošaljite JSON za pregled. Lokalni fixture testovi ne potvrđuju mrežno ponašanje GitHub runnera. FX i Hulu ostaju neaktivni; workflow ne obavlja promociju niti mijenja pet live Official Data datoteka. V2.7.3.1 ZIP je dopuna postojećeg maina i izostavlja tih pet datoteka. APK nije izrađen u ovom Hulu hardening krugu.
 
 ## Struktura
 

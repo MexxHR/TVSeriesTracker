@@ -29,8 +29,8 @@ android {
         applicationId = "com.example.tvseriestracker"
         minSdk = 26
         targetSdk = 35
-        versionCode = 28
-        versionName = "2.7.3"
+        versionCode = 29
+        versionName = "2.7.3.1"
         buildConfigField("String", "SERIES_REQUEST_API_BASE_URL", encodedRequestApiUrl)
         buildConfigField("String", "OFFICIAL_DATA_URL", encodedOfficialDataUrl)
     }

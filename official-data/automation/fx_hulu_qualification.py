@@ -1,4 +1,4 @@
-"""Read-only FX/Hulu qualification report for the V2.7.3 GitHub runner.
+"""Read-only FX/Hulu qualification report for the V2.7.3.1 GitHub runner.
 
 This wraps the existing bounded provider-audit surface and independently
 reconstructs any positive parsed facts with the promotion replay helpers. It
@@ -12,6 +12,7 @@ import datetime as dt
 import hashlib
 import json
 from pathlib import Path
+from urllib.parse import urlsplit, urlunsplit
 
 import monitored
 import promotion
@@ -32,9 +33,9 @@ HISTORICAL_CASE_BASELINE = {
     "fx-mayans-final-s5": (False, "parser"),
     "fx-snowfall-final-s6": (True, "complete"),
     "hulu-deli-boys-s2": (True, "complete"),
-    "hulu-difficult-people-s2": (False, "parser"),
+    "hulu-difficult-people-s2": (True, "complete"),
     "hulu-handmaids-tale-s3": (False, "discovery"),
-    "hulu-shrill-final-s3": (True, "complete"),
+    "hulu-shrill-final-s3": (False, "independent_reconstruction"),
     "hulu-reasonable-doubt-cast": (True, "complete"),
 }
 
@@ -75,6 +76,11 @@ def _fact_reconstruction(case: dict, case_index: int, domains: list[str], today:
                 "fetchStatus": fetch_result.get("status") if isinstance(fetch_result, dict) else None,
                 "failureCategory": fetch_result.get("failureCategory") if isinstance(fetch_result, dict) else None}
 
+    stage = "parse_page"
+    facts = []
+    evidence = []
+    row = None
+    safe_final_url = urlunsplit((*urlsplit(final_url)[:3], "", ""))
     try:
         page = update.parse_page(raw)
         text = provider_audit._QualificationText()
@@ -90,10 +96,12 @@ def _fact_reconstruction(case: dict, case_index: int, domains: list[str], today:
         synthetic_id = 900_000_000 + case_index
         entry = {"tmdbId": synthetic_id, "title": case["series"], "aliases": aliases,
                  "allowedDomains": domains}
+        stage = "strict_parser"
         facts = update.detect(article, entry, today, strict_binding=True)
         if not facts:
             return {"result": "not_applicable", "reason": "strict_parser_returned_no_facts",
                     "tmdbId": None, "internalSyntheticKeyUsed": True}
+        stage = "fact_validation"
         update.validate_facts(facts, entry)
         evidence = [{**{key: fact.get(key) for key in monitored.EVIDENCE_FIELDS},
                      "publicationDateSource": "structured_metadata" if fact.get("announcementDate") else "none"}
@@ -104,6 +112,7 @@ def _fact_reconstruction(case: dict, case_index: int, domains: list[str], today:
                "eligibleSourceUrls": sorted({fact["sourceUrl"] for fact in facts})}
         # Construct the parser's summary and require promotion's separate
         # evidence replay to match the same complete set of promotion fields.
+        stage = "qualification_merge"
         merged, _ = update.merge(None, facts, today)
         if merged is None:
             raise update.AutomationError("Facts could not be independently merged")
@@ -115,7 +124,9 @@ def _fact_reconstruction(case: dict, case_index: int, domains: list[str], today:
                 for key in ("sourceName", "sourceUrl", "announcementDate"):
                     merged[key] = date_fact[key]
         row["verifiedFacts"] = {key: merged.get(key) for key in monitored.FACT_FIELDS}
+        stage = "independent_evidence_replay"
         rebuilt_facts = promotion._validate_evidence(row, domains)
+        stage = "independent_fact_summary"
         rebuilt = promotion._facts_summary(rebuilt_facts, row, today)
         fields = list(monitored.FACT_FIELDS)
         actual = {key: row["verifiedFacts"].get(key) for key in fields}
@@ -130,9 +141,22 @@ def _fact_reconstruction(case: dict, case_index: int, domains: list[str], today:
                                      "sourceUrl", "announcementDate", "evidenceText")}
                                    for item in evidence]}
     except (update.AutomationError, ValueError, KeyError, TypeError) as exc:
-        return {"result": "failed", "reason": type(exc).__name__, "tmdbId": None,
-                "internalSyntheticKeyUsed": True, "fieldsCompared": list(monitored.FACT_FIELDS),
-                "validationResult": "failed"}
+        detail = str(exc)[:300] if isinstance(exc, update.AutomationError) else type(exc).__name__
+        result = {"result": "failed", "reason": type(exc).__name__, "detail": detail,
+                  "failureStage": stage, "tmdbId": None, "internalSyntheticKeyUsed": True,
+                  "fieldsCompared": list(monitored.FACT_FIELDS), "validationResult": "failed",
+                  "refetch": {"status": "fetched", "finalUrl": safe_final_url},
+                  "sourceEvidence": [{key: item.get(key) for key in
+                                      ("factType", "status", "nextSeasonNumber", "rule", "sourceName",
+                                       "sourceUrl", "announcementDate", "evidenceText",
+                                       "publicationDateSource")} for item in evidence]}
+        diagnostic = getattr(exc, "diagnostic", None)
+        if isinstance(diagnostic, dict):
+            result["mismatchedFields"] = diagnostic.get("fields", [])
+        if row:
+            result["binding"] = {"title": row.get("title"), "eligibleSourceUrls": row.get("eligibleSourceUrls"),
+                                 "verifiedFacts": row.get("verifiedFacts")}
+        return result
 
 
 def _case_result(provider: str, provider_row: dict, case_row: dict, case_config: dict,
@@ -204,7 +228,7 @@ def _case_result(provider: str, provider_row: dict, case_row: dict, case_config:
         "validationResult": validation,
         "independentReconstruction": reconstruction,
         "expectationResult": {"passed": expected_ok, "failureCategory": case_row.get("failureCategory")},
-        "baselineResult": {"source": "prior accepted V2.7.1.1 qualification state supplied for this task",
+        "baselineResult": {"source": "V2.7.3 GitHub runner result supplied for this task",
                            "recorded": case_row.get("caseId") in HISTORICAL_CASE_BASELINE,
                            "passed": HISTORICAL_CASE_BASELINE.get(case_row.get("caseId"), (None, None))[0],
                            "earliestFailureStage": HISTORICAL_CASE_BASELINE.get(case_row.get("caseId"), (None, None))[1]},
@@ -253,10 +277,11 @@ def run(*, fetcher=provider_audit.fetch_url, github_runner: bool | None = None,
             state = "NEEDS_MORE_RESEARCH"
         providers[row["provider"]] = {
             "qualificationState": state, "passedCases": passed, "totalCases": len(cases),
-            "baseline": {"qualificationState": "PARSER_COMPATIBILITY_NEEDS_WORK",
+            "baseline": {"qualificationState": ("PARSER_COMPATIBILITY_NEEDS_WORK" if row["provider"] == "FX"
+                                                 else "DISCOVERY_NEEDS_WORK"),
                          "passedCases": 2 if row["provider"] == "FX" else 3,
                          "totalCases": 3 if row["provider"] == "FX" else 5,
-                         "source": "prior qualification results supplied in the task; not rerun in this workflow"},
+                         "source": "V2.7.3 GitHub runner results supplied in the task; not rerun in this workflow"},
             "minimumDistinctProviderAnnouncements": MIN_DISTINCT_PROVIDER_ANNOUNCEMENTS,
             "configuredProviderRootAnnouncements": len(configured_announcements),
             "distinctPassingProviderAnnouncements": len(positive_announcements),

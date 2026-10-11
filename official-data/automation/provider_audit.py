@@ -33,6 +33,7 @@ MAX_QUALIFICATION_PAGES = 20
 MAX_QUALIFICATION_LINKS_PER_PAGE = 60
 MAX_PROVIDER_QUALIFICATION_FETCHES = 80
 MAX_OFFICIAL_SEARCH_RESULTS = 20
+MAX_HULU_SEARCH_QUERIES = 2
 MAX_SITEMAP_BYTES = 1_000_000
 MAX_SITEMAP_URLS = 2_500
 MAX_SITEMAP_CHILDREN = 8
@@ -574,7 +575,9 @@ def _sitemap_links(raw: str, domains: list[str], aliases: list[str]) -> tuple[li
 
 
 def _budget_fetch(fetcher, budget: dict, url: str, domains: list[str]):
-    if budget["remaining"] <= 0:
+    # Apply the current provider-case reservation to every request path,
+    # including root traversal and the known-article diagnostic fetch.
+    if budget["remaining"] <= budget.get("reserve", 0):
         return ({"status": "not_attempted", "httpStatus": None, "finalUrl": None,
                  "failureCategory": "QUALIFICATION_FETCH_BUDGET_EXHAUSTED"}, None)
     budget["remaining"] -= 1
@@ -599,44 +602,75 @@ def _official_search_candidates(case: dict, domains: list[str], fetcher, budget:
         return fetches, []
     parser = _AmcSearchForm()
     parser.feed(home_raw)
-    search_url = None
+    search_action = None
     for form in parser.forms:
         if form["method"] != "get" or not any(item["name"] == "s" for item in form["inputs"]):
             continue
         action = urljoin(home_final, form["action"] or home_final)
         if update.allowed(action, domains):
-            search_url = action + ("&" if "?" in action else "?") + urlencode({"s": case["series"]})
+            search_action = action
             break
-    if not search_url or len(search_url) > 2048:
+    if not search_action:
         return fetches, []
-    results_fetch, results_raw = _budget_fetch(fetcher, budget, search_url, domains)
-    fetches.append({"url": _public_url(search_url), "fetch": results_fetch, "depth": 1,
-                    "source": source})
-    if not results_raw or results_fetch.get("status") != "fetched":
-        return fetches, []
-    results_final = results_fetch.get("finalUrl") or search_url
-    if not update.allowed(results_final, domains):
-        return fetches, []
-    links = _qualification_links(results_raw, results_final, domains,
-                                 case.get("aliases") or [case["series"]], case["articleUrl"])
     target = _canonical_url(case["articleUrl"])
-    # Follow links presented by the official search response only. The known
-    # article URL is a comparison target; it is never constructed or requested
-    # unless the fetched response linked to it.
-    for link in links[:MAX_OFFICIAL_SEARCH_RESULTS]:
-        if not update.allowed(link, domains):
+    queries = [case["series"]]
+    if provider_id == "HULU":
+        focused = _hulu_context_search_query(case)
+        if focused and focused.casefold() != case["series"].casefold():
+            queries.append(focused)
+        queries = queries[:MAX_HULU_SEARCH_QUERIES]
+    for query_index, query in enumerate(queries):
+        search_url = search_action + ("&" if "?" in search_action else "?") + urlencode({"s": query})
+        if len(search_url) > 2048:
             continue
-        article_fetch, article_raw = _budget_fetch(fetcher, budget, link, domains)
-        fetches.append({"url": _public_url(link), "fetch": article_fetch, "depth": 2,
-                        "source": source + "_result"})
-        if not article_raw or article_fetch.get("status") != "fetched":
+        results_fetch, results_raw = _budget_fetch(fetcher, budget, search_url, domains)
+        query_source = source if query_index == 0 else source + "_context"
+        fetches.append({"url": _public_url(search_url), "query": query,
+                        "fetch": results_fetch, "depth": 1, "source": query_source})
+        if not results_raw or results_fetch.get("status") != "fetched":
             continue
-        final_url = article_fetch.get("finalUrl") or link
-        if update.allowed(final_url, domains) and (
-                _canonical_url(link) == target or _canonical_url(final_url) == target):
-            return fetches, [{"url": link, "finalUrl": final_url, "fetch": article_fetch,
-                              "raw": article_raw, "depth": 2, "source": source}]
+        results_final = results_fetch.get("finalUrl") or search_url
+        if not update.allowed(results_final, domains):
+            continue
+        links = _qualification_links(results_raw, results_final, domains,
+                                     case.get("aliases") or [case["series"]], case["articleUrl"])
+        # If the broad title search has many unrelated candidates, preserve
+        # enough per-case budget for the focused query and its first result.
+        context_reserve = 2 if query_index == 0 and len(queries) > 1 else 0
+        # Follow only bounded links presented by the provider's own search
+        # response. The known article URL is a comparison target; it is never
+        # requested unless that response linked to it or redirected to it.
+        for link in links[:MAX_OFFICIAL_SEARCH_RESULTS]:
+            if not update.allowed(link, domains):
+                continue
+            if budget["remaining"] <= budget.get("reserve", 0) + context_reserve:
+                break
+            article_fetch, article_raw = _budget_fetch(fetcher, budget, link, domains)
+            fetches.append({"url": _public_url(link), "fetch": article_fetch, "depth": 2,
+                            "source": query_source + "_result"})
+            if not article_raw or article_fetch.get("status") != "fetched":
+                continue
+            final_url = article_fetch.get("finalUrl") or link
+            if update.allowed(final_url, domains) and (
+                    _canonical_url(link) == target or _canonical_url(final_url) == target):
+                return fetches, [{"url": link, "finalUrl": final_url, "fetch": article_fetch,
+                                  "raw": article_raw, "depth": 2, "source": query_source}]
     return fetches, []
+
+
+def _hulu_context_search_query(case: dict) -> str | None:
+    """Build one generic Hulu search refinement from the case's expected facts."""
+    expected = case.get("expected") or {}
+    status = expected.get("status")
+    season = expected.get("season")
+    status_terms = {"RENEWED": "renewed", "FINAL_SEASON": "final",
+                    "CANCELED": "canceled", "CANCELLED": "canceled"}
+    if status not in status_terms or not isinstance(season, int) or isinstance(season, bool) or season < 1:
+        return None
+    season_words = {1: "one", 2: "two", 3: "three", 4: "four", 5: "five",
+                    6: "six", 7: "seven", 8: "eight", 9: "nine", 10: "ten"}
+    season_text = season_words.get(season, str(season))
+    return f"{case['series']} {status_terms[status]} season {season_text}"
 
 
 def _qualification_candidates(case: dict, domains: list[str], fetcher, budget: dict,
@@ -791,6 +825,12 @@ def qualify_provider(provider: dict, fetcher=fetch_url, *, github_actions: bool 
     reports = []
     budget = {"remaining": MAX_PROVIDER_QUALIFICATION_FETCHES}
     for index, case in enumerate(provider.get("tests", [])):
+        # Keep a small fixed allowance for every later Hulu case to reach its
+        # root and execute both official-search queries if needed. The global
+        # fetch ceiling remains unchanged; unused reservations are released
+        # as subsequent cases run.
+        later_cases = len(provider.get("tests", [])) - index - 1
+        budget["reserve"] = later_cases * 5 if provider["provider"] == "HULU" else 0
         case_id = case.get("caseId", f"{provider['provider']}-{index + 1:02d}")
         roots = _case_roots(case)
         roots_valid = bool(roots) and all(update.allowed(root, domains) and
@@ -845,7 +885,8 @@ def qualify_provider(provider: dict, fetcher=fetch_url, *, github_actions: bool 
                        "redirects": ({"count": found[0]["fetch"].get("redirectCount", 0),
                                       "withinOfficialBoundary": found[0]["fetch"].get("redirectsWithinBoundary")}
                                      if found else None),
-                       "http": [{"url": item["url"], "status": item["fetch"].get("status"),
+                       "http": [{"url": item["url"], "query": item.get("query"),
+                                 "source": item.get("source"), "status": item["fetch"].get("status"),
                                  "httpStatus": item["fetch"].get("httpStatus"),
                                  "failureCategory": item["fetch"].get("failureCategory"), "depth": item["depth"]}
                                 for item in traversal],
