@@ -1,0 +1,45 @@
+name: HBO MAX Provider Qualification
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      # Standard library only: no extra dependencies to install.
+      - name: Snapshot protected files
+        run: |
+          set -euo pipefail
+          sha256sum official-data/official_series_data.json official-data/history/changes.jsonl official-data/sources.json official-data/monitored_series.json official-data/history/monitored_changes.jsonl > "$RUNNER_TEMP/hbo-max-before.sha256"
+      - name: Spanish and qualification safety tests
+        run: python -m unittest discover -s official-data/automation -p 'test_hbo_max_qualification.py' -q
+      - name: Real runner qualification
+        env:
+          TMDB_API_TOKEN: ${{ secrets.TMDB_API_TOKEN }}
+        run: python official-data/automation/hbo_max_qualification.py --output "$RUNNER_TEMP/hbo-max-provider-qualification.json"
+      - name: Verify protected integrity and clean checkout
+        if: always()
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/hbo-max-before.sha256"
+          git diff --exit-code HEAD
+          test -z "$(git ls-files --others --exclude-standard)"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hbo-max-provider-qualification
+          path: ${{ runner.temp }}/hbo-max-provider-qualification.json
+          if-no-files-found: error
