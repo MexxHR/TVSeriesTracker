@@ -1,0 +1,297 @@
+{
+  "schemaVersion": 1,
+  "notice": "Audit research probes only. Candidate ecosystem/goals are not observed TMDB networks or accepted lifecycle facts. Known article URLs never establish generic discovery.",
+  "domains": [
+    {
+      "host": "press.wbd.com",
+      "family": "WBD_PRESS",
+      "evidenceEligible": true,
+      "firstPartyBasis": "Existing official project pressroom and direct corporate WBD root -> Skydance footer -> WBD Press Room link observed 2026-10-12. Corporate redirect is not a provider-routing signal."
+    },
+    {
+      "host": "hbo.com",
+      "family": "HBO_OFFICIAL",
+      "evidenceEligible": true,
+      "firstPartyBasis": "Direct official HBO branded service domain; public root inspected. Branding does not replace series/network identity."
+    },
+    {
+      "host": "max.com",
+      "family": "MAX_OFFICIAL",
+      "evidenceEligible": false,
+      "firstPartyBasis": "Official branded service domain, research probe; no usable source body established in this audit."
+    },
+    {
+      "host": "hbomax.com",
+      "family": "MAX_OFFICIAL",
+      "evidenceEligible": false,
+      "firstPartyBasis": "Official branded service domain, research probe; no usable source body established in this audit."
+    },
+    {
+      "host": "press-spain.max.com",
+      "family": "MAX_PRESS",
+      "evidenceEligible": true,
+      "firstPartyBasis": "Regional press publisher under official max.com domain; direct public articles carry HBO Max branding and WBD communications attribution. Clipsource assets and SharePoint links are not trusted or fetched. Spanish language and Spain territory require separate policies; no production trust changed."
+    },
+    {
+      "host": "wbd.com",
+      "family": "WBD_CORPORATE",
+      "evidenceEligible": false,
+      "firstPartyBasis": "Corporate discovery probe. Web tool observed redirect to skydance.com; no automatic extension of evidence trust."
+    },
+    {
+      "host": "skydance.com",
+      "family": "CORPORATE_REDIRECT_OBSERVED",
+      "evidenceEligible": false,
+      "probeAllowed": false,
+      "firstPartyBasis": "Observed destination of wbd.com with WBD Press Room outbound link. Not independently qualified for TV lifecycle evidence; not added to HTTP allowlist."
+    }
+  ],
+  "roots": [
+    "https://www.wbd.com/",
+    "https://press.wbd.com/",
+    "https://press.wbd.com/us/brands/hbo/media-releases",
+    "https://press.wbd.com/us/brands/hbo-max/media-releases",
+    "https://press.wbd.com/us/search",
+    "https://press.wbd.com/sitemap.xml",
+    "https://www.hbo.com/",
+    "https://www.hbo.com/shows",
+    "https://www.hbo.com/sitemap.xml",
+    "https://www.max.com/",
+    "https://www.hbomax.com/",
+    "https://press-spain.max.com/",
+    "https://press-spain.max.com/sitemap",
+    "https://press.wbd.com/us/brands/hbo-0/media-releases"
+  ],
+  "cases": [
+    {
+      "caseId": "white-lotus-renewal",
+      "series": "The White Lotus",
+      "aliases": [
+        "The White Lotus"
+      ],
+      "tmdbId": 111803,
+      "candidateEcosystem": "HBO",
+      "kind": "positive",
+      "goal": "renewal S4",
+      "articleUrl": "https://press.wbd.com/ca/media-release/hbo-0/hbo-renews-white-lotus-fourth-season"
+    },
+    {
+      "caseId": "last-of-us-renewal",
+      "series": "The Last of Us",
+      "aliases": [
+        "The Last of Us"
+      ],
+      "tmdbId": 100088,
+      "candidateEcosystem": "HBO",
+      "kind": "positive",
+      "goal": "renewal S3 and date/season separation from S2 premiere",
+      "articleUrl": "https://press.wbd.com/ca/media-release/hbo-renews-last-us-third-season?language_content_entity=en"
+    },
+    {
+      "caseId": "somebody-final-date",
+      "series": "Somebody Somewhere",
+      "aliases": [
+        "Somebody Somewhere"
+      ],
+      "tmdbId": 106308,
+      "candidateEcosystem": "HBO",
+      "kind": "positive",
+      "goal": "final S3 and release date",
+      "articleUrl": "https://press.wbd.com/us/media-release/hbo-0/somebody-somewhere/peabody-award-winning-hbo-original-comedy-series-somebody-somewhere-returns-october"
+    },
+    {
+      "caseId": "pitt-renewal",
+      "series": "The Pitt",
+      "aliases": [
+        "The Pitt"
+      ],
+      "tmdbId": 250307,
+      "candidateEcosystem": "MAX",
+      "kind": "positive",
+      "goal": "renewal S3 without borrowing S2 premiere date",
+      "articleUrl": "https://press.wbd.com/us/media-release/hbo-max/pitt/hbo-max-renews-pitt-third-season-ahead-season-two-debut"
+    },
+    {
+      "caseId": "hacks-renewal",
+      "series": "Hacks",
+      "aliases": [
+        "Hacks"
+      ],
+      "tmdbId": 124101,
+      "candidateEcosystem": "MAX",
+      "kind": "positive",
+      "goal": "renewal S5 without borrowing S4 finale date",
+      "articleUrl": "https://press.wbd.com/us/ca/media-release/max-renews-emmy-award-winning-comedy-series-hacks-fifth-season"
+    },
+    {
+      "caseId": "hacks-final-date",
+      "series": "Hacks",
+      "aliases": [
+        "Hacks"
+      ],
+      "tmdbId": 124101,
+      "candidateEcosystem": "MAX",
+      "kind": "positive",
+      "goal": "final S5 and release date",
+      "articleUrl": "https://press.wbd.com/ca/media-release/hacks-returns-its-fifth-and-final-season-april-9-hbo-max"
+    },
+    {
+      "caseId": "tokyo-date",
+      "series": "Tokyo Vice",
+      "aliases": [
+        "Tokyo Vice"
+      ],
+      "tmdbId": 90296,
+      "candidateEcosystem": "MAX",
+      "kind": "positive",
+      "goal": "S2 release date; do not infer cancellation",
+      "articleUrl": "https://press.wbd.com/emea/ca/media-release/hbo-max/season-two-max-original-drama-series-tokyo-vice-debuts-february-8"
+    },
+    {
+      "caseId": "white-lotus-filming-negative",
+      "series": "The White Lotus",
+      "aliases": [
+        "The White Lotus"
+      ],
+      "tmdbId": 111803,
+      "candidateEcosystem": "HBO",
+      "kind": "negative",
+      "goal": "production start alone is not renewal",
+      "articleUrl": "https://press.wbd.com/us/media-release/hbo-0/hbo-original-white-lotus-season-4-begins-filming-france"
+    },
+    {
+      "caseId": "pitt-teaser-negative",
+      "series": "The Pitt",
+      "aliases": [
+        "The Pitt"
+      ],
+      "tmdbId": 250307,
+      "candidateEcosystem": "MAX",
+      "kind": "negative",
+      "goal": "teaser/cast information alone is not lifecycle",
+      "articleUrl": "https://press.wbd.com/us/media-release/hbo-max/hbo-max-releases-official-season-3-teaser-and-first-look-images-max-original-drama"
+    },
+    {
+      "caseId": "april-multititle-ambiguity",
+      "series": "Somebody Somewhere",
+      "aliases": [
+        "Somebody Somewhere"
+      ],
+      "tmdbId": 106308,
+      "candidateEcosystem": "HBO",
+      "kind": "ambiguity",
+      "goal": "Do not borrow Barry final S4 for Somebody Somewhere",
+      "articleUrl": "https://press.wbd.com/na/media-release/max/whats-new-hbo-max-april"
+    },
+    {
+      "caseId": "white-lotus-hbo-alternative",
+      "series": "The White Lotus",
+      "aliases": [
+        "The White Lotus"
+      ],
+      "tmdbId": 111803,
+      "candidateEcosystem": "HBO",
+      "kind": "diagnostic",
+      "goal": "alternative show page; not automatically the same S4 fact",
+      "articleUrl": "https://www.hbo.com/the-white-lotus"
+    },
+    {
+      "caseId": "white-lotus-spanish-filming",
+      "series": "The White Lotus",
+      "aliases": [
+        "The White Lotus"
+      ],
+      "tmdbId": 111803,
+      "candidateEcosystem": "HBO",
+      "kind": "diagnostic",
+      "goal": "production start is not same renewal fact",
+      "language": "es",
+      "territory": "ES",
+      "articleUrl": "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-"
+    },
+    {
+      "caseId": "hacks-spanish-renewal",
+      "series": "Hacks",
+      "aliases": [
+        "Hacks"
+      ],
+      "tmdbId": 124101,
+      "candidateEcosystem": "MAX",
+      "kind": "positive",
+      "goal": "S4 renewal; Spanish parser coverage diagnostic",
+      "language": "es",
+      "territory": "ES",
+      "articleUrl": "https://press-spain.max.com/post/max-renueva-hacks-la-comedia-ganadora-de-un-emmy-por-una-cuarta-"
+    },
+    {
+      "caseId": "hacks-spanish-final",
+      "series": "Hacks",
+      "aliases": [
+        "Hacks"
+      ],
+      "tmdbId": 124101,
+      "candidateEcosystem": "MAX",
+      "kind": "positive",
+      "goal": "final S5 and Spain date; do not substitute US date",
+      "language": "es",
+      "territory": "ES",
+      "articleUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h"
+    },
+    {
+      "caseId": "last-of-us-spanish-renewal",
+      "series": "The Last of Us",
+      "aliases": [
+        "The Last of Us"
+      ],
+      "tmdbId": 100088,
+      "candidateEcosystem": "HBO",
+      "kind": "positive",
+      "goal": "S3 renewal; separate S2 premiere",
+      "language": "es",
+      "territory": "ES",
+      "articleUrl": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada"
+    },
+    {
+      "caseId": "last-of-us-spanish-date",
+      "series": "The Last of Us",
+      "aliases": [
+        "The Last of Us"
+      ],
+      "tmdbId": 100088,
+      "candidateEcosystem": "HBO",
+      "kind": "positive",
+      "goal": "S2 Spain release date",
+      "language": "es",
+      "territory": "ES",
+      "articleUrl": "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-original-de-hbo-the-last-of-us-"
+    },
+    {
+      "caseId": "pitt-spanish-teaser",
+      "series": "The Pitt",
+      "aliases": [
+        "The Pitt"
+      ],
+      "tmdbId": 250307,
+      "candidateEcosystem": "MAX",
+      "kind": "diagnostic",
+      "goal": "teaser and month window, no exact date or renewal inference",
+      "language": "es",
+      "territory": "ES",
+      "articleUrl": "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te"
+    },
+    {
+      "caseId": "somebody-spanish-slate",
+      "series": "Somebody Somewhere",
+      "aliases": [
+        "Somebody Somewhere"
+      ],
+      "tmdbId": 106308,
+      "candidateEcosystem": "HBO",
+      "kind": "ambiguity",
+      "goal": "do not borrow final season from other networks distributed on Max",
+      "language": "es",
+      "territory": "ES",
+      "articleUrl": "https://press-spain.max.com/post/avance-de-estrenos-de-octubre-3"
+    }
+  ]
+}

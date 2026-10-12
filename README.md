@@ -1,4 +1,12 @@
-# TV Series Tracker V2.7.5
+# TV Series Tracker V2.7.7
+
+## V2.7.7 WBD / HBO / Max Source & Provider Qualification Audit
+
+Audit only; production providers and FX remain unchanged. Run the manual **WBD HBO Max Source Audit** workflow after uploading these changes and review **wbd-hbo-max-source-audit** (`wbd-hbo-max-source-audit.json`). Local network diagnostics and separate first-party web research do not establish runner qualification. HBO and Max are assessed with separate network-only identity proposals; no activation, monitored writes, promotion, APK or release ZIP. See `V2.7.7_REPORT.md`.
+
+## V2.7.6 FX Source Strategy Audit
+
+Read-only source research only: FX remains inactive and production parsers, routing, identity rules and data are unchanged. Run the manual **FX Source Strategy Audit** GitHub Actions workflow and review its **fx-source-strategy-audit** artifact (`fx-source-strategy-audit.json`). The audit uses existing bounded first-party HTTP fetching and distinguishes known diagnostic probes from actual provider-root link discovery. Local DNS failures cannot establish runner accessibility or permanent provider unsuitability. See `V2.7.6_REPORT.md`. No APK or release ZIP is produced for this task.
 
 ## V2.7.5 FX qualification audit
 
