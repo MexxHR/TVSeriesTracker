@@ -1,4 +1,8 @@
-# TV Series Tracker V2.7.8
+# TV Series Tracker V2.7.8.1
+
+## V2.7.8.1 HBO/MAX Qualification Runner-State Hotfix
+
+Synthetic qualification tests now explicitly select local/runner context, independent of host GITHUB_ACTIONS. Real runner qualification retains its actual context. Artifact upload checks for a generated result and reports infrastructure failures clearly. Qualification/parser/discovery/routing policies are unchanged; production activation remains false. Upload `TVSeriesTracker-V2.7.8.1.zip`, then manually rerun **HBO MAX Provider Qualification**. See `V2.7.8.1_REPORT.md`.
 
 ## V2.7.8 HBO / MAX Qualification & Spanish Parser Hardening
 

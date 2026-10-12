@@ -1,6 +1,8 @@
 """Synthetic offline safety/qualification contracts; not live-source evidence."""
 import datetime as dt
 import json
+import os
+import sys
 from pathlib import Path
 import tempfile
 import unittest
@@ -180,12 +182,14 @@ class QualificationTests(unittest.TestCase):
         for name in q.integrity.PROTECTED_FILES:
             p=self.root/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(b'protected')
 
-    def run_q(self,cases,pages,metadata=None,fetcher=None):
+    def run_q(self,cases,pages,metadata=None,fetcher=None,*,github_actions=False):
         def fetch(url,domains):
             raw=pages.get(url)
             return ({'status':'fetched','httpStatus':200,'finalUrl':url},raw) if raw else ({'status':'failed','failureCategory':'DNS_FAILURE'},None)
-        return q.run(root=self.root,config={'minimumDistinctSeriesPerRoute':3,'cases':cases},fetcher=fetcher or fetch,
-                     token='synthetic',metadata_loader=lambda i,t:metadata or {'title':'SERIES A','networks':[{'name':'HBO'}]},today=TODAY)
+        # Synthetic context is explicit; never inherit the physical CI host.
+        with patch.dict(os.environ,{'GITHUB_ACTIONS':'true' if github_actions else 'false'}):
+            return q.run(root=self.root,config={'minimumDistinctSeriesPerRoute':3,'cases':cases},fetcher=fetcher or fetch,
+                         token='synthetic',metadata_loader=lambda i,t:metadata or {'title':'SERIES A','networks':[{'name':'HBO'}]},today=TODAY)
 
     def test_baseline_is_actual_runner_and_checksum(self):
         baseline=q.baseline_proof()
@@ -367,13 +371,38 @@ class QualificationTests(unittest.TestCase):
         self.assertEqual(result['productionActivation'],{'HBO':False,'MAX':False})
 
     def test_schema_no_writes_and_local_inconclusive(self):
-        result=self.run_q([case()],{})
+        for host in ('true','false'):
+            with self.subTest(host=host),patch.dict(os.environ,{'GITHUB_ACTIONS':host}):
+                result=self.run_q([case()],{})
+                self.assertEqual(os.environ['GITHUB_ACTIONS'],host)
+                self.assertEqual(result['resultScope'],'LOCAL_DIAGNOSTIC_ONLY')
+                for route in ('hbo','max'):
+                    self.assertEqual(result[route]['qualificationState'],'LOCAL_NETWORK_INCONCLUSIVE')
         self.assertTrue(result['qualificationOnly'] and result['readOnly'])
         self.assertEqual(result['hbo']['qualificationState'],'LOCAL_NETWORK_INCONCLUSIVE')
         self.assertEqual(result['productionActivation'],{'HBO':False,'MAX':False})
         self.assertEqual(result['protectedFileIntegrity']['changedFiles'],[])
         self.assertTrue(result['protectedFileIntegrity']['unchanged'])
         json.dumps(result)
+
+    def test_runner_access_failure_context_is_explicit(self):
+        with patch.dict(os.environ,{'GITHUB_ACTIONS':'false'}):
+            result=self.run_q([case()],{},github_actions=True)
+            self.assertEqual(os.environ['GITHUB_ACTIONS'],'false')
+        self.assertEqual(result['resultScope'],'RUNNER_CONFIRMATION')
+        for route in ('hbo','max'):
+            self.assertEqual(result[route]['qualificationState'],'RUNNER_ACCESS_NEEDS_WORK')
+        self.assertEqual(result['productionActivation'],{'HBO':False,'MAX':False})
+        self.assertEqual(result['protectedFileIntegrity']['changedFiles'],[])
+        self.assertTrue(result['protectedFileIntegrity']['unchanged'])
+
+    def test_normal_nonqualified_run_writes_real_result_artifact(self):
+        result=self.run_q([case()],{},github_actions=True)
+        output=self.root/'hbo-max-provider-qualification.json'
+        with patch.object(sys,'path',sys.path+[str(q.update.ROOT/'backend')]),patch.object(q.update,'ROOT',self.root),patch.object(q,'run',return_value=result),patch('sys.argv',['qualification','--output',str(output)]):
+            q.main()
+        self.assertEqual(json.loads(output.read_text(encoding='utf-8')),result)
+        self.assertEqual(result['hbo']['qualificationState'],'RUNNER_ACCESS_NEEDS_WORK')
 
     def test_protected_mutation_aborts(self):
         def fetch(url,domains):
@@ -400,6 +429,15 @@ class QualificationTests(unittest.TestCase):
         for forbidden in ('contents: write','schedule:','git push','git commit','promotion.py','monitored.py','update.py','assembleDebug','package_release.py'):
             self.assertNotIn(forbidden,workflow)
         self.assertEqual(workflow.count('secrets.'),1)
+        ordered=('actions/checkout@','actions/setup-python@','name: Snapshot protected files',
+                 'name: Spanish and qualification safety tests','name: Real runner qualification',
+                 'name: Verify protected integrity','name: Check qualification artifact','uses: actions/upload-artifact@')
+        positions=[workflow.index(s) for s in ordered]
+        self.assertEqual(positions,sorted(positions))
+        self.assertIn('steps.qualification_artifact.outputs.generated',workflow)
+        self.assertIn('::error::Qualification artifact was not generated',workflow)
+        real_step=workflow.split('- name: Real runner qualification',1)[1].split('- name: Verify protected integrity',1)[0]
+        self.assertNotIn('GITHUB_ACTIONS',real_step)
 
 if __name__=='__main__':
     unittest.main()
