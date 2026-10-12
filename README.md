@@ -1,4 +1,8 @@
-# TV Series Tracker V2.7.4
+# TV Series Tracker V2.7.5
+
+## V2.7.5 FX qualification audit
+
+FX remains production-inactive. Parser and production routing are unchanged. The FX registry adds a first-party cast-announcement negative case; Mayans remains a safe false negative. Provider announcement coverage remains below the unchanged threshold of three. See V2.7.5_REPORT.md. After uploading TVSeriesTracker-V2.7.5.zip, manually run FX + Hulu Provider Qualification and review the fx-hulu-provider-qualification artifact.
 
 ## V2.7.4 Hulu production capability
 

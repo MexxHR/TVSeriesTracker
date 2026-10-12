@@ -1,0 +1,730 @@
+{
+  "schemaVersion": 1,
+  "reportType": "fx_hulu_provider_qualification",
+  "generatedAt": "2026-10-12T15:45:14+00:00",
+  "readOnly": true,
+  "qualificationOnly": true,
+  "productionActivationReady": {
+    "FX": false,
+    "HULU": false
+  },
+  "identityLimitations": "The audit registry has no TMDB IDs; tmdbId is null and no production route or monitored VERIFIED_FACTS state is asserted.",
+  "runner": {
+    "githubActions": false
+  },
+  "providers": {
+    "FX": {
+      "qualificationState": "PARSER_COMPATIBILITY_NEEDS_WORK",
+      "passedCases": 3,
+      "totalCases": 4,
+      "baseline": {
+        "qualificationState": "PARSER_COMPATIBILITY_NEEDS_WORK",
+        "passedCases": 2,
+        "totalCases": 3,
+        "source": "V2.7.3 GitHub runner results supplied in the task; not rerun in this workflow"
+      },
+      "minimumDistinctProviderAnnouncements": 3,
+      "configuredProviderRootAnnouncements": 0,
+      "distinctPassingProviderAnnouncements": 0,
+      "thresholdPossibleFromConfiguredCaseSet": false,
+      "cases": [
+        {
+          "caseId": "fx-far-cry-cast-negative",
+          "tmdbId": null,
+          "title": "Far Cry",
+          "provider": "FX",
+          "passed": true,
+          "kind": "negative",
+          "articleUrl": "https://www.fxnetworks.com/news/new-cast-additions-to-far-cry",
+          "rootScope": "provider",
+          "qualificationOnly": true,
+          "routeSignals": [],
+          "productionRouteResult": "not_assessed",
+          "routingEvidence": "provider_audit_registry_case; no TMDB identity asserted",
+          "officialUrlsAttempted": [
+            "https://www.fxnetworks.com/",
+            "https://www.fxnetworks.com/news/new-cast-additions-to-far-cry"
+          ],
+          "discovery": {
+            "result": "candidate_found",
+            "discoveredFromRoot": true,
+            "qualificationCandidateCount": 1,
+            "candidateUrls": [
+              "https://www.fxnetworks.com/news/new-cast-additions-to-far-cry"
+            ],
+            "rejectedCandidateUrls": [],
+            "provenance": "official_link_traversal",
+            "productionParserEligibility": "not_assessed"
+          },
+          "fetch": {
+            "discoveryFetches": [
+              {
+                "url": "https://www.fxnetworks.com/",
+                "query": null,
+                "source": "official_root",
+                "status": "fetched",
+                "httpStatus": 200,
+                "failureCategory": null,
+                "depth": 0
+              },
+              {
+                "url": "https://www.fxnetworks.com/news/new-cast-additions-to-far-cry",
+                "query": null,
+                "source": "official_link_traversal",
+                "status": "fetched",
+                "httpStatus": 200,
+                "failureCategory": null,
+                "depth": 1
+              }
+            ],
+            "knownArticleDiagnostic": {
+              "source": "discovered",
+              "fetchable": true,
+              "httpStatus": 200,
+              "failureCategory": null,
+              "parserCompatible": true,
+              "parserFailureCategory": null,
+              "content": {
+                "extractable": true,
+                "pageTitle": "New Cast Additions to FX's \"Far Cry\"",
+                "facts": [],
+                "signals": [],
+                "parserFactCount": 0,
+                "blockClassification": null
+              }
+            }
+          },
+          "qualificationTitleMarkerResult": "passed",
+          "productionIdentityResult": "not_assessed",
+          "configuredSourceStructure": "announcement",
+          "productionStructureQualification": "not_assessed",
+          "parsedSourceCount": 1,
+          "productionParsedSourceCount": "not_applicable",
+          "parserResult": {
+            "factCount": 0,
+            "facts": [],
+            "signalsDiagnosticOnly": []
+          },
+          "verifiedFacts": null,
+          "sourceEvidence": [],
+          "productionMonitoredState": "not_created",
+          "validationResult": "passed",
+          "independentReconstruction": {
+            "result": "not_applicable",
+            "reason": "no_qualifying_parsed_facts"
+          },
+          "expectationResult": {
+            "passed": true,
+            "failureCategory": null
+          },
+          "baselineResult": {
+            "source": "V2.7.3 GitHub runner result supplied for this task",
+            "recorded": false,
+            "passed": null,
+            "earliestFailureStage": null
+          },
+          "earliestFailureStage": null,
+          "classification": "NEGATIVE_SAFETY_CASE_PASSED"
+        },
+        {
+          "caseId": "fx-lowdown-s2",
+          "tmdbId": null,
+          "title": "The Lowdown",
+          "provider": "FX",
+          "passed": true,
+          "kind": "positive",
+          "articleUrl": "https://www.fxnetworks.com/shows/the-lowdown/season-two-renewal",
+          "rootScope": "series",
+          "qualificationOnly": true,
+          "routeSignals": [],
+          "productionRouteResult": "not_assessed",
+          "routingEvidence": "provider_audit_registry_case; no TMDB identity asserted",
+          "officialUrlsAttempted": [
+            "https://www.fxnetworks.com/shows/the-lowdown/headlines",
+            "https://www.fxnetworks.com/shows/the-lowdown/season-two-renewal"
+          ],
+          "discovery": {
+            "result": "candidate_found",
+            "discoveredFromRoot": true,
+            "qualificationCandidateCount": 1,
+            "candidateUrls": [
+              "https://www.fxnetworks.com/shows/the-lowdown/season-two-renewal"
+            ],
+            "rejectedCandidateUrls": [],
+            "provenance": "official_link_traversal",
+            "productionParserEligibility": "not_assessed"
+          },
+          "fetch": {
+            "discoveryFetches": [
+              {
+                "url": "https://www.fxnetworks.com/shows/the-lowdown/headlines",
+                "query": null,
+                "source": "official_root",
+                "status": "fetched",
+                "httpStatus": 200,
+                "failureCategory": null,
+                "depth": 0
+              },
+              {
+                "url": "https://www.fxnetworks.com/shows/the-lowdown/season-two-renewal",
+                "query": null,
+                "source": "official_link_traversal",
+                "status": "fetched",
+                "httpStatus": 200,
+                "failureCategory": null,
+                "depth": 1
+              }
+            ],
+            "knownArticleDiagnostic": {
+              "source": "discovered",
+              "fetchable": true,
+              "httpStatus": 200,
+              "failureCategory": null,
+              "parserCompatible": true,
+              "parserFailureCategory": null,
+              "content": {
+                "extractable": true,
+                "pageTitle": "FX’s The Lowdown Renewed for Second Season on FX and Hulu",
+                "facts": [
+                  {
+                    "factType": "LIFECYCLE",
+                    "status": "RENEWED",
+                    "season": 2,
+                    "releaseDate": null,
+                    "releaseYear": null
+                  }
+                ],
+                "signals": [
+                  "renewal"
+                ],
+                "parserFactCount": 1,
+                "blockClassification": null
+              }
+            }
+          },
+          "qualificationTitleMarkerResult": "passed",
+          "productionIdentityResult": "not_assessed",
+          "configuredSourceStructure": "announcement",
+          "productionStructureQualification": "not_assessed",
+          "parsedSourceCount": 1,
+          "productionParsedSourceCount": "not_applicable",
+          "parserResult": {
+            "factCount": 1,
+            "facts": [
+              {
+                "factType": "LIFECYCLE",
+                "status": "RENEWED",
+                "season": 2,
+                "releaseDate": null,
+                "releaseYear": null
+              }
+            ],
+            "signalsDiagnosticOnly": [
+              "renewal"
+            ]
+          },
+          "verifiedFacts": {
+            "status": "RENEWED",
+            "nextSeasonNumber": 2,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Provider discovery qualification",
+            "sourceUrl": "https://www.fxnetworks.com/shows/the-lowdown/season-two-renewal",
+            "announcementDate": null
+          },
+          "sourceEvidence": [
+            {
+              "factType": "LIFECYCLE",
+              "status": "RENEWED",
+              "nextSeasonNumber": 2,
+              "rule": "explicit-renewal",
+              "sourceName": "Provider discovery qualification",
+              "sourceUrl": "https://www.fxnetworks.com/shows/the-lowdown/season-two-renewal",
+              "announcementDate": null,
+              "evidenceText": "FX's The Lowdown Renewed for Second Season on FX and Hulu"
+            },
+            {
+              "factType": "LIFECYCLE",
+              "status": "RENEWED",
+              "nextSeasonNumber": 2,
+              "rule": "explicit-renewal",
+              "sourceName": "Provider discovery qualification",
+              "sourceUrl": "https://www.fxnetworks.com/shows/the-lowdown/season-two-renewal",
+              "announcementDate": null,
+              "evidenceText": "FX's The Lowdown Renewed for Second Season on FX and Hulu"
+            },
+            {
+              "factType": "LIFECYCLE",
+              "status": "RENEWED",
+              "nextSeasonNumber": 2,
+              "rule": "explicit-renewal",
+              "sourceName": "Provider discovery qualification",
+              "sourceUrl": "https://www.fxnetworks.com/shows/the-lowdown/season-two-renewal",
+              "announcementDate": null,
+              "evidenceText": "FX's The Lowdown Renewed for Second Season on FX and Hulu"
+            }
+          ],
+          "productionMonitoredState": "not_created",
+          "validationResult": "passed",
+          "independentReconstruction": {
+            "result": "passed",
+            "tmdbId": null,
+            "internalSyntheticKeyUsed": true,
+            "fieldsCompared": [
+              "status",
+              "nextSeasonNumber",
+              "releaseDate",
+              "releaseYear",
+              "sourceName",
+              "sourceUrl",
+              "announcementDate"
+            ],
+            "mismatchedFields": [],
+            "verifiedFacts": {
+              "status": "RENEWED",
+              "nextSeasonNumber": 2,
+              "releaseDate": null,
+              "releaseYear": null,
+              "sourceName": "Provider discovery qualification",
+              "sourceUrl": "https://www.fxnetworks.com/shows/the-lowdown/season-two-renewal",
+              "announcementDate": null
+            },
+            "reconstructedFacts": {
+              "status": "RENEWED",
+              "nextSeasonNumber": 2,
+              "releaseDate": null,
+              "releaseYear": null,
+              "sourceName": "Provider discovery qualification",
+              "sourceUrl": "https://www.fxnetworks.com/shows/the-lowdown/season-two-renewal",
+              "announcementDate": null
+            },
+            "sourceEvidence": [
+              {
+                "factType": "LIFECYCLE",
+                "status": "RENEWED",
+                "nextSeasonNumber": 2,
+                "rule": "explicit-renewal",
+                "sourceName": "Provider discovery qualification",
+                "sourceUrl": "https://www.fxnetworks.com/shows/the-lowdown/season-two-renewal",
+                "announcementDate": null,
+                "evidenceText": "FX's The Lowdown Renewed for Second Season on FX and Hulu"
+              },
+              {
+                "factType": "LIFECYCLE",
+                "status": "RENEWED",
+                "nextSeasonNumber": 2,
+                "rule": "explicit-renewal",
+                "sourceName": "Provider discovery qualification",
+                "sourceUrl": "https://www.fxnetworks.com/shows/the-lowdown/season-two-renewal",
+                "announcementDate": null,
+                "evidenceText": "FX's The Lowdown Renewed for Second Season on FX and Hulu"
+              },
+              {
+                "factType": "LIFECYCLE",
+                "status": "RENEWED",
+                "nextSeasonNumber": 2,
+                "rule": "explicit-renewal",
+                "sourceName": "Provider discovery qualification",
+                "sourceUrl": "https://www.fxnetworks.com/shows/the-lowdown/season-two-renewal",
+                "announcementDate": null,
+                "evidenceText": "FX's The Lowdown Renewed for Second Season on FX and Hulu"
+              }
+            ]
+          },
+          "expectationResult": {
+            "passed": true,
+            "failureCategory": null
+          },
+          "baselineResult": {
+            "source": "V2.7.3 GitHub runner result supplied for this task",
+            "recorded": true,
+            "passed": true,
+            "earliestFailureStage": "complete"
+          },
+          "earliestFailureStage": null,
+          "classification": "OFFICIAL_EVIDENCE_CASE_PASSED"
+        },
+        {
+          "caseId": "fx-mayans-final-s5",
+          "tmdbId": null,
+          "title": "Mayans M.C.",
+          "provider": "FX",
+          "passed": false,
+          "kind": "positive",
+          "articleUrl": "https://www.fxnetworks.com/shows/mayans-mc",
+          "rootScope": "provider",
+          "qualificationOnly": true,
+          "routeSignals": [],
+          "productionRouteResult": "not_assessed",
+          "routingEvidence": "provider_audit_registry_case; no TMDB identity asserted",
+          "officialUrlsAttempted": [
+            "https://www.fxnetworks.com/shows/all",
+            "https://www.fxnetworks.com/shows/mayans-mc"
+          ],
+          "discovery": {
+            "result": "candidate_found",
+            "discoveredFromRoot": true,
+            "qualificationCandidateCount": 1,
+            "candidateUrls": [
+              "https://www.fxnetworks.com/shows/mayans-mc"
+            ],
+            "rejectedCandidateUrls": [],
+            "provenance": "official_link_traversal",
+            "productionParserEligibility": "not_assessed"
+          },
+          "fetch": {
+            "discoveryFetches": [
+              {
+                "url": "https://www.fxnetworks.com/shows/all",
+                "query": null,
+                "source": "official_root",
+                "status": "fetched",
+                "httpStatus": 200,
+                "failureCategory": null,
+                "depth": 0
+              },
+              {
+                "url": "https://www.fxnetworks.com/shows/mayans-mc",
+                "query": null,
+                "source": "official_link_traversal",
+                "status": "fetched",
+                "httpStatus": 200,
+                "failureCategory": null,
+                "depth": 1
+              }
+            ],
+            "knownArticleDiagnostic": {
+              "source": "discovered",
+              "fetchable": true,
+              "httpStatus": 200,
+              "failureCategory": null,
+              "parserCompatible": false,
+              "parserFailureCategory": "EXPECTED_FACT_MISSING",
+              "content": {
+                "extractable": true,
+                "pageTitle": "FX's Mayans MC | Watch on Hulu",
+                "facts": [],
+                "signals": [
+                  "final_season"
+                ],
+                "parserFactCount": 0,
+                "blockClassification": null
+              }
+            }
+          },
+          "qualificationTitleMarkerResult": "not_confirmed",
+          "productionIdentityResult": "not_assessed",
+          "configuredSourceStructure": "series_page",
+          "productionStructureQualification": "not_assessed",
+          "parsedSourceCount": 1,
+          "productionParsedSourceCount": "not_applicable",
+          "parserResult": {
+            "factCount": 0,
+            "facts": [],
+            "signalsDiagnosticOnly": [
+              "final_season"
+            ]
+          },
+          "verifiedFacts": null,
+          "sourceEvidence": [],
+          "productionMonitoredState": "not_created",
+          "validationResult": "not_applicable",
+          "independentReconstruction": {
+            "result": "not_applicable",
+            "reason": "no_qualifying_parsed_facts"
+          },
+          "expectationResult": {
+            "passed": false,
+            "failureCategory": "EXPECTED_FACT_MISSING"
+          },
+          "baselineResult": {
+            "source": "V2.7.3 GitHub runner result supplied for this task",
+            "recorded": true,
+            "passed": false,
+            "earliestFailureStage": "parser"
+          },
+          "earliestFailureStage": "parser",
+          "classification": "EXPECTED_FACT_MISSING"
+        },
+        {
+          "caseId": "fx-snowfall-final-s6",
+          "tmdbId": null,
+          "title": "Snowfall",
+          "provider": "FX",
+          "passed": true,
+          "kind": "positive",
+          "articleUrl": "https://www.fxnetworks.com/shows/snowfall",
+          "rootScope": "provider",
+          "qualificationOnly": true,
+          "routeSignals": [],
+          "productionRouteResult": "not_assessed",
+          "routingEvidence": "provider_audit_registry_case; no TMDB identity asserted",
+          "officialUrlsAttempted": [
+            "https://www.fxnetworks.com/shows/all",
+            "https://www.fxnetworks.com/shows/snowfall"
+          ],
+          "discovery": {
+            "result": "candidate_found",
+            "discoveredFromRoot": true,
+            "qualificationCandidateCount": 1,
+            "candidateUrls": [
+              "https://www.fxnetworks.com/shows/snowfall"
+            ],
+            "rejectedCandidateUrls": [],
+            "provenance": "official_link_traversal",
+            "productionParserEligibility": "not_assessed"
+          },
+          "fetch": {
+            "discoveryFetches": [
+              {
+                "url": "https://www.fxnetworks.com/shows/all",
+                "query": null,
+                "source": "official_root",
+                "status": "fetched",
+                "httpStatus": 200,
+                "failureCategory": null,
+                "depth": 0
+              },
+              {
+                "url": "https://www.fxnetworks.com/shows/snowfall",
+                "query": null,
+                "source": "official_link_traversal",
+                "status": "fetched",
+                "httpStatus": 200,
+                "failureCategory": null,
+                "depth": 1
+              }
+            ],
+            "knownArticleDiagnostic": {
+              "source": "discovered",
+              "fetchable": true,
+              "httpStatus": 200,
+              "failureCategory": null,
+              "parserCompatible": true,
+              "parserFailureCategory": null,
+              "content": {
+                "extractable": true,
+                "pageTitle": "FX's Snowfall | Watch on Hulu",
+                "facts": [
+                  {
+                    "factType": "LIFECYCLE",
+                    "status": "FINAL_SEASON",
+                    "season": 6,
+                    "releaseDate": null,
+                    "releaseYear": null
+                  }
+                ],
+                "signals": [
+                  "final_season"
+                ],
+                "parserFactCount": 1,
+                "blockClassification": null
+              }
+            }
+          },
+          "qualificationTitleMarkerResult": "passed",
+          "productionIdentityResult": "not_assessed",
+          "configuredSourceStructure": "series_page",
+          "productionStructureQualification": "not_assessed",
+          "parsedSourceCount": 1,
+          "productionParsedSourceCount": "not_applicable",
+          "parserResult": {
+            "factCount": 1,
+            "facts": [
+              {
+                "factType": "LIFECYCLE",
+                "status": "FINAL_SEASON",
+                "season": 6,
+                "releaseDate": null,
+                "releaseYear": null
+              }
+            ],
+            "signalsDiagnosticOnly": [
+              "final_season"
+            ]
+          },
+          "verifiedFacts": {
+            "status": "FINAL_SEASON",
+            "nextSeasonNumber": 6,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Provider discovery qualification",
+            "sourceUrl": "https://www.fxnetworks.com/shows/snowfall",
+            "announcementDate": null
+          },
+          "sourceEvidence": [
+            {
+              "factType": "LIFECYCLE",
+              "status": "FINAL_SEASON",
+              "nextSeasonNumber": 6,
+              "rule": "explicit-final-season",
+              "sourceName": "Provider discovery qualification",
+              "sourceUrl": "https://www.fxnetworks.com/shows/snowfall",
+              "announcementDate": null,
+              "evidenceText": "In the sixth and final season of FX's Snowfall"
+            }
+          ],
+          "productionMonitoredState": "not_created",
+          "validationResult": "passed",
+          "independentReconstruction": {
+            "result": "passed",
+            "tmdbId": null,
+            "internalSyntheticKeyUsed": true,
+            "fieldsCompared": [
+              "status",
+              "nextSeasonNumber",
+              "releaseDate",
+              "releaseYear",
+              "sourceName",
+              "sourceUrl",
+              "announcementDate"
+            ],
+            "mismatchedFields": [],
+            "verifiedFacts": {
+              "status": "FINAL_SEASON",
+              "nextSeasonNumber": 6,
+              "releaseDate": null,
+              "releaseYear": null,
+              "sourceName": "Provider discovery qualification",
+              "sourceUrl": "https://www.fxnetworks.com/shows/snowfall",
+              "announcementDate": null
+            },
+            "reconstructedFacts": {
+              "status": "FINAL_SEASON",
+              "nextSeasonNumber": 6,
+              "releaseDate": null,
+              "releaseYear": null,
+              "sourceName": "Provider discovery qualification",
+              "sourceUrl": "https://www.fxnetworks.com/shows/snowfall",
+              "announcementDate": null
+            },
+            "sourceEvidence": [
+              {
+                "factType": "LIFECYCLE",
+                "status": "FINAL_SEASON",
+                "nextSeasonNumber": 6,
+                "rule": "explicit-final-season",
+                "sourceName": "Provider discovery qualification",
+                "sourceUrl": "https://www.fxnetworks.com/shows/snowfall",
+                "announcementDate": null,
+                "evidenceText": "In the sixth and final season of FX's Snowfall"
+              }
+            ]
+          },
+          "expectationResult": {
+            "passed": true,
+            "failureCategory": null
+          },
+          "baselineResult": {
+            "source": "V2.7.3 GitHub runner result supplied for this task",
+            "recorded": true,
+            "passed": true,
+            "earliestFailureStage": "complete"
+          },
+          "earliestFailureStage": null,
+          "classification": "OFFICIAL_EVIDENCE_CASE_PASSED"
+        }
+      ]
+    }
+  },
+  "summary": {
+    "fxReadyForProductionActivation": false,
+    "huluReadyForProductionActivation": false,
+    "activationDecision": "requires a separate later decision after reviewing real GitHub artifact",
+    "remainingGaps": [
+      "FX: PARSER_COMPATIBILITY_NEEDS_WORK (3/4); production activation is not eligible.",
+      "FX: configured cases contain only 0 qualifying provider-root announcements; policy requires 3.",
+      "FX/fx-mayans-final-s5: earliest failing stage is parser (EXPECTED_FACT_MISSING)."
+    ]
+  },
+  "protectedFileIntegrity": {
+    "algorithm": "sha256",
+    "before": {
+      "official-data/official_series_data.json": "1944e4e5e4459ae5e650e7c414ade15a8c5f2fadcbc230370b4a8bf7f39fb31f",
+      "official-data/history/changes.jsonl": "faf0e20a994d5448d93960fbebce93fb843f8062f4909764abf09f75a2a8da6a",
+      "official-data/sources.json": "ed037e2743ce2e5db98746e9138f8fb750bbb1ab8dcc60a97182c54a170366ac",
+      "official-data/monitored_series.json": "be89deda13bd814c4bd20e8be46b7f4da06382698a956a0a7a7cc7e77239b91f",
+      "official-data/history/monitored_changes.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "after": {
+      "official-data/official_series_data.json": "1944e4e5e4459ae5e650e7c414ade15a8c5f2fadcbc230370b4a8bf7f39fb31f",
+      "official-data/history/changes.jsonl": "faf0e20a994d5448d93960fbebce93fb843f8062f4909764abf09f75a2a8da6a",
+      "official-data/sources.json": "ed037e2743ce2e5db98746e9138f8fb750bbb1ab8dcc60a97182c54a170366ac",
+      "official-data/monitored_series.json": "be89deda13bd814c4bd20e8be46b7f4da06382698a956a0a7a7cc7e77239b91f",
+      "official-data/history/monitored_changes.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "unchanged": true,
+    "changedFiles": []
+  },
+  "fixtureNotice": "LOCAL FX ONLY. Constructed HTML/root links; HTTP 200 is simulated. Official excerpts are not raw snapshots. No GitHub runner or real discovery confirmation.",
+  "fxExtractDiagnostics": [
+    {
+      "caseId": "fx-lowdown-s2",
+      "officialUrl": "https://www.fxnetworks.com/shows/the-lowdown/season-two-renewal",
+      "pageTitle": "FX’s The Lowdown Renewed for Second Season on FX and Hulu",
+      "relevantExtract": "",
+      "expected": {
+        "titleMarkers": [
+          "Lowdown"
+        ],
+        "factTypes": [
+          "LIFECYCLE"
+        ],
+        "status": "RENEWED",
+        "season": 2
+      },
+      "httpStatusActual": null,
+      "httpStatusActualNote": "Web extraction succeeded; numeric origin status unavailable. Fixture transport status is simulated."
+    },
+    {
+      "caseId": "fx-mayans-final-s5",
+      "officialUrl": "https://www.fxnetworks.com/shows/mayans-mc",
+      "pageTitle": "FX's Mayans MC | Watch on Hulu",
+      "relevantExtract": "<h2>FINAL SEASON</h2><h2>Season 5</h2>",
+      "expected": {
+        "titleMarkers": [
+          "Mayans"
+        ],
+        "factTypes": [
+          "LIFECYCLE"
+        ],
+        "status": "FINAL_SEASON",
+        "season": 5
+      },
+      "httpStatusActual": null,
+      "httpStatusActualNote": "Web extraction succeeded; numeric origin status unavailable. Fixture transport status is simulated."
+    },
+    {
+      "caseId": "fx-snowfall-final-s6",
+      "officialUrl": "https://www.fxnetworks.com/shows/snowfall",
+      "pageTitle": "FX's Snowfall | Watch on Hulu",
+      "relevantExtract": "In the sixth and final season of FX’s Snowfall",
+      "expected": {
+        "titleMarkers": [
+          "Snowfall"
+        ],
+        "factTypes": [
+          "LIFECYCLE"
+        ],
+        "status": "FINAL_SEASON",
+        "season": 6
+      },
+      "httpStatusActual": null,
+      "httpStatusActualNote": "Web extraction succeeded; numeric origin status unavailable. Fixture transport status is simulated."
+    },
+    {
+      "caseId": "fx-far-cry-cast-negative",
+      "officialUrl": "https://www.fxnetworks.com/news/new-cast-additions-to-far-cry",
+      "pageTitle": "New Cast Additions to FX's \"Far Cry\"",
+      "relevantExtract": "",
+      "expected": {
+        "titleMarkers": [
+          "Far Cry"
+        ],
+        "factTypes": []
+      },
+      "httpStatusActual": null,
+      "httpStatusActualNote": "Web extraction succeeded; numeric origin status unavailable. Fixture transport status is simulated."
+    }
+  ]
+}
