@@ -37,8 +37,19 @@ jobs:
           sha256sum -c "$RUNNER_TEMP/hbo-max-before.sha256"
           git diff --exit-code HEAD
           test -z "$(git ls-files --others --exclude-standard)"
-      - uses: actions/upload-artifact@v4
+      - name: Check qualification artifact
+        id: qualification_artifact
         if: always()
+        run: |
+          set -euo pipefail
+          if [ -s "$RUNNER_TEMP/hbo-max-provider-qualification.json" ]; then
+            echo "generated=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::Qualification artifact was not generated; inspect preceding safety tests and real qualification step for infrastructure failure."
+            exit 1
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.qualification_artifact.outputs.generated == 'true'
         with:
           name: hbo-max-provider-qualification
           path: ${{ runner.temp }}/hbo-max-provider-qualification.json
