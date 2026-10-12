@@ -42,7 +42,7 @@ def _answer(tmdb_id: int, state: str, *, title=None, monitored_state=None,
     return result
 
 
-def _validate_evidence(row: dict, domains: list[str]) -> list[dict]:
+def _validate_evidence(row: dict, domains: list[str], *, detector=None, aliases=None) -> list[dict]:
     """Re-run the strict parser over persisted fact excerpts and check provenance."""
     if (row.get("parserResult") != "facts" or row.get("validationResult") != "passed" or
             not isinstance(row.get("eligibleSourceUrls"), list) or not row["eligibleSourceUrls"]):
@@ -51,7 +51,7 @@ def _validate_evidence(row: dict, domains: list[str]) -> list[dict]:
     evidence = row.get("sourceEvidence")
     if not isinstance(evidence, list) or not evidence:
         raise update.AutomationError("Verified monitored record has no source evidence")
-    entry = {"tmdbId": row["tmdbId"], "title": row["title"], "aliases": [row["title"]],
+    entry = {"tmdbId": row["tmdbId"], "title": row["title"], "aliases": aliases or [row["title"]],
              "allowedDomains": domains}
     facts = []
     for item in evidence:
@@ -71,7 +71,9 @@ def _validate_evidence(row: dict, domains: list[str]) -> list[dict]:
         article = {"title": "", "body": text, "url": url,
                    "sourceName": item.get("sourceName"),
                    "publicationDate": item.get("announcementDate")}
-        parsed = update.detect(article, entry, dt.date.fromisoformat(row["lastChecked"]),
+        # Qualification may inject an isolated language parser. Production
+        # callers retain the existing strict English parser and source policy.
+        parsed = (detector or update.detect)(article, entry, dt.date.fromisoformat(row["lastChecked"]),
                                extended_final=True, strict_binding=True)
         match = next((fact for fact in parsed if fact.get("factType") == item.get("factType") and
                       fact.get("rule") == item.get("rule") and

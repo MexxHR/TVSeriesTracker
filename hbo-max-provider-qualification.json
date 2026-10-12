@@ -1,0 +1,1203 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-12T18:33:25.808981+00:00",
+  "qualificationOnly": true,
+  "readOnly": true,
+  "resultScope": "LOCAL_DIAGNOSTIC_ONLY",
+  "baseline": {
+    "sha256": "32efb7c7d21c11498e9ca4db1ac7b962a86de863ecfabf5947364ffe97be7d0e",
+    "resultScope": "RUNNER_CONFIRMATION",
+    "generatedAt": "2026-10-12T17:54:55+00:00",
+    "accessibleRegionalUrls": [
+      "https://press-spain.max.com/",
+      "https://press-spain.max.com/post/avance-de-estrenos-de-octubre-3",
+      "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+      "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te",
+      "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+      "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-",
+      "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-original-de-hbo-the-last-of-us-",
+      "https://press-spain.max.com/post/max-renueva-hacks-la-comedia-ganadora-de-un-emmy-por-una-cuarta-",
+      "https://press-spain.max.com/sitemap"
+    ],
+    "historicalNetworks": [
+      {
+        "tmdbId": 111803,
+        "requestedTitle": "The White Lotus",
+        "title": "The White Lotus",
+        "networks": [
+          {
+            "id": 49,
+            "name": "HBO"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "HBO",
+          "rawNetworkLabels": [
+            "HBO"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 100088,
+        "requestedTitle": "The Last of Us",
+        "title": "The Last of Us",
+        "networks": [
+          {
+            "id": 49,
+            "name": "HBO"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "HBO",
+          "rawNetworkLabels": [
+            "HBO"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 106308,
+        "requestedTitle": "Somebody Somewhere",
+        "title": "Somebody Somewhere",
+        "networks": [
+          {
+            "id": 49,
+            "name": "HBO"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "HBO",
+          "rawNetworkLabels": [
+            "HBO"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 250307,
+        "requestedTitle": "The Pitt",
+        "title": "The Pitt",
+        "networks": [
+          {
+            "id": 6783,
+            "name": "Max"
+          },
+          {
+            "id": 8304,
+            "name": "HBO Max"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "MAX",
+          "rawNetworkLabels": [
+            "Max",
+            "HBO Max"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 124101,
+        "requestedTitle": "Hacks",
+        "title": "Hacks",
+        "networks": [
+          {
+            "id": 3186,
+            "name": "HBO Max"
+          },
+          {
+            "id": 6783,
+            "name": "Max"
+          },
+          {
+            "id": 8304,
+            "name": "HBO Max"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "MAX",
+          "rawNetworkLabels": [
+            "HBO Max",
+            "Max",
+            "HBO Max"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 90296,
+        "requestedTitle": "Tokyo Vice",
+        "title": "Tokyo Vice",
+        "networks": [
+          {
+            "id": 3186,
+            "name": "HBO Max"
+          },
+          {
+            "id": 6783,
+            "name": "Max"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "MAX",
+          "rawNetworkLabels": [
+            "HBO Max",
+            "Max"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      }
+    ],
+    "wbd403Observed": true,
+    "historicalOnlyNotCurrentQualificationEvidence": true
+  },
+  "sourcePolicy": {
+    "newQualificationHost": "press-spain.max.com",
+    "language": "es",
+    "territory": "ES",
+    "productionActivated": false,
+    "wildcardTrust": false,
+    "sourceName": "Max Press Spain"
+  },
+  "routing": {
+    "HBO": [],
+    "MAX": []
+  },
+  "currentMetadataObservations": [
+    {
+      "tmdbId": 111803,
+      "requestedTitle": "The White Lotus",
+      "networks": null,
+      "result": "MISSING_TMDB_CREDENTIAL",
+      "routeProposal": null
+    },
+    {
+      "tmdbId": 100088,
+      "requestedTitle": "The Last of Us",
+      "networks": null,
+      "result": "MISSING_TMDB_CREDENTIAL",
+      "routeProposal": null
+    },
+    {
+      "tmdbId": 106308,
+      "requestedTitle": "Somebody Somewhere",
+      "networks": null,
+      "result": "MISSING_TMDB_CREDENTIAL",
+      "routeProposal": null
+    },
+    {
+      "tmdbId": 250307,
+      "requestedTitle": "The Pitt",
+      "networks": null,
+      "result": "MISSING_TMDB_CREDENTIAL",
+      "routeProposal": null
+    },
+    {
+      "tmdbId": 124101,
+      "requestedTitle": "Hacks",
+      "networks": null,
+      "result": "MISSING_TMDB_CREDENTIAL",
+      "routeProposal": null
+    },
+    {
+      "tmdbId": 90296,
+      "requestedTitle": "Tokyo Vice",
+      "networks": null,
+      "result": "MISSING_TMDB_CREDENTIAL",
+      "routeProposal": null
+    },
+    {
+      "tmdbId": 111803,
+      "requestedTitle": "The White Lotus",
+      "networks": null,
+      "result": "MISSING_TMDB_CREDENTIAL",
+      "routeProposal": null
+    },
+    {
+      "tmdbId": 250307,
+      "requestedTitle": "The Pitt",
+      "networks": null,
+      "result": "MISSING_TMDB_CREDENTIAL",
+      "routeProposal": null
+    },
+    {
+      "tmdbId": 106308,
+      "requestedTitle": "Somebody Somewhere",
+      "networks": null,
+      "result": "MISSING_TMDB_CREDENTIAL",
+      "routeProposal": null
+    },
+    {
+      "tmdbId": 124101,
+      "requestedTitle": "Hacks",
+      "networks": null,
+      "result": "MISSING_TMDB_CREDENTIAL",
+      "routeProposal": null
+    },
+    {
+      "tmdbId": 100088,
+      "requestedTitle": "The Last of Us",
+      "networks": null,
+      "result": "MISSING_TMDB_CREDENTIAL",
+      "routeProposal": null
+    },
+    {
+      "tmdbId": null,
+      "requestedTitle": "Industry",
+      "result": "UNRESOLVED_TMDB_IDENTITY",
+      "networks": null,
+      "routeProposal": null
+    },
+    {
+      "tmdbId": null,
+      "requestedTitle": "Rooster",
+      "result": "UNRESOLVED_TMDB_IDENTITY",
+      "networks": null,
+      "routeProposal": null
+    },
+    {
+      "tmdbId": null,
+      "requestedTitle": "Conan O'Brien Must Go",
+      "result": "UNRESOLVED_TMDB_IDENTITY",
+      "networks": null,
+      "routeProposal": null
+    }
+  ],
+  "httpAccessMatrix": [
+    {
+      "url": "https://press-spain.max.com/",
+      "httpStatus": null,
+      "finalUrl": "https://press-spain.max.com/",
+      "redirectChain": [],
+      "accessClassification": "DNS_FAILURE",
+      "failureCategory": "DNS_FAILURE",
+      "bodyExtractable": false
+    },
+    {
+      "url": "https://press-spain.max.com/sitemap",
+      "httpStatus": null,
+      "finalUrl": "https://press-spain.max.com/sitemap",
+      "redirectChain": [],
+      "accessClassification": "DNS_FAILURE",
+      "failureCategory": "DNS_FAILURE",
+      "bodyExtractable": false
+    },
+    {
+      "url": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+      "httpStatus": null,
+      "finalUrl": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+      "redirectChain": [],
+      "accessClassification": "DNS_FAILURE",
+      "failureCategory": "DNS_FAILURE",
+      "bodyExtractable": false
+    },
+    {
+      "url": "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-original-de-hbo-the-last-of-us-",
+      "httpStatus": null,
+      "finalUrl": "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-original-de-hbo-the-last-of-us-",
+      "redirectChain": [],
+      "accessClassification": "DNS_FAILURE",
+      "failureCategory": "DNS_FAILURE",
+      "bodyExtractable": false
+    },
+    {
+      "url": "https://press-spain.max.com/post/max-renueva-hacks-la-comedia-ganadora-de-un-emmy-por-una-cuarta-",
+      "httpStatus": null,
+      "finalUrl": "https://press-spain.max.com/post/max-renueva-hacks-la-comedia-ganadora-de-un-emmy-por-una-cuarta-",
+      "redirectChain": [],
+      "accessClassification": "DNS_FAILURE",
+      "failureCategory": "DNS_FAILURE",
+      "bodyExtractable": false
+    },
+    {
+      "url": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+      "httpStatus": null,
+      "finalUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+      "redirectChain": [],
+      "accessClassification": "DNS_FAILURE",
+      "failureCategory": "DNS_FAILURE",
+      "bodyExtractable": false
+    },
+    {
+      "url": "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-",
+      "httpStatus": null,
+      "finalUrl": "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-",
+      "redirectChain": [],
+      "accessClassification": "DNS_FAILURE",
+      "failureCategory": "DNS_FAILURE",
+      "bodyExtractable": false
+    },
+    {
+      "url": "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te",
+      "httpStatus": null,
+      "finalUrl": "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te",
+      "redirectChain": [],
+      "accessClassification": "DNS_FAILURE",
+      "failureCategory": "DNS_FAILURE",
+      "bodyExtractable": false
+    },
+    {
+      "url": "https://press-spain.max.com/post/avance-de-estrenos-de-octubre-3",
+      "httpStatus": null,
+      "finalUrl": "https://press-spain.max.com/post/avance-de-estrenos-de-octubre-3",
+      "redirectChain": [],
+      "accessClassification": "DNS_FAILURE",
+      "failureCategory": "DNS_FAILURE",
+      "bodyExtractable": false
+    },
+    {
+      "url": "https://press.wbd.com/ca/media-release/hbo-0/hbo-renews-white-lotus-fourth-season",
+      "httpStatus": null,
+      "finalUrl": "https://press.wbd.com/ca/media-release/hbo-0/hbo-renews-white-lotus-fourth-season",
+      "redirectChain": [],
+      "accessClassification": "DNS_FAILURE",
+      "failureCategory": "DNS_FAILURE",
+      "bodyExtractable": false
+    }
+  ],
+  "hbo": {
+    "distinctPositiveSeries": 0,
+    "genericDiscoveryPassingSeries": 0,
+    "independentReconstructionPassingSeries": 0,
+    "minimumDistinctSeries": 3,
+    "qualificationState": "LOCAL_NETWORK_INCONCLUSIVE",
+    "cases": [
+      {
+        "caseId": "the-white-lotus-lifecycle",
+        "tmdbId": 111803,
+        "requestedTitle": "The White Lotus",
+        "kind": "positive",
+        "candidateRouteNotIdentity": "HBO",
+        "route": null,
+        "rawNetworkLabels": null,
+        "discoverySource": [],
+        "discoveryMethod": "NO_CANDIDATE",
+        "discoveredUrl": null,
+        "evidenceSource": null,
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": null,
+        "identityResult": {
+          "acceptedForAudit": false
+        },
+        "parserFacts": [],
+        "signalsDiagnosticOnly": [],
+        "relevantEvidenceSnippet": [],
+        "status": null,
+        "nextSeasonNumber": null,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": null,
+        "sourceUrl": null,
+        "announcementDate": null,
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "not_applicable",
+          "mismatchedFields": []
+        },
+        "mismatchedFields": [],
+        "contentPassed": false,
+        "passed": false,
+        "failureStage": "discovery",
+        "failureReason": "NO_FIRST_PARTY_CANDIDATE",
+        "requiredPositive": false,
+        "attempts": []
+      },
+      {
+        "caseId": "the-last-of-us-lifecycle",
+        "tmdbId": 100088,
+        "requestedTitle": "The Last of Us",
+        "kind": "positive",
+        "route": null,
+        "candidateRouteNotIdentity": "HBO",
+        "rawNetworkLabels": null,
+        "metadataResult": "MISSING_TMDB_CREDENTIAL",
+        "discoverySource": [],
+        "discoveryMethod": "DIRECT_KNOWN_URL_ONLY",
+        "discoveredUrl": null,
+        "evidenceSource": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": null,
+        "identityResult": {
+          "acceptedForAudit": false,
+          "failure": "FETCH_UNAVAILABLE"
+        },
+        "originalBrandLabels": [],
+        "providerIdentityMatched": false,
+        "parserFacts": [],
+        "signalsDiagnosticOnly": [],
+        "relevantEvidenceSnippet": [],
+        "status": null,
+        "nextSeasonNumber": null,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+        "announcementDate": null,
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "not_applicable",
+          "mismatchedFields": []
+        },
+        "mismatchedFields": [],
+        "contentPassed": false,
+        "passed": false,
+        "failureStage": "fetch",
+        "failureReason": "DNS_FAILURE",
+        "negativeTargetContentValidated": null,
+        "requiredPositive": true,
+        "attempts": [
+          {
+            "url": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+            "identityAccepted": false,
+            "factCount": 0,
+            "failureStage": "fetch"
+          },
+          {
+            "url": "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-original-de-hbo-the-last-of-us-",
+            "identityAccepted": false,
+            "factCount": 0,
+            "failureStage": "fetch"
+          }
+        ]
+      },
+      {
+        "caseId": "somebody-somewhere-lifecycle",
+        "tmdbId": 106308,
+        "requestedTitle": "Somebody Somewhere",
+        "kind": "positive",
+        "candidateRouteNotIdentity": "HBO",
+        "route": null,
+        "rawNetworkLabels": null,
+        "discoverySource": [],
+        "discoveryMethod": "NO_CANDIDATE",
+        "discoveredUrl": null,
+        "evidenceSource": null,
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": null,
+        "identityResult": {
+          "acceptedForAudit": false
+        },
+        "parserFacts": [],
+        "signalsDiagnosticOnly": [],
+        "relevantEvidenceSnippet": [],
+        "status": null,
+        "nextSeasonNumber": null,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": null,
+        "sourceUrl": null,
+        "announcementDate": null,
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "not_applicable",
+          "mismatchedFields": []
+        },
+        "mismatchedFields": [],
+        "contentPassed": false,
+        "passed": false,
+        "failureStage": "discovery",
+        "failureReason": "NO_FIRST_PARTY_CANDIDATE",
+        "requiredPositive": false,
+        "attempts": []
+      },
+      {
+        "caseId": "white-lotus-spanish-filming",
+        "tmdbId": 111803,
+        "requestedTitle": "The White Lotus",
+        "kind": "negative",
+        "route": null,
+        "candidateRouteNotIdentity": "HBO",
+        "rawNetworkLabels": null,
+        "metadataResult": "MISSING_TMDB_CREDENTIAL",
+        "discoverySource": [],
+        "discoveryMethod": "DIRECT_KNOWN_URL_ONLY",
+        "discoveredUrl": null,
+        "evidenceSource": "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-",
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": null,
+        "identityResult": {
+          "acceptedForAudit": false,
+          "failure": "FETCH_UNAVAILABLE"
+        },
+        "originalBrandLabels": [],
+        "providerIdentityMatched": false,
+        "parserFacts": [],
+        "signalsDiagnosticOnly": [],
+        "relevantEvidenceSnippet": [],
+        "status": null,
+        "nextSeasonNumber": null,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-",
+        "announcementDate": null,
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "not_applicable",
+          "mismatchedFields": []
+        },
+        "mismatchedFields": [],
+        "contentPassed": false,
+        "passed": false,
+        "failureStage": "fetch",
+        "failureReason": "DNS_FAILURE",
+        "negativeTargetContentValidated": false,
+        "requiredPositive": false,
+        "attempts": [
+          {
+            "url": "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-",
+            "identityAccepted": false,
+            "factCount": 0,
+            "failureStage": "fetch"
+          }
+        ]
+      },
+      {
+        "caseId": "somebody-spanish-slate",
+        "tmdbId": 106308,
+        "requestedTitle": "Somebody Somewhere",
+        "kind": "ambiguity",
+        "route": null,
+        "candidateRouteNotIdentity": "HBO",
+        "rawNetworkLabels": null,
+        "metadataResult": "MISSING_TMDB_CREDENTIAL",
+        "discoverySource": [],
+        "discoveryMethod": "DIRECT_KNOWN_URL_ONLY",
+        "discoveredUrl": null,
+        "evidenceSource": "https://press-spain.max.com/post/avance-de-estrenos-de-octubre-3",
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": null,
+        "identityResult": {
+          "acceptedForAudit": false,
+          "failure": "FETCH_UNAVAILABLE"
+        },
+        "originalBrandLabels": [],
+        "providerIdentityMatched": false,
+        "parserFacts": [],
+        "signalsDiagnosticOnly": [],
+        "relevantEvidenceSnippet": [],
+        "status": null,
+        "nextSeasonNumber": null,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/avance-de-estrenos-de-octubre-3",
+        "announcementDate": null,
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "not_applicable",
+          "mismatchedFields": []
+        },
+        "mismatchedFields": [],
+        "contentPassed": false,
+        "passed": false,
+        "failureStage": "fetch",
+        "failureReason": "DNS_FAILURE",
+        "negativeTargetContentValidated": null,
+        "requiredPositive": false,
+        "attempts": [
+          {
+            "url": "https://press-spain.max.com/post/avance-de-estrenos-de-octubre-3",
+            "identityAccepted": false,
+            "factCount": 0,
+            "failureStage": "fetch"
+          }
+        ]
+      },
+      {
+        "caseId": "last-of-us-spanish-date",
+        "tmdbId": 100088,
+        "requestedTitle": "The Last of Us",
+        "kind": "regional",
+        "route": null,
+        "candidateRouteNotIdentity": "HBO",
+        "rawNetworkLabels": null,
+        "metadataResult": "MISSING_TMDB_CREDENTIAL",
+        "discoverySource": [],
+        "discoveryMethod": "DIRECT_KNOWN_URL_ONLY",
+        "discoveredUrl": null,
+        "evidenceSource": "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-original-de-hbo-the-last-of-us-",
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": null,
+        "identityResult": {
+          "acceptedForAudit": false,
+          "failure": "FETCH_UNAVAILABLE"
+        },
+        "originalBrandLabels": [],
+        "providerIdentityMatched": false,
+        "parserFacts": [],
+        "signalsDiagnosticOnly": [],
+        "relevantEvidenceSnippet": [],
+        "status": null,
+        "nextSeasonNumber": null,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-original-de-hbo-the-last-of-us-",
+        "announcementDate": null,
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "not_applicable",
+          "mismatchedFields": []
+        },
+        "mismatchedFields": [],
+        "contentPassed": false,
+        "passed": false,
+        "failureStage": "fetch",
+        "failureReason": "DNS_FAILURE",
+        "negativeTargetContentValidated": null,
+        "requiredPositive": false,
+        "attempts": [
+          {
+            "url": "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-original-de-hbo-the-last-of-us-",
+            "identityAccepted": false,
+            "factCount": 0,
+            "failureStage": "fetch"
+          }
+        ]
+      },
+      {
+        "caseId": "industry-lifecycle",
+        "tmdbId": null,
+        "requestedTitle": "Industry",
+        "kind": "positive",
+        "candidateRouteNotIdentity": "HBO",
+        "route": null,
+        "rawNetworkLabels": null,
+        "discoverySource": [],
+        "discoveryMethod": "NO_CANDIDATE",
+        "discoveredUrl": null,
+        "evidenceSource": null,
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": null,
+        "identityResult": {
+          "acceptedForAudit": false
+        },
+        "parserFacts": [],
+        "signalsDiagnosticOnly": [],
+        "relevantEvidenceSnippet": [],
+        "status": null,
+        "nextSeasonNumber": null,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": null,
+        "sourceUrl": null,
+        "announcementDate": null,
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "not_applicable",
+          "mismatchedFields": []
+        },
+        "mismatchedFields": [],
+        "contentPassed": false,
+        "passed": false,
+        "failureStage": "discovery",
+        "failureReason": "NO_FIRST_PARTY_CANDIDATE",
+        "requiredPositive": false,
+        "attempts": []
+      },
+      {
+        "caseId": "rooster-lifecycle",
+        "tmdbId": null,
+        "requestedTitle": "Rooster",
+        "kind": "positive",
+        "candidateRouteNotIdentity": "HBO",
+        "route": null,
+        "rawNetworkLabels": null,
+        "discoverySource": [],
+        "discoveryMethod": "NO_CANDIDATE",
+        "discoveredUrl": null,
+        "evidenceSource": null,
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": null,
+        "identityResult": {
+          "acceptedForAudit": false
+        },
+        "parserFacts": [],
+        "signalsDiagnosticOnly": [],
+        "relevantEvidenceSnippet": [],
+        "status": null,
+        "nextSeasonNumber": null,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": null,
+        "sourceUrl": null,
+        "announcementDate": null,
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "not_applicable",
+          "mismatchedFields": []
+        },
+        "mismatchedFields": [],
+        "contentPassed": false,
+        "passed": false,
+        "failureStage": "discovery",
+        "failureReason": "NO_FIRST_PARTY_CANDIDATE",
+        "requiredPositive": false,
+        "attempts": []
+      }
+    ]
+  },
+  "max": {
+    "distinctPositiveSeries": 0,
+    "genericDiscoveryPassingSeries": 0,
+    "independentReconstructionPassingSeries": 0,
+    "minimumDistinctSeries": 3,
+    "qualificationState": "LOCAL_NETWORK_INCONCLUSIVE",
+    "cases": [
+      {
+        "caseId": "the-pitt-lifecycle",
+        "tmdbId": 250307,
+        "requestedTitle": "The Pitt",
+        "kind": "positive",
+        "candidateRouteNotIdentity": "MAX",
+        "route": null,
+        "rawNetworkLabels": null,
+        "discoverySource": [],
+        "discoveryMethod": "NO_CANDIDATE",
+        "discoveredUrl": null,
+        "evidenceSource": null,
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": null,
+        "identityResult": {
+          "acceptedForAudit": false
+        },
+        "parserFacts": [],
+        "signalsDiagnosticOnly": [],
+        "relevantEvidenceSnippet": [],
+        "status": null,
+        "nextSeasonNumber": null,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": null,
+        "sourceUrl": null,
+        "announcementDate": null,
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "not_applicable",
+          "mismatchedFields": []
+        },
+        "mismatchedFields": [],
+        "contentPassed": false,
+        "passed": false,
+        "failureStage": "discovery",
+        "failureReason": "NO_FIRST_PARTY_CANDIDATE",
+        "requiredPositive": false,
+        "attempts": []
+      },
+      {
+        "caseId": "hacks-lifecycle",
+        "tmdbId": 124101,
+        "requestedTitle": "Hacks",
+        "kind": "positive",
+        "route": null,
+        "candidateRouteNotIdentity": "MAX",
+        "rawNetworkLabels": null,
+        "metadataResult": "MISSING_TMDB_CREDENTIAL",
+        "discoverySource": [],
+        "discoveryMethod": "DIRECT_KNOWN_URL_ONLY",
+        "discoveredUrl": null,
+        "evidenceSource": "https://press-spain.max.com/post/max-renueva-hacks-la-comedia-ganadora-de-un-emmy-por-una-cuarta-",
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": null,
+        "identityResult": {
+          "acceptedForAudit": false,
+          "failure": "FETCH_UNAVAILABLE"
+        },
+        "originalBrandLabels": [],
+        "providerIdentityMatched": false,
+        "parserFacts": [],
+        "signalsDiagnosticOnly": [],
+        "relevantEvidenceSnippet": [],
+        "status": null,
+        "nextSeasonNumber": null,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/max-renueva-hacks-la-comedia-ganadora-de-un-emmy-por-una-cuarta-",
+        "announcementDate": null,
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "not_applicable",
+          "mismatchedFields": []
+        },
+        "mismatchedFields": [],
+        "contentPassed": false,
+        "passed": false,
+        "failureStage": "fetch",
+        "failureReason": "DNS_FAILURE",
+        "negativeTargetContentValidated": null,
+        "requiredPositive": true,
+        "attempts": [
+          {
+            "url": "https://press-spain.max.com/post/max-renueva-hacks-la-comedia-ganadora-de-un-emmy-por-una-cuarta-",
+            "identityAccepted": false,
+            "factCount": 0,
+            "failureStage": "fetch"
+          },
+          {
+            "url": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+            "identityAccepted": false,
+            "factCount": 0,
+            "failureStage": "fetch"
+          }
+        ]
+      },
+      {
+        "caseId": "tokyo-vice-lifecycle",
+        "tmdbId": 90296,
+        "requestedTitle": "Tokyo Vice",
+        "kind": "positive",
+        "candidateRouteNotIdentity": "MAX",
+        "route": null,
+        "rawNetworkLabels": null,
+        "discoverySource": [],
+        "discoveryMethod": "NO_CANDIDATE",
+        "discoveredUrl": null,
+        "evidenceSource": null,
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": null,
+        "identityResult": {
+          "acceptedForAudit": false
+        },
+        "parserFacts": [],
+        "signalsDiagnosticOnly": [],
+        "relevantEvidenceSnippet": [],
+        "status": null,
+        "nextSeasonNumber": null,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": null,
+        "sourceUrl": null,
+        "announcementDate": null,
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "not_applicable",
+          "mismatchedFields": []
+        },
+        "mismatchedFields": [],
+        "contentPassed": false,
+        "passed": false,
+        "failureStage": "discovery",
+        "failureReason": "NO_FIRST_PARTY_CANDIDATE",
+        "requiredPositive": false,
+        "attempts": []
+      },
+      {
+        "caseId": "pitt-spanish-teaser",
+        "tmdbId": 250307,
+        "requestedTitle": "The Pitt",
+        "kind": "negative",
+        "route": null,
+        "candidateRouteNotIdentity": "MAX",
+        "rawNetworkLabels": null,
+        "metadataResult": "MISSING_TMDB_CREDENTIAL",
+        "discoverySource": [],
+        "discoveryMethod": "DIRECT_KNOWN_URL_ONLY",
+        "discoveredUrl": null,
+        "evidenceSource": "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te",
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": null,
+        "identityResult": {
+          "acceptedForAudit": false,
+          "failure": "FETCH_UNAVAILABLE"
+        },
+        "originalBrandLabels": [],
+        "providerIdentityMatched": false,
+        "parserFacts": [],
+        "signalsDiagnosticOnly": [],
+        "relevantEvidenceSnippet": [],
+        "status": null,
+        "nextSeasonNumber": null,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te",
+        "announcementDate": null,
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "not_applicable",
+          "mismatchedFields": []
+        },
+        "mismatchedFields": [],
+        "contentPassed": false,
+        "passed": false,
+        "failureStage": "fetch",
+        "failureReason": "DNS_FAILURE",
+        "negativeTargetContentValidated": false,
+        "requiredPositive": false,
+        "attempts": [
+          {
+            "url": "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te",
+            "identityAccepted": false,
+            "factCount": 0,
+            "failureStage": "fetch"
+          }
+        ]
+      },
+      {
+        "caseId": "hacks-spanish-final",
+        "tmdbId": 124101,
+        "requestedTitle": "Hacks",
+        "kind": "regional",
+        "route": null,
+        "candidateRouteNotIdentity": "MAX",
+        "rawNetworkLabels": null,
+        "metadataResult": "MISSING_TMDB_CREDENTIAL",
+        "discoverySource": [],
+        "discoveryMethod": "DIRECT_KNOWN_URL_ONLY",
+        "discoveredUrl": null,
+        "evidenceSource": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": null,
+        "identityResult": {
+          "acceptedForAudit": false,
+          "failure": "FETCH_UNAVAILABLE"
+        },
+        "originalBrandLabels": [],
+        "providerIdentityMatched": false,
+        "parserFacts": [],
+        "signalsDiagnosticOnly": [],
+        "relevantEvidenceSnippet": [],
+        "status": null,
+        "nextSeasonNumber": null,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+        "announcementDate": null,
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "not_applicable",
+          "mismatchedFields": []
+        },
+        "mismatchedFields": [],
+        "contentPassed": false,
+        "passed": false,
+        "failureStage": "fetch",
+        "failureReason": "DNS_FAILURE",
+        "negativeTargetContentValidated": null,
+        "requiredPositive": false,
+        "attempts": [
+          {
+            "url": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+            "identityAccepted": false,
+            "factCount": 0,
+            "failureStage": "fetch"
+          }
+        ]
+      },
+      {
+        "caseId": "conan-lifecycle",
+        "tmdbId": null,
+        "requestedTitle": "Conan O'Brien Must Go",
+        "kind": "positive",
+        "candidateRouteNotIdentity": "MAX",
+        "route": null,
+        "rawNetworkLabels": null,
+        "discoverySource": [],
+        "discoveryMethod": "NO_CANDIDATE",
+        "discoveredUrl": null,
+        "evidenceSource": null,
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": null,
+        "identityResult": {
+          "acceptedForAudit": false
+        },
+        "parserFacts": [],
+        "signalsDiagnosticOnly": [],
+        "relevantEvidenceSnippet": [],
+        "status": null,
+        "nextSeasonNumber": null,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": null,
+        "sourceUrl": null,
+        "announcementDate": null,
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "not_applicable",
+          "mismatchedFields": []
+        },
+        "mismatchedFields": [],
+        "contentPassed": false,
+        "passed": false,
+        "failureStage": "discovery",
+        "failureReason": "NO_FIRST_PARTY_CANDIDATE",
+        "requiredPositive": false,
+        "attempts": []
+      }
+    ]
+  },
+  "sharedSafety": {
+    "crossSeason": {
+      "scope": "SYNTHETIC_SAFETY_NOT_REAL_SOURCE_COVERAGE",
+      "passed": true,
+      "checks": [
+        {
+          "name": "renewal_does_not_borrow_previous_date",
+          "passed": true
+        }
+      ]
+    },
+    "multiTitle": {
+      "scope": "SYNTHETIC_SAFETY_NOT_REAL_SOURCE_COVERAGE",
+      "passed": false,
+      "checks": [
+        {
+          "name": "separate_subjects",
+          "passed": true
+        },
+        {
+          "name": "final_season_not_borrowed",
+          "passed": true
+        }
+      ],
+      "realMonthlyCorpusPassed": false
+    },
+    "negation": {
+      "scope": "SYNTHETIC_SAFETY_NOT_REAL_SOURCE_COVERAGE",
+      "passed": true,
+      "checks": [
+        {
+          "name": "SERIES A no ha sido renovada por una tercera temporada.",
+          "passed": true
+        },
+        {
+          "name": "SERIES A todavía no ha sido renovada por una tercera temporada.",
+          "passed": true
+        },
+        {
+          "name": "SERIES A aún no ha sido renovado por una tercera temporada.",
+          "passed": true
+        },
+        {
+          "name": "SERIES A podría ser renovada para una tercera temporada.",
+          "passed": true
+        },
+        {
+          "name": "SERIES A espera ser renovada por una tercera temporada.",
+          "passed": true
+        },
+        {
+          "name": "No se ha confirmado una tercera temporada de SERIES A.",
+          "passed": true
+        }
+      ]
+    },
+    "teaserTrailer": {
+      "scope": "SYNTHETIC_SAFETY_NOT_REAL_SOURCE_COVERAGE",
+      "passed": true,
+      "checks": [
+        {
+          "name": "HBO Max lanza el teaser oficial y las primeras imágenes de la tercera temporada de SERIES A.",
+          "passed": true
+        },
+        {
+          "name": "El último episodio de la quinta temporada de SERIES A.",
+          "passed": true
+        },
+        {
+          "name": "El último tráiler de la temporada de SERIES A.",
+          "passed": true
+        },
+        {
+          "name": "La cuarta temporada de SERIES A comienza su rodaje.",
+          "passed": true
+        }
+      ]
+    },
+    "regionalReleaseDate": {
+      "scope": "SYNTHETIC_SAFETY_NOT_REAL_SOURCE_COVERAGE",
+      "passed": true,
+      "checks": [
+        {
+          "name": "regional_date_never_global",
+          "passed": true
+        }
+      ]
+    },
+    "firstPartyNegatives": {
+      "passed": false,
+      "validatedCases": 0,
+      "requiredCases": 2,
+      "unavailableIsNotPass": true
+    }
+  },
+  "wbd403": {
+    "historicalRunnerObserved": true,
+    "observed": false,
+    "currentClassification": "DNS_FAILURE",
+    "bypassAttempted": false
+  },
+  "cancellationCoverage": "CANCELLATION_FIRST_PARTY_COVERAGE_INSUFFICIENT",
+  "budget": {
+    "maximumFetches": 84,
+    "actualFetches": 10,
+    "indexPages": 2
+  },
+  "productionActivation": {
+    "HBO": false,
+    "MAX": false
+  },
+  "protectedFileIntegrity": {
+    "algorithm": "sha256",
+    "before": {
+      "official-data/official_series_data.json": "1944e4e5e4459ae5e650e7c414ade15a8c5f2fadcbc230370b4a8bf7f39fb31f",
+      "official-data/history/changes.jsonl": "faf0e20a994d5448d93960fbebce93fb843f8062f4909764abf09f75a2a8da6a",
+      "official-data/sources.json": "ed037e2743ce2e5db98746e9138f8fb750bbb1ab8dcc60a97182c54a170366ac",
+      "official-data/monitored_series.json": "be89deda13bd814c4bd20e8be46b7f4da06382698a956a0a7a7cc7e77239b91f",
+      "official-data/history/monitored_changes.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "after": {
+      "official-data/official_series_data.json": "1944e4e5e4459ae5e650e7c414ade15a8c5f2fadcbc230370b4a8bf7f39fb31f",
+      "official-data/history/changes.jsonl": "faf0e20a994d5448d93960fbebce93fb843f8062f4909764abf09f75a2a8da6a",
+      "official-data/sources.json": "ed037e2743ce2e5db98746e9138f8fb750bbb1ab8dcc60a97182c54a170366ac",
+      "official-data/monitored_series.json": "be89deda13bd814c4bd20e8be46b7f4da06382698a956a0a7a7cc7e77239b91f",
+      "official-data/history/monitored_changes.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "unchanged": true,
+    "changedFiles": []
+  }
+}

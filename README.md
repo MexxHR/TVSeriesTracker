@@ -1,4 +1,8 @@
-# TV Series Tracker V2.7.7
+# TV Series Tracker V2.7.8
+
+## V2.7.8 HBO / MAX Qualification & Spanish Parser Hardening
+
+Qualification only: separate exact HBO/MAX network routes, explicit Spanish lifecycle parsing, first-party regional discovery and independent bounded-evidence reconstruction. Spain dates remain ES diagnostics; global production dates remain null. Production providers and FX stay unchanged. After uploading `TVSeriesTracker-V2.7.8.zip`, manually run **HBO MAX Provider Qualification** and review **hbo-max-provider-qualification** (`hbo-max-provider-qualification.json`). Both production activation flags remain false regardless of runner outcome. See `V2.7.8_REPORT.md`.
 
 ## V2.7.7 WBD / HBO / Max Source & Provider Qualification Audit
 

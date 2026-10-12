@@ -154,7 +154,7 @@ def _public_url(url: str | None) -> str | None:
     return f"{parsed.scheme.lower()}://{parsed.hostname.lower()}{parsed.path}"
 
 
-def fetch_url(url: str, domains: list[str]) -> tuple[dict, str | None]:
+def fetch_url(url: str, domains: list[str], *, decoder=None) -> tuple[dict, str | None]:
     """One bounded request, with no credentials and no retry loop."""
     base = {"status": "not_fetched", "httpStatus": None, "initialHttpStatus": None, "finalStatus": None,
             "finalUrl": None, "redirectCount": 0, "redirectsWithinBoundary": None,
@@ -201,7 +201,8 @@ def fetch_url(url: str, domains: list[str]) -> tuple[dict, str | None]:
                      "initialHttpStatus": redirects.statuses[0] if redirects.statuses else status, "finalStatus": status,
                      "finalUrl": _public_url(final), "redirectCount": redirects.count,
                      "redirectsWithinBoundary": True, "contentType": content_type,
-                     "responseBytes": len(payload)}, payload.decode("utf-8", errors="replace"))
+                     "responseBytes": len(payload)},
+                    decoder(payload, response.headers.get_content_charset()) if decoder else payload.decode("utf-8", errors="replace"))
     except HTTPError as exc:
         category, status = classify_failure(exc)
         final_url = exc.geturl()

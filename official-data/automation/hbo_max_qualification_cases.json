@@ -1,0 +1,198 @@
+{
+  "schemaVersion": 1,
+  "minimumDistinctSeriesPerRoute": 3,
+  "notice": "Known URLs are direct regression probes only; generic discovery never uses them as seeds or ranks. Candidate routes are not actual network observations. Missing evidence fails qualification.",
+  "cases": [
+    {
+      "caseId": "the-white-lotus-lifecycle",
+      "title": "The White Lotus",
+      "aliases": [
+        "The White Lotus"
+      ],
+      "tmdbId": 111803,
+      "candidateRoute": "HBO",
+      "kind": "positive",
+      "knownUrls": [],
+      "requiredPositive": false
+    },
+    {
+      "caseId": "the-last-of-us-lifecycle",
+      "title": "The Last of Us",
+      "aliases": [
+        "The Last of Us"
+      ],
+      "tmdbId": 100088,
+      "candidateRoute": "HBO",
+      "kind": "positive",
+      "knownUrls": [
+        "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+        "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-original-de-hbo-the-last-of-us-"
+      ],
+      "requiredPositive": true
+    },
+    {
+      "caseId": "somebody-somewhere-lifecycle",
+      "title": "Somebody Somewhere",
+      "aliases": [
+        "Somebody Somewhere"
+      ],
+      "tmdbId": 106308,
+      "candidateRoute": "HBO",
+      "kind": "positive",
+      "knownUrls": [],
+      "requiredPositive": false
+    },
+    {
+      "caseId": "the-pitt-lifecycle",
+      "title": "The Pitt",
+      "aliases": [
+        "The Pitt"
+      ],
+      "tmdbId": 250307,
+      "candidateRoute": "MAX",
+      "kind": "positive",
+      "knownUrls": [],
+      "requiredPositive": false
+    },
+    {
+      "caseId": "hacks-lifecycle",
+      "title": "Hacks",
+      "aliases": [
+        "Hacks"
+      ],
+      "tmdbId": 124101,
+      "candidateRoute": "MAX",
+      "kind": "positive",
+      "knownUrls": [
+        "https://press-spain.max.com/post/max-renueva-hacks-la-comedia-ganadora-de-un-emmy-por-una-cuarta-",
+        "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h"
+      ],
+      "requiredPositive": true
+    },
+    {
+      "caseId": "tokyo-vice-lifecycle",
+      "title": "Tokyo Vice",
+      "aliases": [
+        "Tokyo Vice"
+      ],
+      "tmdbId": 90296,
+      "candidateRoute": "MAX",
+      "kind": "positive",
+      "knownUrls": [],
+      "requiredPositive": false
+    },
+    {
+      "caseId": "white-lotus-spanish-filming",
+      "title": "The White Lotus",
+      "aliases": [
+        "The White Lotus"
+      ],
+      "tmdbId": 111803,
+      "candidateRoute": "HBO",
+      "kind": "negative",
+      "knownUrls": [
+        "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-"
+      ],
+      "requiredPositive": false
+    },
+    {
+      "caseId": "pitt-spanish-teaser",
+      "title": "The Pitt",
+      "aliases": [
+        "The Pitt"
+      ],
+      "tmdbId": 250307,
+      "candidateRoute": "MAX",
+      "kind": "negative",
+      "knownUrls": [
+        "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te"
+      ],
+      "requiredPositive": false
+    },
+    {
+      "caseId": "somebody-spanish-slate",
+      "title": "Somebody Somewhere",
+      "aliases": [
+        "Somebody Somewhere"
+      ],
+      "tmdbId": 106308,
+      "candidateRoute": "HBO",
+      "kind": "ambiguity",
+      "knownUrls": [
+        "https://press-spain.max.com/post/avance-de-estrenos-de-octubre-3"
+      ],
+      "requiredPositive": false
+    },
+    {
+      "caseId": "hacks-spanish-final",
+      "title": "Hacks",
+      "aliases": [
+        "Hacks"
+      ],
+      "tmdbId": 124101,
+      "candidateRoute": "MAX",
+      "kind": "regional",
+      "knownUrls": [
+        "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h"
+      ],
+      "requiredPositive": false
+    },
+    {
+      "caseId": "last-of-us-spanish-date",
+      "title": "The Last of Us",
+      "aliases": [
+        "The Last of Us"
+      ],
+      "tmdbId": 100088,
+      "candidateRoute": "HBO",
+      "kind": "regional",
+      "knownUrls": [
+        "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-original-de-hbo-the-last-of-us-"
+      ],
+      "requiredPositive": false
+    },
+    {
+      "caseId": "industry-lifecycle",
+      "title": "Industry",
+      "aliases": [
+        "Industry"
+      ],
+      "tmdbId": null,
+      "candidateRoute": "HBO",
+      "kind": "positive",
+      "requiredPositive": false,
+      "knownUrls": [],
+      "researchDiscoveryUrlNotSeed": "https://press-spain.max.com/post/hbo-renueva-industry-por-una-quinta-y-ultima-temporada",
+      "identityPolicy": "Resolve unique exact English TMDB search title, then fetch ID/name/networks. Localized alias explicitly observed on this first-party article; no ownership inference."
+    },
+    {
+      "caseId": "rooster-lifecycle",
+      "title": "Rooster",
+      "aliases": [
+        "Rooster"
+      ],
+      "tmdbId": null,
+      "candidateRoute": "HBO",
+      "kind": "positive",
+      "requiredPositive": false,
+      "knownUrls": [],
+      "researchDiscoveryUrlNotSeed": "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
+      "identityPolicy": "Resolve unique exact English TMDB search title, then fetch ID/name/networks. Localized alias explicitly observed on this first-party article; no ownership inference."
+    },
+    {
+      "caseId": "conan-lifecycle",
+      "title": "Conan O'Brien Must Go",
+      "aliases": [
+        "Conan O'Brien Must Go",
+        "Siguiendo a Conan O'Brien"
+      ],
+      "tmdbId": null,
+      "candidateRoute": "MAX",
+      "kind": "positive",
+      "requiredPositive": false,
+      "knownUrls": [],
+      "researchDiscoveryUrlNotSeed": "https://press-spain.max.com/post/max-renueva-siguiendo-a-conan-obrien-por-una-tercera-temporada-y",
+      "identityPolicy": "Resolve unique exact English TMDB search title, then fetch ID/name/networks. Localized alias explicitly observed on this first-party article; no ownership inference."
+    }
+  ]
+}
