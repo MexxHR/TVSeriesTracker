@@ -1,4 +1,8 @@
-# TV Series Tracker V2.7.10
+# TV Series Tracker V2.7.11
+
+## V2.7.11 MAX Qualification Completion
+
+MAX qualification only: exact-title ellipsis normalization in an isolated qualification parser, refreshed V2.7.9 runner baseline and fuller discovery diagnostics. HBO production/Rooster behavior stays frozen; MAX and FX remain inactive. Minimum remains three distinct fully passing series with generic discovery and independent seven-field replay. Upload `TVSeriesTracker-V2.7.11.zip`, await **Android debug APK** CI (`TV-Series-Tracker-V2.7.11-debug`), then manually run **HBO MAX Provider Qualification** and send **hbo-max-provider-qualification** (`hbo-max-provider-qualification.json`). Local qualification is not runner proof. See `V2.7.11_REPORT.md`.
 
 ## V2.7.10 HBO Production Activation
 

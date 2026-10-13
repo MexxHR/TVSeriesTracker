@@ -248,14 +248,14 @@
       "aliases": [
         "And Just Like That..."
       ],
-      "tmdbId": null,
+      "tmdbId": 116450,
       "candidateRoute": "MAX",
       "kind": "positive",
       "requiredPositive": false,
       "knownUrlOracle": [
         "https://press-spain.max.com/post/hbo-max-renueva-su-serie-and-just-like-that-por-una-segunda-temp"
       ],
-      "identityPolicy": "Unique exact TMDB identity search plus fresh metadata; official localized aliases only; unresolved/ambiguous identity never counts."
+      "identityPolicy": "ID observed in actual V2.7.9 runner; fresh metadata/network identity still required. Oracle is never a seed."
     }
   ]
 }

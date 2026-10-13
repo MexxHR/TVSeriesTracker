@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "scope": "DEVELOPMENT_RESEARCH_NOT_RUNNER_QUALIFICATION",
+  "observedOn": "2026-10-13",
+  "baselineArtifactSha256": "a406dc080422a4fabcd483ca664e830beaec271bb9f71dbc0464208188c3dc9a",
+  "baselineMaxCases": [
+    {
+      "caseId": "the-pitt-lifecycle",
+      "requestedTitle": "The Pitt",
+      "tmdbId": 250307,
+      "route": "MAX",
+      "rawNetworkLabels": [
+        "Max",
+        "HBO Max"
+      ],
+      "passed": false,
+      "failureStage": "parser",
+      "failureReason": "QUALIFICATION_REQUIREMENT_NOT_MET",
+      "discoveredUrl": "https://press-spain.max.com/post/hbo-max-lanza-el-avance-oficial-de-la-segunda-temporada-de-la-se",
+      "status": null,
+      "nextSeasonNumber": null,
+      "announcementDate": "2025-08-21"
+    },
+    {
+      "caseId": "hacks-lifecycle",
+      "requestedTitle": "Hacks",
+      "tmdbId": 124101,
+      "route": "MAX",
+      "rawNetworkLabels": [
+        "HBO Max",
+        "Max",
+        "HBO Max"
+      ],
+      "passed": true,
+      "failureStage": null,
+      "failureReason": null,
+      "discoveredUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+      "status": "FINAL_SEASON",
+      "nextSeasonNumber": 5,
+      "announcementDate": "2026-03-23"
+    },
+    {
+      "caseId": "tokyo-vice-lifecycle",
+      "requestedTitle": "Tokyo Vice",
+      "tmdbId": 90296,
+      "route": "MAX",
+      "rawNetworkLabels": [
+        "HBO Max",
+        "Max"
+      ],
+      "passed": true,
+      "failureStage": null,
+      "failureReason": null,
+      "discoveredUrl": "https://press-spain.max.com/post/hbo-max-renueva-la-serie-tokyo-vice-por-una-segunda-temporada",
+      "status": "RENEWED",
+      "nextSeasonNumber": 2,
+      "announcementDate": "2022-06-07"
+    },
+    {
+      "caseId": "conan-lifecycle",
+      "requestedTitle": "Conan O'Brien Must Go",
+      "tmdbId": 226698,
+      "route": null,
+      "rawNetworkLabels": [
+        "HBO",
+        "Max"
+      ],
+      "passed": false,
+      "failureStage": "routing",
+      "failureReason": "AMBIGUOUS_NETWORKS",
+      "discoveredUrl": "https://press-spain.max.com/post/max-renueva-siguiendo-a-conan-obrien-por-una-tercera-temporada-y",
+      "status": null,
+      "nextSeasonNumber": null,
+      "announcementDate": "2025-03-13"
+    },
+    {
+      "caseId": "and-just-like-that-lifecycle",
+      "requestedTitle": "And Just Like That...",
+      "tmdbId": 116450,
+      "route": "MAX",
+      "rawNetworkLabels": [
+        "HBO Max",
+        "Max",
+        "HBO Max"
+      ],
+      "passed": false,
+      "failureStage": "routing",
+      "failureReason": "QUALIFICATION_REQUIREMENT_NOT_MET",
+      "discoveredUrl": "https://press-spain.max.com/post/hbo-max-renueva-su-serie-and-just-like-that-por-una-segunda-temp",
+      "status": null,
+      "nextSeasonNumber": null,
+      "announcementDate": "2022-03-22"
+    }
+  ],
+  "candidateInvestigated": {
+    "title": "And Just Like That...",
+    "tmdbId": 116450,
+    "identitySource": "Actual V2.7.9 runner; current metadata still mandatory",
+    "url": "https://press-spain.max.com/post/hbo-max-renueva-su-serie-and-just-like-that-por-una-segunda-temp",
+    "publicationDate": "2022-03-22",
+    "boundedFirstPartyExcerpt": "AND JUST LIKE THAT... ha sido renovada por una segunda temporada",
+    "rootCause": "Configured title ellipsis is incorrectly treated as clause-ending punctuation; original-brand and passive renewal binding are lost",
+    "fixScope": "MAX qualification only, exact alias punctuation normalization before unchanged Spanish grammar; no HBO production call path",
+    "genericDiscoveryProof": "Actual V2.7.9 runner discovered this article. V2.7.11 must still freshly rediscover/refetch/replay it. No direct fallback."
+  },
+  "additionalResearch": {
+    "queries": [
+      "Max Press Spain renewal + La Vida Sexual",
+      "Max Press Spain renewal + Bookie",
+      "Max Press Spain renewal + Las Chicas",
+      "Max Press Spain renewal + Doom Patrol"
+    ],
+    "result": "No additional safely identified first-party series admitted from these development queries. No absence/cancellation inference."
+  },
+  "newSeriesAdded": [],
+  "budgetChanged": false,
+  "productionActivationMax": false,
+  "cancellationCoverage": "CANCELLATION_FIRST_PARTY_COVERAGE_INSUFFICIENT"
+}

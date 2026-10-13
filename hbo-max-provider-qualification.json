@@ -1,24 +1,76 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-13T16:22:13.401541+00:00",
+  "generatedAt": "2026-10-13T17:41:10.654636+00:00",
   "qualificationOnly": true,
   "readOnly": true,
   "resultScope": "LOCAL_DIAGNOSTIC_ONLY",
   "baseline": {
-    "artifactSha256": "3c63bba62acb5e24342a93443831a123a8dd9ab97c68c838f3f314fab38dbd7e",
-    "sha256": "3c63bba62acb5e24342a93443831a123a8dd9ab97c68c838f3f314fab38dbd7e",
+    "artifactSha256": "a406dc080422a4fabcd483ca664e830beaec271bb9f71dbc0464208188c3dc9a",
+    "sha256": "a406dc080422a4fabcd483ca664e830beaec271bb9f71dbc0464208188c3dc9a",
     "resultScope": "RUNNER_CONFIRMATION",
-    "generatedAt": "2026-10-12T19:07:39.490052+00:00",
+    "generatedAt": "2026-10-13T16:34:26.168329+00:00",
     "accessibleRegionalUrls": [
       "https://press-spain.max.com/",
       "https://press-spain.max.com/post",
+      "https://press-spain.max.com/post/and-just-like-that-el-documental-llega-manana-a-hbo-max",
+      "https://press-spain.max.com/post/and-just-like-that-la-serie-max-original-que-continua-la-histori",
       "https://press-spain.max.com/post/avance-de-estrenos-de-octubre-3",
       "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+      "https://press-spain.max.com/post/hbo-lanza-el-trailer-de-la-segunda-temporada-de-the-white-lotus",
+      "https://press-spain.max.com/post/hbo-lanza-el-trailer-oficial-y-el-cartel-de-la-segunda-temporada",
+      "https://press-spain.max.com/post/hbo-lanza-el-trailer-y-poster-oficiales-de-la-tercera-temporada-",
+      "https://press-spain.max.com/post/hbo-max-lanza-el-avance-oficial-de-la-segunda-temporada-de-la-se",
       "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te",
+      "https://press-spain.max.com/post/hbo-max-lanza-el-trailer-oficial-de-la-segunda-temporada-de-and-",
+      "https://press-spain.max.com/post/hbo-max-renueva-la-serie-tokyo-vice-por-una-segunda-temporada",
+      "https://press-spain.max.com/post/hbo-max-renueva-su-serie-and-just-like-that-por-una-segunda-temp",
+      "https://press-spain.max.com/post/hbo-publica-el-trailer-y-poster-oficiales-de-la-tercera-temporad",
+      "https://press-spain.max.com/post/hbo-renueva-industry-por-una-cuarta-temporada",
+      "https://press-spain.max.com/post/hbo-renueva-industry-por-una-quinta-y-ultima-temporada",
+      "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+      "https://press-spain.max.com/post/hbo-renueva-la-serie-dramatica-original-la-edad-dorada-por-una-c",
+      "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
       "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+      "https://press-spain.max.com/post/imagenes-disponibles-de-la-premiere-en-los-angeles-de-la-tercera",
+      "https://press-spain.max.com/post/la-comedia-original-de-hbo-the-comeback-vuelve-con-una-tercera-y",
+      "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-dramatica-original-de-hbo-indust",
       "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-",
+      "https://press-spain.max.com/post/la-segunda-temporada-de-and-just-like-that-se-estrena-el-proximo",
+      "https://press-spain.max.com/post/la-segunda-temporada-de-industry-se-estrena-el-proximo-2-de-agos",
       "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-original-de-hbo-the-last-of-us-",
-      "https://press-spain.max.com/post/max-renueva-hacks-la-comedia-ganadora-de-un-emmy-por-una-cuarta-",
+      "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-the-white-lotus-se-estrena-el-1",
+      "https://press-spain.max.com/post/la-serie-original-de-max-the-pitt-se-estrena-el-proximo-10-de-en",
+      "https://press-spain.max.com/post/la-tercera-temporada-de-la-serie-original-de-hbo-industry-se-est",
+      "https://press-spain.max.com/post/la-tercera-temporada-de-la-serie-original-de-hbo-the-white-lotus",
+      "https://press-spain.max.com/post/max-lanza-un-plan-basico-con-anuncios-en-espana-para-ampliar-las",
+      "https://press-spain.max.com/post/max-renueva-siguiendo-a-conan-obrien-por-una-tercera-temporada-y",
+      "https://press-spain.max.com/post/nuevas-incorporaciones-a-la-tercera-entrega-de-the-white-lotus",
+      "https://press-spain.max.com/post/the-pitt-la-nueva-serie-original-de-max-se-estrena-en-enero",
+      "https://press-spain.max.com/post/the-pitt-reconoce-la-labor-de-la-comunidad-sanitaria-en-espana",
+      "https://press-spain.max.com/post?limit=30&offset=0&searchKey=&tab=all",
+      "https://press-spain.max.com/post?limit=30&offset=0&searchKey=&tab=contenidos",
+      "https://press-spain.max.com/post?limit=30&offset=0&searchKey=And+Just+Like+That...&tab=all",
+      "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Conan+O%27Brien+Must+Go&tab=all",
+      "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Hacks&tab=all",
+      "https://press-spain.max.com/post?limit=30&offset=0&searchKey=IT%3A+Bienvenidos+a+Derry&tab=all",
+      "https://press-spain.max.com/post?limit=30&offset=0&searchKey=IT%3A+Welcome+to+Derry&tab=all",
+      "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Industry&tab=all",
+      "https://press-spain.max.com/post?limit=30&offset=0&searchKey=La+Edad+Dorada&tab=all",
+      "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Rooster&tab=all",
+      "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Siguiendo+a+Conan+O%27Brien&tab=all",
+      "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Somebody+Somewhere&tab=all",
+      "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Comeback&tab=all",
+      "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Gilded+Age&tab=all",
+      "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Last+of+Us&tab=all",
+      "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Pitt&tab=all",
+      "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+White+Lotus&tab=all",
+      "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Tokyo+Vice&tab=all",
+      "https://press-spain.max.com/post?limit=45&offset=0&searchKey=&tab=all",
+      "https://press-spain.max.com/post?limit=45&offset=0&searchKey=&tab=contenidos",
+      "https://press-spain.max.com/post?limit=60&offset=0&searchKey=&tab=all",
+      "https://press-spain.max.com/post?tab=all",
+      "https://press-spain.max.com/post?tab=contenidos",
+      "https://press-spain.max.com/post?tab=corporativo",
       "https://press-spain.max.com/sitemap"
     ],
     "historicalNetworks": [
@@ -328,21 +380,111 @@
           "result": "AMBIGUOUS_NETWORKS",
           "ownershipHomepageDistributorIgnored": true
         }
+      },
+      {
+        "tmdbId": 200875,
+        "requestedTitle": "IT: Welcome to Derry",
+        "title": "IT: Welcome to Derry",
+        "networks": [
+          {
+            "id": 49,
+            "name": "HBO"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "HBO",
+          "rawNetworkLabels": [
+            "HBO"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 81723,
+        "requestedTitle": "The Gilded Age",
+        "title": "The Gilded Age",
+        "networks": [
+          {
+            "id": 49,
+            "name": "HBO"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "HBO",
+          "rawNetworkLabels": [
+            "HBO"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 1999,
+        "requestedTitle": "The Comeback",
+        "title": "The Comeback",
+        "networks": [
+          {
+            "id": 49,
+            "name": "HBO"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "HBO",
+          "rawNetworkLabels": [
+            "HBO"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 116450,
+        "requestedTitle": "And Just Like That...",
+        "title": "And Just Like That…",
+        "networks": [
+          {
+            "id": 3186,
+            "name": "HBO Max"
+          },
+          {
+            "id": 6783,
+            "name": "Max"
+          },
+          {
+            "id": 8304,
+            "name": "HBO Max"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "MAX",
+          "rawNetworkLabels": [
+            "HBO Max",
+            "Max",
+            "HBO Max"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
       }
     ],
     "wbd403Observed": true,
     "previousQualification": {
       "hbo": {
-        "distinctPositiveSeries": 1,
-        "genericDiscoveryPassingSeries": 0,
-        "independentReconstructionPassingSeries": 1,
+        "distinctPositiveSeries": 5,
+        "genericDiscoveryPassingSeries": 5,
+        "independentReconstructionPassingSeries": 5,
         "minimumDistinctSeries": 3,
-        "qualificationState": "INSUFFICIENT_DISTINCT_FIRST_PARTY_CASES"
+        "qualificationState": "QUALIFIED_ON_GITHUB_RUNNER"
       },
       "max": {
-        "distinctPositiveSeries": 1,
-        "genericDiscoveryPassingSeries": 0,
-        "independentReconstructionPassingSeries": 1,
+        "distinctPositiveSeries": 2,
+        "genericDiscoveryPassingSeries": 2,
+        "independentReconstructionPassingSeries": 2,
         "minimumDistinctSeries": 3,
         "qualificationState": "INSUFFICIENT_DISTINCT_FIRST_PARTY_CASES"
       }
@@ -419,6 +561,18 @@
       }
     ],
     "truncated": false
+  },
+  "maxDiscoverySummary": {
+    "indexLinksExtracted": 0,
+    "acceptedArticleCandidates": 0,
+    "maxRelatedCandidates": 0,
+    "maxRelatedBeforeBudgetCaseAssociations": 0,
+    "maxCandidatesFetched": 0,
+    "identityAccepted": 0,
+    "lifecycleFactCandidates": 0,
+    "reconstructionPasses": 0,
+    "distinctPassingMaxSeries": [],
+    "relatedCandidatesAreSelectedTitleMatchesNotProviderProof": true
   },
   "sourcePolicy": {
     "newQualificationHost": "press-spain.max.com",
@@ -553,10 +707,10 @@
       "routeProposal": null
     },
     {
-      "tmdbId": null,
+      "tmdbId": 116450,
       "requestedTitle": "And Just Like That...",
-      "result": "UNRESOLVED_TMDB_IDENTITY",
       "networks": null,
+      "result": "MISSING_TMDB_CREDENTIAL",
       "routeProposal": null
     }
   ],
@@ -687,7 +841,7 @@
         "mismatchedFields": [],
         "contentPassed": false,
         "passed": false,
-        "failureStage": "discovery",
+        "failureStage": "routing",
         "failureReason": "MISSING_TMDB_CREDENTIAL",
         "metadataResult": "MISSING_TMDB_CREDENTIAL",
         "discoveryEntryPoint": null,
@@ -698,6 +852,7 @@
         "knownUrlUsedAsSeed": false,
         "oracleMatched": false,
         "providerIdentityMatched": false,
+        "selectedCandidateUrls": [],
         "requiredPositive": false,
         "attempts": []
       },
@@ -738,7 +893,7 @@
         "mismatchedFields": [],
         "contentPassed": false,
         "passed": false,
-        "failureStage": "discovery",
+        "failureStage": "routing",
         "failureReason": "MISSING_TMDB_CREDENTIAL",
         "metadataResult": "MISSING_TMDB_CREDENTIAL",
         "discoveryEntryPoint": null,
@@ -752,6 +907,7 @@
         "knownUrlUsedAsSeed": false,
         "oracleMatched": false,
         "providerIdentityMatched": false,
+        "selectedCandidateUrls": [],
         "requiredPositive": true,
         "attempts": []
       },
@@ -792,7 +948,7 @@
         "mismatchedFields": [],
         "contentPassed": false,
         "passed": false,
-        "failureStage": "discovery",
+        "failureStage": "routing",
         "failureReason": "MISSING_TMDB_CREDENTIAL",
         "metadataResult": "MISSING_TMDB_CREDENTIAL",
         "discoveryEntryPoint": null,
@@ -803,6 +959,7 @@
         "knownUrlUsedAsSeed": false,
         "oracleMatched": false,
         "providerIdentityMatched": false,
+        "selectedCandidateUrls": [],
         "requiredPositive": false,
         "attempts": []
       },
@@ -847,7 +1004,7 @@
         "mismatchedFields": [],
         "contentPassed": false,
         "passed": false,
-        "failureStage": "fetch",
+        "failureStage": "routing",
         "failureReason": "MISSING_TMDB_CREDENTIAL",
         "negativeTargetContentValidated": false,
         "discoveryEntryPoint": null,
@@ -859,12 +1016,16 @@
         ],
         "knownUrlUsedAsSeed": false,
         "oracleMatched": true,
+        "selectedCandidateUrls": [],
         "requiredPositive": false,
         "attempts": [
           {
             "url": "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-",
+            "bodyExtractable": false,
             "identityAccepted": false,
+            "providerIdentityMatched": false,
             "factCount": 0,
+            "reconstructionResult": "not_applicable",
             "failureStage": "fetch"
           }
         ]
@@ -910,7 +1071,7 @@
         "mismatchedFields": [],
         "contentPassed": false,
         "passed": false,
-        "failureStage": "fetch",
+        "failureStage": "routing",
         "failureReason": "MISSING_TMDB_CREDENTIAL",
         "negativeTargetContentValidated": null,
         "discoveryEntryPoint": null,
@@ -922,12 +1083,16 @@
         ],
         "knownUrlUsedAsSeed": false,
         "oracleMatched": true,
+        "selectedCandidateUrls": [],
         "requiredPositive": false,
         "attempts": [
           {
             "url": "https://press-spain.max.com/post/avance-de-estrenos-de-octubre-3",
+            "bodyExtractable": false,
             "identityAccepted": false,
+            "providerIdentityMatched": false,
             "factCount": 0,
+            "reconstructionResult": "not_applicable",
             "failureStage": "fetch"
           }
         ]
@@ -973,7 +1138,7 @@
         "mismatchedFields": [],
         "contentPassed": false,
         "passed": false,
-        "failureStage": "fetch",
+        "failureStage": "routing",
         "failureReason": "MISSING_TMDB_CREDENTIAL",
         "negativeTargetContentValidated": null,
         "discoveryEntryPoint": null,
@@ -985,12 +1150,16 @@
         ],
         "knownUrlUsedAsSeed": false,
         "oracleMatched": true,
+        "selectedCandidateUrls": [],
         "requiredPositive": false,
         "attempts": [
           {
             "url": "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-original-de-hbo-the-last-of-us-",
+            "bodyExtractable": false,
             "identityAccepted": false,
+            "providerIdentityMatched": false,
             "factCount": 0,
+            "reconstructionResult": "not_applicable",
             "failureStage": "fetch"
           }
         ]
@@ -1032,7 +1201,7 @@
         "mismatchedFields": [],
         "contentPassed": false,
         "passed": false,
-        "failureStage": "discovery",
+        "failureStage": "routing",
         "failureReason": "UNRESOLVED_TMDB_IDENTITY",
         "metadataResult": "UNRESOLVED_TMDB_IDENTITY",
         "discoveryEntryPoint": null,
@@ -1043,6 +1212,7 @@
         "knownUrlUsedAsSeed": false,
         "oracleMatched": false,
         "providerIdentityMatched": false,
+        "selectedCandidateUrls": [],
         "requiredPositive": false,
         "attempts": []
       },
@@ -1083,7 +1253,7 @@
         "mismatchedFields": [],
         "contentPassed": false,
         "passed": false,
-        "failureStage": "discovery",
+        "failureStage": "routing",
         "failureReason": "MISSING_TMDB_CREDENTIAL",
         "metadataResult": "MISSING_TMDB_CREDENTIAL",
         "discoveryEntryPoint": null,
@@ -1094,6 +1264,7 @@
         "knownUrlUsedAsSeed": false,
         "oracleMatched": false,
         "providerIdentityMatched": false,
+        "selectedCandidateUrls": [],
         "requiredPositive": false,
         "attempts": []
       },
@@ -1134,7 +1305,7 @@
         "mismatchedFields": [],
         "contentPassed": false,
         "passed": false,
-        "failureStage": "discovery",
+        "failureStage": "routing",
         "failureReason": "UNRESOLVED_TMDB_IDENTITY",
         "metadataResult": "UNRESOLVED_TMDB_IDENTITY",
         "discoveryEntryPoint": null,
@@ -1147,6 +1318,7 @@
         "knownUrlUsedAsSeed": false,
         "oracleMatched": false,
         "providerIdentityMatched": false,
+        "selectedCandidateUrls": [],
         "requiredPositive": false,
         "attempts": []
       },
@@ -1187,7 +1359,7 @@
         "mismatchedFields": [],
         "contentPassed": false,
         "passed": false,
-        "failureStage": "discovery",
+        "failureStage": "routing",
         "failureReason": "UNRESOLVED_TMDB_IDENTITY",
         "metadataResult": "UNRESOLVED_TMDB_IDENTITY",
         "discoveryEntryPoint": null,
@@ -1200,6 +1372,7 @@
         "knownUrlUsedAsSeed": false,
         "oracleMatched": false,
         "providerIdentityMatched": false,
+        "selectedCandidateUrls": [],
         "requiredPositive": false,
         "attempts": []
       },
@@ -1240,7 +1413,7 @@
         "mismatchedFields": [],
         "contentPassed": false,
         "passed": false,
-        "failureStage": "discovery",
+        "failureStage": "routing",
         "failureReason": "UNRESOLVED_TMDB_IDENTITY",
         "metadataResult": "UNRESOLVED_TMDB_IDENTITY",
         "discoveryEntryPoint": null,
@@ -1253,6 +1426,7 @@
         "knownUrlUsedAsSeed": false,
         "oracleMatched": false,
         "providerIdentityMatched": false,
+        "selectedCandidateUrls": [],
         "requiredPositive": false,
         "attempts": []
       }
@@ -1302,7 +1476,7 @@
         "mismatchedFields": [],
         "contentPassed": false,
         "passed": false,
-        "failureStage": "discovery",
+        "failureStage": "routing",
         "failureReason": "MISSING_TMDB_CREDENTIAL",
         "metadataResult": "MISSING_TMDB_CREDENTIAL",
         "discoveryEntryPoint": null,
@@ -1313,6 +1487,7 @@
         "knownUrlUsedAsSeed": false,
         "oracleMatched": false,
         "providerIdentityMatched": false,
+        "selectedCandidateUrls": [],
         "requiredPositive": false,
         "attempts": []
       },
@@ -1353,7 +1528,7 @@
         "mismatchedFields": [],
         "contentPassed": false,
         "passed": false,
-        "failureStage": "discovery",
+        "failureStage": "routing",
         "failureReason": "MISSING_TMDB_CREDENTIAL",
         "metadataResult": "MISSING_TMDB_CREDENTIAL",
         "discoveryEntryPoint": null,
@@ -1367,6 +1542,7 @@
         "knownUrlUsedAsSeed": false,
         "oracleMatched": false,
         "providerIdentityMatched": false,
+        "selectedCandidateUrls": [],
         "requiredPositive": true,
         "attempts": []
       },
@@ -1407,7 +1583,7 @@
         "mismatchedFields": [],
         "contentPassed": false,
         "passed": false,
-        "failureStage": "discovery",
+        "failureStage": "routing",
         "failureReason": "MISSING_TMDB_CREDENTIAL",
         "metadataResult": "MISSING_TMDB_CREDENTIAL",
         "discoveryEntryPoint": null,
@@ -1418,6 +1594,7 @@
         "knownUrlUsedAsSeed": false,
         "oracleMatched": false,
         "providerIdentityMatched": false,
+        "selectedCandidateUrls": [],
         "requiredPositive": false,
         "attempts": []
       },
@@ -1462,7 +1639,7 @@
         "mismatchedFields": [],
         "contentPassed": false,
         "passed": false,
-        "failureStage": "fetch",
+        "failureStage": "routing",
         "failureReason": "MISSING_TMDB_CREDENTIAL",
         "negativeTargetContentValidated": false,
         "discoveryEntryPoint": null,
@@ -1474,12 +1651,16 @@
         ],
         "knownUrlUsedAsSeed": false,
         "oracleMatched": true,
+        "selectedCandidateUrls": [],
         "requiredPositive": false,
         "attempts": [
           {
             "url": "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te",
+            "bodyExtractable": false,
             "identityAccepted": false,
+            "providerIdentityMatched": false,
             "factCount": 0,
+            "reconstructionResult": "not_applicable",
             "failureStage": "fetch"
           }
         ]
@@ -1525,7 +1706,7 @@
         "mismatchedFields": [],
         "contentPassed": false,
         "passed": false,
-        "failureStage": "fetch",
+        "failureStage": "routing",
         "failureReason": "MISSING_TMDB_CREDENTIAL",
         "negativeTargetContentValidated": null,
         "discoveryEntryPoint": null,
@@ -1537,12 +1718,16 @@
         ],
         "knownUrlUsedAsSeed": false,
         "oracleMatched": true,
+        "selectedCandidateUrls": [],
         "requiredPositive": false,
         "attempts": [
           {
             "url": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+            "bodyExtractable": false,
             "identityAccepted": false,
+            "providerIdentityMatched": false,
             "factCount": 0,
+            "reconstructionResult": "not_applicable",
             "failureStage": "fetch"
           }
         ]
@@ -1584,7 +1769,7 @@
         "mismatchedFields": [],
         "contentPassed": false,
         "passed": false,
-        "failureStage": "discovery",
+        "failureStage": "routing",
         "failureReason": "MISSING_TMDB_CREDENTIAL",
         "metadataResult": "MISSING_TMDB_CREDENTIAL",
         "discoveryEntryPoint": null,
@@ -1595,12 +1780,13 @@
         "knownUrlUsedAsSeed": false,
         "oracleMatched": false,
         "providerIdentityMatched": false,
+        "selectedCandidateUrls": [],
         "requiredPositive": false,
         "attempts": []
       },
       {
         "caseId": "and-just-like-that-lifecycle",
-        "tmdbId": null,
+        "tmdbId": 116450,
         "requestedTitle": "And Just Like That...",
         "kind": "positive",
         "candidateRouteNotIdentity": "MAX",
@@ -1635,9 +1821,9 @@
         "mismatchedFields": [],
         "contentPassed": false,
         "passed": false,
-        "failureStage": "discovery",
-        "failureReason": "UNRESOLVED_TMDB_IDENTITY",
-        "metadataResult": "UNRESOLVED_TMDB_IDENTITY",
+        "failureStage": "routing",
+        "failureReason": "MISSING_TMDB_CREDENTIAL",
+        "metadataResult": "MISSING_TMDB_CREDENTIAL",
         "discoveryEntryPoint": null,
         "candidateCountBeforeFilter": 0,
         "candidateCountAfterFilter": 0,
@@ -1648,6 +1834,7 @@
         "knownUrlUsedAsSeed": false,
         "oracleMatched": false,
         "providerIdentityMatched": false,
+        "selectedCandidateUrls": [],
         "requiredPositive": false,
         "attempts": []
       }

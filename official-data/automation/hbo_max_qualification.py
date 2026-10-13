@@ -22,13 +22,14 @@ import fx_hulu_qualification as integrity
 import wbd_hbo_max_source_audit as audit
 import spanish_qualification_parser as spanish
 import hbo_max_discovery as generic
+import max_qualification_parser as max_spanish
 
 HOST='press-spain.max.com'
 SOURCE='Max Press Spain'
 ROOTS=generic.ENTRY_POINTS
 CONFIG=Path(__file__).with_name('hbo_max_qualification_cases.json')
-BASELINE=Path(__file__).with_name('fixtures')/'v2781_hbo_max_runner.json'
-BASELINE_SHA='3c63bba62acb5e24342a93443831a123a8dd9ab97c68c838f3f314fab38dbd7e'
+BASELINE=Path(__file__).with_name('fixtures')/'v279_hbo_max_runner.json'
+BASELINE_SHA='a406dc080422a4fabcd483ca664e830beaec271bb9f71dbc0464208188c3dc9a'
 MIN_SERIES=3
 MAX_FETCHES=120
 
@@ -66,7 +67,7 @@ def baseline_proof(path=BASELINE):
         raise ValueError('Runner baseline checksum mismatch')
     b=json.loads(data.decode('utf-8-sig'))
     if b.get('resultScope')!='RUNNER_CONFIRMATION' or b.get('readOnly') is not True or b.get('qualificationOnly') is not True:
-        raise ValueError('Actual V2.7.8.1 runner artifact required')
+        raise ValueError('Actual V2.7.9 runner artifact required')
     urls={r['url'] for r in b['httpAccessMatrix'] if r.get('httpStatus')==200 and r.get('bodyExtractable')}
     if not set(ROOTS)<=urls:
         raise ValueError('Runner did not confirm regional discovery roots')
@@ -145,6 +146,8 @@ def article(raw,url):
             'publicationDate':published(raw,url,heading),'language':'es','territory':'ES'}
 
 def original_brand(a,entry):
+    if entry.get('qualificationRoute')=='MAX':
+        a,entry=max_spanish.scoped(a,entry)
     title=spanish.title_pattern(entry)
     found=set()
     for s in spanish.clauses(a):
@@ -157,7 +160,12 @@ def original_brand(a,entry):
 def detector(a,entry,today,**kwargs):
     if not evidence_url(a['url']) or a.get('sourceName')!=SOURCE:
         raise update.AutomationError('Qualification provenance rejected')
-    return spanish.detect({**a,'language':'es','territory':'ES'},entry,today,**kwargs)
+    parser=max_spanish.detect if entry.get('qualificationRoute')=='MAX' else spanish.detect
+    return parser({**a,'language':'es','territory':'ES'},entry,today,**kwargs)
+
+def regional_dates(a,entry):
+    parser=max_spanish.regional_dates if entry.get('qualificationRoute')=='MAX' else spanish.regional_dates
+    return parser(a,entry)
 
 def reconstruction(first,first_regional,raw,url,entry,today,expected):
     """Fresh article -> bounded excerpts -> existing independent validator/summary.
@@ -168,7 +176,7 @@ def reconstruction(first,first_regional,raw,url,entry,today,expected):
     """
     a=article(raw,url)
     fresh=detector(a,entry,today)
-    fresh_regional=spanish.regional_dates(a,entry)
+    fresh_regional=regional_dates(a,entry)
     if not fresh:
         return {'result':'failed','reason':'NO_FRESH_LIFECYCLE_FACTS','mismatchedFields':[]}
     evidence=[{**{k:f.get(k) for k in promotion.monitored.EVIDENCE_FIELDS},
@@ -177,7 +185,9 @@ def reconstruction(first,first_regional,raw,url,entry,today,expected):
          'parserResult':'facts','validationResult':'passed','eligibleSourceUrls':[url],
          'verifiedFacts':expected,'sourceEvidence':evidence}
     try:
-        rebuilt=promotion._validate_evidence(row,[HOST],detector=detector,aliases=entry['aliases'])
+        def replay_detector(a,e,t,**kwargs):
+            return detector(a,{**e,'qualificationRoute':entry.get('qualificationRoute')},t,**kwargs)
+        rebuilt=promotion._validate_evidence(row,[HOST],detector=replay_detector,aliases=entry['aliases'])
         summary=promotion._facts_summary(rebuilt,row,today)
         regional_ok=first_regional==fresh_regional
         return {'result':'passed' if regional_ok else 'failed','fieldsCompared':list(promotion.monitored.FACT_FIELDS),
@@ -313,6 +323,7 @@ def run(*,root=update.ROOT,config=None,fetcher=fetch,token='',metadata_loader=di
         entry={'tmdbId':c['tmdbId'],'title':c['title'],'aliases':c['aliases'],'allowedDomains':[HOST]}
         metadata=observations[c['caseId']];route_proposal=metadata.get('routeProposal') or {}
         route=route_proposal.get('route')
+        entry['qualificationRoute']=route
         selected,filtered_count=generic.candidates(indexes,c['aliases'],route)
         paths={a['url']:a['path'] for a in selected}
         candidates=[a['url'] for a in selected]
@@ -329,7 +340,7 @@ def run(*,root=update.ROOT,config=None,fetcher=fetch,token='',metadata_loader=di
                 try:
                     ident=audit.identity(raw,url,final,{'aliases':c['aliases']},[HOST])
                     a=article(raw,final);brands=original_brand(a,entry)
-                    facts=detector(a,entry,today);regional=spanish.regional_dates(a,entry)
+                    facts=detector(a,entry,today);regional=regional_dates(a,entry)
                 except (ValueError,update.AutomationError):
                     ident={'acceptedForAudit':False,'failure':'CONTENT_VALIDATION_FAILED'}
             matched=bool(route and route==c['candidateRoute'] and brands==[route])
@@ -353,7 +364,7 @@ def run(*,root=update.ROOT,config=None,fetcher=fetch,token='',metadata_loader=di
             negative_ok=bool(raw and ident['acceptedForAudit'] and matched and not facts)
             ambiguity_ok=bool(raw and not facts)
             passed=(content_ok and discovered and replay['result']=='passed' and replay.get('mismatchedFields',[])==[]) if c['kind']=='positive' else negative_ok if c['kind']=='negative' else ambiguity_ok if c['kind']=='ambiguity' else bool(raw and ident['acceptedForAudit'] and matched and regional and all(x['productionReleaseDate'] is None for x in regional))
-            stage='fetch' if not raw else 'identity' if not ident['acceptedForAudit'] else 'routing' if not matched else 'parser' if c['kind']=='positive' and not facts else 'discovery' if c['kind']=='positive' and not discovered else 'independent_reconstruction' if content_ok and replay['result']!='passed' else None
+            stage='fetch' if not raw else 'identity' if not ident['acceptedForAudit'] else 'routing' if not route or route!=c['candidateRoute'] else 'provider_identity' if not matched else 'parser' if c['kind']=='positive' and not facts else 'discovery' if c['kind']=='positive' and not discovered else 'independent_reconstruction' if content_ok and replay['result']!='passed' else None
             row={'caseId':c['caseId'],'tmdbId':c['tmdbId'],'requestedTitle':c['title'],'kind':c['kind'],
                  'route':route,'candidateRouteNotIdentity':c['candidateRoute'],'rawNetworkLabels':route_proposal.get('rawNetworkLabels'),
                  'metadataResult':metadata['result'],'discoverySource':[audit.public_url(u) for u in paths.get(url,[])],
@@ -373,7 +384,8 @@ def run(*,root=update.ROOT,config=None,fetcher=fetch,token='',metadata_loader=di
                  'passed':bool(passed),'failureStage':None if passed else stage or 'safety',
                  'failureReason':None if passed else result.get('failureCategory') or ident.get('failure') or 'QUALIFICATION_REQUIREMENT_NOT_MET',
                  'negativeTargetContentValidated':negative_ok if c['kind']=='negative' else None}
-            attempts.append({'url':audit.public_url(url),'identityAccepted':ident['acceptedForAudit'],'factCount':len(facts),'failureStage':row['failureStage']})
+            attempts.append({'url':audit.public_url(url),'bodyExtractable':bool(raw),'identityAccepted':ident['acceptedForAudit'],
+                             'providerIdentityMatched':matched,'factCount':len(facts),'reconstructionResult':replay['result'],'failureStage':row['failureStage']})
             # Prefer a qualifying replayable positive over a later failed probe.
             if chosen is None or row['passed'] or row['contentPassed'] and not chosen['contentPassed']:
                 chosen=row
@@ -396,8 +408,25 @@ def run(*,root=update.ROOT,config=None,fetcher=fetch,token='',metadata_loader=di
                        'sourceName':SOURCE,'sourceUrl':chosen.get('sourceUrl'),'announcementDate':chosen.get('announcementDate'),
                        'providerIdentityMatched':chosen.get('providerIdentityMatched',False),
                        'failureReason':chosen.get('failureReason') if route else route_proposal.get('result') or metadata['result']})
+        if not route:
+            chosen['failureStage']='routing'
+        if not chosen['passed'] and chosen.get('failureReason')=='QUALIFICATION_REQUIREMENT_NOT_MET':
+            chosen['failureReason']={'provider_identity':'ORIGINAL_BRAND_NOT_CONFIRMED','parser':'NO_EXPLICIT_LIFECYCLE_FACT','independent_reconstruction':'INDEPENDENT_RECONSTRUCTION_FAILED'}.get(chosen['failureStage'],chosen['failureReason'])
+        chosen['selectedCandidateUrls']=[a['url'] for a in selected]
         chosen['requiredPositive']=c.get('requiredPositive',True)
         chosen['attempts']=attempts;rows.append(chosen)
+    max_rows=[r for r in rows if r['candidateRouteNotIdentity']=='MAX' and r['kind']=='positive']
+    max_attempts=[a for r in max_rows for a in r['attempts']]
+    max_summary={'indexLinksExtracted':sum(p.get('linksExtracted',0) for p in discovery_diagnostic['pages']),
+        'acceptedArticleCandidates':len(indexes),
+        'maxRelatedCandidates':len({u for r in max_rows for u in r['selectedCandidateUrls']}),
+        'maxRelatedBeforeBudgetCaseAssociations':sum(r['candidateCountAfterFilter'] for r in max_rows),
+        'maxCandidatesFetched':len({a['url'] for a in max_attempts if a['bodyExtractable']}),
+        'identityAccepted':len({a['url'] for a in max_attempts if a['identityAccepted']}),
+        'lifecycleFactCandidates':len({a['url'] for a in max_attempts if a['factCount']}),
+        'reconstructionPasses':len({a['url'] for a in max_attempts if a['reconstructionResult']=='passed'}),
+        'distinctPassingMaxSeries':[{'tmdbId':i,'title':title} for i,title in sorted({r['tmdbId']:r['requestedTitle'] for r in max_rows if r['passed']}.items())],
+        'relatedCandidatesAreSelectedTitleMatchesNotProviderProof':True}
     # Historical WBD URL is a diagnostic probe only, never regional evidence.
     wbd_url='https://press.wbd.com/ca/media-release/hbo-0/hbo-renews-white-lotus-fourth-season'
     wbd_result,_=get(wbd_url)
@@ -414,7 +443,7 @@ def run(*,root=update.ROOT,config=None,fetcher=fetch,token='',metadata_loader=di
         raise RuntimeError('Protected files changed during qualification')
     return {'schemaVersion':1,'generatedAt':dt.datetime.now(dt.timezone.utc).isoformat(),'qualificationOnly':True,'readOnly':True,
             'resultScope':'RUNNER_CONFIRMATION' if runner else 'LOCAL_DIAGNOSTIC_ONLY','baseline':baseline,
-            'discovery':discovery_diagnostic,
+            'discovery':discovery_diagnostic,'maxDiscoverySummary':max_summary,
             'sourcePolicy':{'newQualificationHost':HOST,'language':'es','territory':'ES','productionActivated':False,'wildcardTrust':False,'sourceName':SOURCE},
             'routing':{route:[o for o in observations.values() if (o.get('routeProposal') or {}).get('route')==route] for route in ('HBO','MAX')},
             'currentMetadataObservations':list(observations.values()),'httpAccessMatrix':matrix,

@@ -9,13 +9,13 @@ class AudacityPreviewWorkflowTest(unittest.TestCase):
         gradle = (root / 'app/build.gradle.kts').read_text(encoding='utf-8')
         android = (root / '.github/workflows/android-debug.yml').read_text(encoding='utf-8')
         package = (root / 'backend/package_release.py').read_text(encoding='utf-8')
-        self.assertIn('versionCode = 39', gradle)
-        self.assertIn('versionName = "2.7.10"', gradle)
-        self.assertIn('VERSION = "V2.7.10"', package)
+        self.assertIn('versionCode = 40', gradle)
+        self.assertIn('versionName = "2.7.11"', gradle)
+        self.assertIn('VERSION = "V2.7.11"', package)
         for required in ('android-actions/setup-android@v3', "packages: 'platform-tools'",
                          'chmod +x gradlew', './gradlew clean :app:testDebugUnitTest :app:assembleDebug',
                          'python backend/package_release.py', 'certificate_digest(',
-                         'TV-Series-Tracker-V2.7.10-debug'):
+                         'TV-Series-Tracker-V2.7.11-debug'):
             self.assertIn(required, android)
 
     def test_manual_preview_runs_real_monitored_path_and_independent_rebuild(self):

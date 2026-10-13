@@ -1,0 +1,4722 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-13T16:34:26.168329+00:00",
+  "qualificationOnly": true,
+  "readOnly": true,
+  "resultScope": "RUNNER_CONFIRMATION",
+  "baseline": {
+    "artifactSha256": "3c63bba62acb5e24342a93443831a123a8dd9ab97c68c838f3f314fab38dbd7e",
+    "sha256": "3c63bba62acb5e24342a93443831a123a8dd9ab97c68c838f3f314fab38dbd7e",
+    "resultScope": "RUNNER_CONFIRMATION",
+    "generatedAt": "2026-10-12T19:07:39.490052+00:00",
+    "accessibleRegionalUrls": [
+      "https://press-spain.max.com/",
+      "https://press-spain.max.com/post",
+      "https://press-spain.max.com/post/avance-de-estrenos-de-octubre-3",
+      "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+      "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te",
+      "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+      "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-",
+      "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-original-de-hbo-the-last-of-us-",
+      "https://press-spain.max.com/post/max-renueva-hacks-la-comedia-ganadora-de-un-emmy-por-una-cuarta-",
+      "https://press-spain.max.com/sitemap"
+    ],
+    "historicalNetworks": [
+      {
+        "tmdbId": 111803,
+        "requestedTitle": "The White Lotus",
+        "title": "The White Lotus",
+        "networks": [
+          {
+            "id": 49,
+            "name": "HBO"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "HBO",
+          "rawNetworkLabels": [
+            "HBO"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 100088,
+        "requestedTitle": "The Last of Us",
+        "title": "The Last of Us",
+        "networks": [
+          {
+            "id": 49,
+            "name": "HBO"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "HBO",
+          "rawNetworkLabels": [
+            "HBO"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 106308,
+        "requestedTitle": "Somebody Somewhere",
+        "title": "Somebody Somewhere",
+        "networks": [
+          {
+            "id": 49,
+            "name": "HBO"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "HBO",
+          "rawNetworkLabels": [
+            "HBO"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 250307,
+        "requestedTitle": "The Pitt",
+        "title": "The Pitt",
+        "networks": [
+          {
+            "id": 6783,
+            "name": "Max"
+          },
+          {
+            "id": 8304,
+            "name": "HBO Max"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "MAX",
+          "rawNetworkLabels": [
+            "Max",
+            "HBO Max"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 124101,
+        "requestedTitle": "Hacks",
+        "title": "Hacks",
+        "networks": [
+          {
+            "id": 3186,
+            "name": "HBO Max"
+          },
+          {
+            "id": 6783,
+            "name": "Max"
+          },
+          {
+            "id": 8304,
+            "name": "HBO Max"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "MAX",
+          "rawNetworkLabels": [
+            "HBO Max",
+            "Max",
+            "HBO Max"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 90296,
+        "requestedTitle": "Tokyo Vice",
+        "title": "Tokyo Vice",
+        "networks": [
+          {
+            "id": 3186,
+            "name": "HBO Max"
+          },
+          {
+            "id": 6783,
+            "name": "Max"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "MAX",
+          "rawNetworkLabels": [
+            "HBO Max",
+            "Max"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 111803,
+        "requestedTitle": "The White Lotus",
+        "title": "The White Lotus",
+        "networks": [
+          {
+            "id": 49,
+            "name": "HBO"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "HBO",
+          "rawNetworkLabels": [
+            "HBO"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 250307,
+        "requestedTitle": "The Pitt",
+        "title": "The Pitt",
+        "networks": [
+          {
+            "id": 6783,
+            "name": "Max"
+          },
+          {
+            "id": 8304,
+            "name": "HBO Max"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "MAX",
+          "rawNetworkLabels": [
+            "Max",
+            "HBO Max"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 106308,
+        "requestedTitle": "Somebody Somewhere",
+        "title": "Somebody Somewhere",
+        "networks": [
+          {
+            "id": 49,
+            "name": "HBO"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "HBO",
+          "rawNetworkLabels": [
+            "HBO"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 124101,
+        "requestedTitle": "Hacks",
+        "title": "Hacks",
+        "networks": [
+          {
+            "id": 3186,
+            "name": "HBO Max"
+          },
+          {
+            "id": 6783,
+            "name": "Max"
+          },
+          {
+            "id": 8304,
+            "name": "HBO Max"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "MAX",
+          "rawNetworkLabels": [
+            "HBO Max",
+            "Max",
+            "HBO Max"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 100088,
+        "requestedTitle": "The Last of Us",
+        "title": "The Last of Us",
+        "networks": [
+          {
+            "id": 49,
+            "name": "HBO"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "HBO",
+          "rawNetworkLabels": [
+            "HBO"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": null,
+        "requestedTitle": "Industry",
+        "result": "UNRESOLVED_TMDB_IDENTITY",
+        "networks": null,
+        "routeProposal": null
+      },
+      {
+        "tmdbId": 254953,
+        "requestedTitle": "Rooster",
+        "title": "Rooster",
+        "networks": [
+          {
+            "id": 49,
+            "name": "HBO"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "HBO",
+          "rawNetworkLabels": [
+            "HBO"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 226698,
+        "requestedTitle": "Conan O'Brien Must Go",
+        "title": "Conan O'Brien Must Go",
+        "networks": [
+          {
+            "id": 49,
+            "name": "HBO"
+          },
+          {
+            "id": 6783,
+            "name": "Max"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": null,
+          "rawNetworkLabels": [
+            "HBO",
+            "Max"
+          ],
+          "result": "AMBIGUOUS_NETWORKS",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      }
+    ],
+    "wbd403Observed": true,
+    "previousQualification": {
+      "hbo": {
+        "distinctPositiveSeries": 1,
+        "genericDiscoveryPassingSeries": 0,
+        "independentReconstructionPassingSeries": 1,
+        "minimumDistinctSeries": 3,
+        "qualificationState": "INSUFFICIENT_DISTINCT_FIRST_PARTY_CASES"
+      },
+      "max": {
+        "distinctPositiveSeries": 1,
+        "genericDiscoveryPassingSeries": 0,
+        "independentReconstructionPassingSeries": 1,
+        "minimumDistinctSeries": 3,
+        "qualificationState": "INSUFFICIENT_DISTINCT_FIRST_PARTY_CASES"
+      }
+    },
+    "historicalOnlyNotCurrentQualificationEvidence": true
+  },
+  "discovery": {
+    "entryPoints": [
+      "https://press-spain.max.com/",
+      "https://press-spain.max.com/sitemap",
+      "https://press-spain.max.com/post"
+    ],
+    "sitemap": {
+      "pages": [
+        {
+          "url": "https://press-spain.max.com/sitemap",
+          "path": [
+            "https://press-spain.max.com/sitemap"
+          ],
+          "fetched": true,
+          "linksExtracted": 382,
+          "acceptedLinks": 373,
+          "format": "HTML",
+          "lastmodPresent": false
+        }
+      ]
+    },
+    "postIndex": {
+      "pages": [
+        {
+          "url": "https://press-spain.max.com/post",
+          "path": [
+            "https://press-spain.max.com/post"
+          ],
+          "fetched": true,
+          "linksExtracted": 44,
+          "acceptedLinks": 37,
+          "format": "HTML",
+          "lastmodPresent": false
+        },
+        {
+          "url": "https://press-spain.max.com/post?tab=all",
+          "path": [
+            "https://press-spain.max.com/post",
+            "https://press-spain.max.com/post?tab=all"
+          ],
+          "fetched": true,
+          "linksExtracted": 44,
+          "acceptedLinks": 37,
+          "format": "HTML",
+          "lastmodPresent": false
+        },
+        {
+          "url": "https://press-spain.max.com/post?tab=contenidos",
+          "path": [
+            "https://press-spain.max.com/post",
+            "https://press-spain.max.com/post?tab=contenidos"
+          ],
+          "fetched": true,
+          "linksExtracted": 44,
+          "acceptedLinks": 37,
+          "format": "HTML",
+          "lastmodPresent": false
+        },
+        {
+          "url": "https://press-spain.max.com/post?tab=corporativo",
+          "path": [
+            "https://press-spain.max.com/post",
+            "https://press-spain.max.com/post?tab=corporativo"
+          ],
+          "fetched": true,
+          "linksExtracted": 17,
+          "acceptedLinks": 8,
+          "format": "HTML",
+          "lastmodPresent": false
+        },
+        {
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=&tab=all",
+          "path": [
+            "https://press-spain.max.com/post",
+            "https://press-spain.max.com/post?limit=30&offset=0&searchKey=&tab=all"
+          ],
+          "fetched": true,
+          "linksExtracted": 70,
+          "acceptedLinks": 63,
+          "format": "HTML",
+          "lastmodPresent": false
+        },
+        {
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=&tab=contenidos",
+          "path": [
+            "https://press-spain.max.com/post",
+            "https://press-spain.max.com/post?tab=contenidos",
+            "https://press-spain.max.com/post?limit=30&offset=0&searchKey=&tab=contenidos"
+          ],
+          "fetched": true,
+          "linksExtracted": 70,
+          "acceptedLinks": 63,
+          "format": "HTML",
+          "lastmodPresent": false
+        },
+        {
+          "url": "https://press-spain.max.com/post?limit=45&offset=0&searchKey=&tab=all",
+          "path": [
+            "https://press-spain.max.com/post",
+            "https://press-spain.max.com/post?limit=30&offset=0&searchKey=&tab=all",
+            "https://press-spain.max.com/post?limit=45&offset=0&searchKey=&tab=all"
+          ],
+          "fetched": true,
+          "linksExtracted": 99,
+          "acceptedLinks": 92,
+          "format": "HTML",
+          "lastmodPresent": false
+        },
+        {
+          "url": "https://press-spain.max.com/post?limit=45&offset=0&searchKey=&tab=contenidos",
+          "path": [
+            "https://press-spain.max.com/post",
+            "https://press-spain.max.com/post?tab=contenidos",
+            "https://press-spain.max.com/post?limit=30&offset=0&searchKey=&tab=contenidos",
+            "https://press-spain.max.com/post?limit=45&offset=0&searchKey=&tab=contenidos"
+          ],
+          "fetched": true,
+          "linksExtracted": 99,
+          "acceptedLinks": 92,
+          "format": "HTML",
+          "lastmodPresent": false
+        },
+        {
+          "url": "https://press-spain.max.com/post?limit=60&offset=0&searchKey=&tab=all",
+          "path": [
+            "https://press-spain.max.com/post",
+            "https://press-spain.max.com/post?limit=30&offset=0&searchKey=&tab=all",
+            "https://press-spain.max.com/post?limit=45&offset=0&searchKey=&tab=all",
+            "https://press-spain.max.com/post?limit=60&offset=0&searchKey=&tab=all"
+          ],
+          "fetched": true,
+          "linksExtracted": 128,
+          "acceptedLinks": 121,
+          "format": "HTML",
+          "lastmodPresent": false
+        },
+        {
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=And+Just+Like+That...&tab=all",
+          "path": [
+            "https://press-spain.max.com/post",
+            "https://press-spain.max.com/post?limit=30&offset=0&searchKey=And+Just+Like+That...&tab=all"
+          ],
+          "fetched": true,
+          "linksExtracted": 37,
+          "acceptedLinks": 30,
+          "format": "HTML",
+          "lastmodPresent": false
+        },
+        {
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Conan+O%27Brien+Must+Go&tab=all",
+          "path": [
+            "https://press-spain.max.com/post",
+            "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Conan+O%27Brien+Must+Go&tab=all"
+          ],
+          "fetched": true,
+          "linksExtracted": 17,
+          "acceptedLinks": 10,
+          "format": "HTML",
+          "lastmodPresent": false
+        },
+        {
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Hacks&tab=all",
+          "path": [
+            "https://press-spain.max.com/post",
+            "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Hacks&tab=all"
+          ],
+          "fetched": true,
+          "linksExtracted": 43,
+          "acceptedLinks": 36,
+          "format": "HTML",
+          "lastmodPresent": false
+        },
+        {
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Industry&tab=all",
+          "path": [
+            "https://press-spain.max.com/post",
+            "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Industry&tab=all"
+          ],
+          "fetched": true,
+          "linksExtracted": 41,
+          "acceptedLinks": 34,
+          "format": "HTML",
+          "lastmodPresent": false
+        },
+        {
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=IT%3A+Bienvenidos+a+Derry&tab=all",
+          "path": [
+            "https://press-spain.max.com/post",
+            "https://press-spain.max.com/post?limit=30&offset=0&searchKey=IT%3A+Bienvenidos+a+Derry&tab=all"
+          ],
+          "fetched": true,
+          "linksExtracted": 41,
+          "acceptedLinks": 34,
+          "format": "HTML",
+          "lastmodPresent": false
+        },
+        {
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=IT%3A+Welcome+to+Derry&tab=all",
+          "path": [
+            "https://press-spain.max.com/post",
+            "https://press-spain.max.com/post?limit=30&offset=0&searchKey=IT%3A+Welcome+to+Derry&tab=all"
+          ],
+          "fetched": true,
+          "linksExtracted": 17,
+          "acceptedLinks": 10,
+          "format": "HTML",
+          "lastmodPresent": false
+        },
+        {
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=La+Edad+Dorada&tab=all",
+          "path": [
+            "https://press-spain.max.com/post",
+            "https://press-spain.max.com/post?limit=30&offset=0&searchKey=La+Edad+Dorada&tab=all"
+          ],
+          "fetched": true,
+          "linksExtracted": 42,
+          "acceptedLinks": 35,
+          "format": "HTML",
+          "lastmodPresent": false
+        },
+        {
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Rooster&tab=all",
+          "path": [
+            "https://press-spain.max.com/post",
+            "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Rooster&tab=all"
+          ],
+          "fetched": true,
+          "linksExtracted": 25,
+          "acceptedLinks": 18,
+          "format": "HTML",
+          "lastmodPresent": false
+        },
+        {
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Siguiendo+a+Conan+O%27Brien&tab=all",
+          "path": [
+            "https://press-spain.max.com/post",
+            "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Siguiendo+a+Conan+O%27Brien&tab=all"
+          ],
+          "fetched": true,
+          "linksExtracted": 23,
+          "acceptedLinks": 16,
+          "format": "HTML",
+          "lastmodPresent": false
+        },
+        {
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Somebody+Somewhere&tab=all",
+          "path": [
+            "https://press-spain.max.com/post",
+            "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Somebody+Somewhere&tab=all"
+          ],
+          "fetched": true,
+          "linksExtracted": 23,
+          "acceptedLinks": 16,
+          "format": "HTML",
+          "lastmodPresent": false
+        },
+        {
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Comeback&tab=all",
+          "path": [
+            "https://press-spain.max.com/post",
+            "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Comeback&tab=all"
+          ],
+          "fetched": true,
+          "linksExtracted": 29,
+          "acceptedLinks": 22,
+          "format": "HTML",
+          "lastmodPresent": false
+        },
+        {
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Gilded+Age&tab=all",
+          "path": [
+            "https://press-spain.max.com/post",
+            "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Gilded+Age&tab=all"
+          ],
+          "fetched": true,
+          "linksExtracted": 18,
+          "acceptedLinks": 11,
+          "format": "HTML",
+          "lastmodPresent": false
+        },
+        {
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Last+of+Us&tab=all",
+          "path": [
+            "https://press-spain.max.com/post",
+            "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Last+of+Us&tab=all"
+          ],
+          "fetched": true,
+          "linksExtracted": 73,
+          "acceptedLinks": 66,
+          "format": "HTML",
+          "lastmodPresent": false
+        },
+        {
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Pitt&tab=all",
+          "path": [
+            "https://press-spain.max.com/post",
+            "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Pitt&tab=all"
+          ],
+          "fetched": true,
+          "linksExtracted": 45,
+          "acceptedLinks": 38,
+          "format": "HTML",
+          "lastmodPresent": false
+        },
+        {
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+White+Lotus&tab=all",
+          "path": [
+            "https://press-spain.max.com/post",
+            "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+White+Lotus&tab=all"
+          ],
+          "fetched": true,
+          "linksExtracted": 57,
+          "acceptedLinks": 50,
+          "format": "HTML",
+          "lastmodPresent": false
+        },
+        {
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Tokyo+Vice&tab=all",
+          "path": [
+            "https://press-spain.max.com/post",
+            "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Tokyo+Vice&tab=all"
+          ],
+          "fetched": true,
+          "linksExtracted": 27,
+          "acceptedLinks": 20,
+          "format": "HTML",
+          "lastmodPresent": false
+        }
+      ],
+      "paginationFollowed": true
+    },
+    "search": {
+      "status": "OBSERVED_GET_TEMPLATE",
+      "queries": [
+        {
+          "title": "And Just Like That...",
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=And+Just+Like+That...&tab=all",
+          "templateObservedAt": "https://press-spain.max.com/post"
+        },
+        {
+          "title": "Conan O'Brien Must Go",
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Conan+O%27Brien+Must+Go&tab=all",
+          "templateObservedAt": "https://press-spain.max.com/post"
+        },
+        {
+          "title": "Hacks",
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Hacks&tab=all",
+          "templateObservedAt": "https://press-spain.max.com/post"
+        },
+        {
+          "title": "Industry",
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Industry&tab=all",
+          "templateObservedAt": "https://press-spain.max.com/post"
+        },
+        {
+          "title": "IT: Bienvenidos a Derry",
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=IT%3A+Bienvenidos+a+Derry&tab=all",
+          "templateObservedAt": "https://press-spain.max.com/post"
+        },
+        {
+          "title": "IT: Welcome to Derry",
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=IT%3A+Welcome+to+Derry&tab=all",
+          "templateObservedAt": "https://press-spain.max.com/post"
+        },
+        {
+          "title": "La Edad Dorada",
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=La+Edad+Dorada&tab=all",
+          "templateObservedAt": "https://press-spain.max.com/post"
+        },
+        {
+          "title": "Rooster",
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Rooster&tab=all",
+          "templateObservedAt": "https://press-spain.max.com/post"
+        },
+        {
+          "title": "Siguiendo a Conan O'Brien",
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Siguiendo+a+Conan+O%27Brien&tab=all",
+          "templateObservedAt": "https://press-spain.max.com/post"
+        },
+        {
+          "title": "Somebody Somewhere",
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Somebody+Somewhere&tab=all",
+          "templateObservedAt": "https://press-spain.max.com/post"
+        },
+        {
+          "title": "The Comeback",
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Comeback&tab=all",
+          "templateObservedAt": "https://press-spain.max.com/post"
+        },
+        {
+          "title": "The Gilded Age",
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Gilded+Age&tab=all",
+          "templateObservedAt": "https://press-spain.max.com/post"
+        },
+        {
+          "title": "The Last of Us",
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Last+of+Us&tab=all",
+          "templateObservedAt": "https://press-spain.max.com/post"
+        },
+        {
+          "title": "The Pitt",
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Pitt&tab=all",
+          "templateObservedAt": "https://press-spain.max.com/post"
+        },
+        {
+          "title": "The White Lotus",
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+White+Lotus&tab=all",
+          "templateObservedAt": "https://press-spain.max.com/post"
+        },
+        {
+          "title": "Tokyo Vice",
+          "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Tokyo+Vice&tab=all",
+          "templateObservedAt": "https://press-spain.max.com/post"
+        }
+      ]
+    },
+    "candidateBudget": 8,
+    "maximumIndexPages": 24,
+    "maximumSearchPages": 24,
+    "maximumLinksPerPage": 4000,
+    "maximumArticleCandidates": 4000,
+    "articleCandidatesExtracted": 416,
+    "indexPages": 27,
+    "knownUrlSeedingUsed": false,
+    "pages": [
+      {
+        "url": "https://press-spain.max.com/",
+        "path": [
+          "https://press-spain.max.com/"
+        ],
+        "fetched": true,
+        "linksExtracted": 58,
+        "acceptedLinks": 47,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/sitemap",
+        "path": [
+          "https://press-spain.max.com/sitemap"
+        ],
+        "fetched": true,
+        "linksExtracted": 382,
+        "acceptedLinks": 373,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/post",
+        "path": [
+          "https://press-spain.max.com/post"
+        ],
+        "fetched": true,
+        "linksExtracted": 44,
+        "acceptedLinks": 37,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/post?tab=all",
+        "path": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post?tab=all"
+        ],
+        "fetched": true,
+        "linksExtracted": 44,
+        "acceptedLinks": 37,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/post?tab=contenidos",
+        "path": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post?tab=contenidos"
+        ],
+        "fetched": true,
+        "linksExtracted": 44,
+        "acceptedLinks": 37,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/post?tab=corporativo",
+        "path": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post?tab=corporativo"
+        ],
+        "fetched": true,
+        "linksExtracted": 17,
+        "acceptedLinks": 8,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=&tab=all",
+        "path": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post?limit=30&offset=0&searchKey=&tab=all"
+        ],
+        "fetched": true,
+        "linksExtracted": 70,
+        "acceptedLinks": 63,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=&tab=contenidos",
+        "path": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post?tab=contenidos",
+          "https://press-spain.max.com/post?limit=30&offset=0&searchKey=&tab=contenidos"
+        ],
+        "fetched": true,
+        "linksExtracted": 70,
+        "acceptedLinks": 63,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/post?limit=45&offset=0&searchKey=&tab=all",
+        "path": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post?limit=30&offset=0&searchKey=&tab=all",
+          "https://press-spain.max.com/post?limit=45&offset=0&searchKey=&tab=all"
+        ],
+        "fetched": true,
+        "linksExtracted": 99,
+        "acceptedLinks": 92,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/post?limit=45&offset=0&searchKey=&tab=contenidos",
+        "path": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post?tab=contenidos",
+          "https://press-spain.max.com/post?limit=30&offset=0&searchKey=&tab=contenidos",
+          "https://press-spain.max.com/post?limit=45&offset=0&searchKey=&tab=contenidos"
+        ],
+        "fetched": true,
+        "linksExtracted": 99,
+        "acceptedLinks": 92,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/post?limit=60&offset=0&searchKey=&tab=all",
+        "path": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post?limit=30&offset=0&searchKey=&tab=all",
+          "https://press-spain.max.com/post?limit=45&offset=0&searchKey=&tab=all",
+          "https://press-spain.max.com/post?limit=60&offset=0&searchKey=&tab=all"
+        ],
+        "fetched": true,
+        "linksExtracted": 128,
+        "acceptedLinks": 121,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=And+Just+Like+That...&tab=all",
+        "path": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post?limit=30&offset=0&searchKey=And+Just+Like+That...&tab=all"
+        ],
+        "fetched": true,
+        "linksExtracted": 37,
+        "acceptedLinks": 30,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Conan+O%27Brien+Must+Go&tab=all",
+        "path": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Conan+O%27Brien+Must+Go&tab=all"
+        ],
+        "fetched": true,
+        "linksExtracted": 17,
+        "acceptedLinks": 10,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Hacks&tab=all",
+        "path": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Hacks&tab=all"
+        ],
+        "fetched": true,
+        "linksExtracted": 43,
+        "acceptedLinks": 36,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Industry&tab=all",
+        "path": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Industry&tab=all"
+        ],
+        "fetched": true,
+        "linksExtracted": 41,
+        "acceptedLinks": 34,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=IT%3A+Bienvenidos+a+Derry&tab=all",
+        "path": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post?limit=30&offset=0&searchKey=IT%3A+Bienvenidos+a+Derry&tab=all"
+        ],
+        "fetched": true,
+        "linksExtracted": 41,
+        "acceptedLinks": 34,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=IT%3A+Welcome+to+Derry&tab=all",
+        "path": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post?limit=30&offset=0&searchKey=IT%3A+Welcome+to+Derry&tab=all"
+        ],
+        "fetched": true,
+        "linksExtracted": 17,
+        "acceptedLinks": 10,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=La+Edad+Dorada&tab=all",
+        "path": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post?limit=30&offset=0&searchKey=La+Edad+Dorada&tab=all"
+        ],
+        "fetched": true,
+        "linksExtracted": 42,
+        "acceptedLinks": 35,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Rooster&tab=all",
+        "path": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Rooster&tab=all"
+        ],
+        "fetched": true,
+        "linksExtracted": 25,
+        "acceptedLinks": 18,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Siguiendo+a+Conan+O%27Brien&tab=all",
+        "path": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Siguiendo+a+Conan+O%27Brien&tab=all"
+        ],
+        "fetched": true,
+        "linksExtracted": 23,
+        "acceptedLinks": 16,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Somebody+Somewhere&tab=all",
+        "path": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Somebody+Somewhere&tab=all"
+        ],
+        "fetched": true,
+        "linksExtracted": 23,
+        "acceptedLinks": 16,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Comeback&tab=all",
+        "path": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Comeback&tab=all"
+        ],
+        "fetched": true,
+        "linksExtracted": 29,
+        "acceptedLinks": 22,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Gilded+Age&tab=all",
+        "path": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Gilded+Age&tab=all"
+        ],
+        "fetched": true,
+        "linksExtracted": 18,
+        "acceptedLinks": 11,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Last+of+Us&tab=all",
+        "path": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Last+of+Us&tab=all"
+        ],
+        "fetched": true,
+        "linksExtracted": 73,
+        "acceptedLinks": 66,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Pitt&tab=all",
+        "path": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Pitt&tab=all"
+        ],
+        "fetched": true,
+        "linksExtracted": 45,
+        "acceptedLinks": 38,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+White+Lotus&tab=all",
+        "path": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+White+Lotus&tab=all"
+        ],
+        "fetched": true,
+        "linksExtracted": 57,
+        "acceptedLinks": 50,
+        "format": "HTML",
+        "lastmodPresent": false
+      },
+      {
+        "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Tokyo+Vice&tab=all",
+        "path": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Tokyo+Vice&tab=all"
+        ],
+        "fetched": true,
+        "linksExtracted": 27,
+        "acceptedLinks": 20,
+        "format": "HTML",
+        "lastmodPresent": false
+      }
+    ],
+    "truncated": true
+  },
+  "sourcePolicy": {
+    "newQualificationHost": "press-spain.max.com",
+    "language": "es",
+    "territory": "ES",
+    "productionActivated": false,
+    "wildcardTrust": false,
+    "sourceName": "Max Press Spain"
+  },
+  "routing": {
+    "HBO": [
+      {
+        "tmdbId": 111803,
+        "requestedTitle": "The White Lotus",
+        "title": "The White Lotus",
+        "networks": [
+          {
+            "id": 49,
+            "name": "HBO"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "HBO",
+          "rawNetworkLabels": [
+            "HBO"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 100088,
+        "requestedTitle": "The Last of Us",
+        "title": "The Last of Us",
+        "networks": [
+          {
+            "id": 49,
+            "name": "HBO"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "HBO",
+          "rawNetworkLabels": [
+            "HBO"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 106308,
+        "requestedTitle": "Somebody Somewhere",
+        "title": "Somebody Somewhere",
+        "networks": [
+          {
+            "id": 49,
+            "name": "HBO"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "HBO",
+          "rawNetworkLabels": [
+            "HBO"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 111803,
+        "requestedTitle": "The White Lotus",
+        "title": "The White Lotus",
+        "networks": [
+          {
+            "id": 49,
+            "name": "HBO"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "HBO",
+          "rawNetworkLabels": [
+            "HBO"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 106308,
+        "requestedTitle": "Somebody Somewhere",
+        "title": "Somebody Somewhere",
+        "networks": [
+          {
+            "id": 49,
+            "name": "HBO"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "HBO",
+          "rawNetworkLabels": [
+            "HBO"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 100088,
+        "requestedTitle": "The Last of Us",
+        "title": "The Last of Us",
+        "networks": [
+          {
+            "id": 49,
+            "name": "HBO"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "HBO",
+          "rawNetworkLabels": [
+            "HBO"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 254953,
+        "requestedTitle": "Rooster",
+        "title": "Rooster",
+        "networks": [
+          {
+            "id": 49,
+            "name": "HBO"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "HBO",
+          "rawNetworkLabels": [
+            "HBO"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 200875,
+        "requestedTitle": "IT: Welcome to Derry",
+        "title": "IT: Welcome to Derry",
+        "networks": [
+          {
+            "id": 49,
+            "name": "HBO"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "HBO",
+          "rawNetworkLabels": [
+            "HBO"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 81723,
+        "requestedTitle": "The Gilded Age",
+        "title": "The Gilded Age",
+        "networks": [
+          {
+            "id": 49,
+            "name": "HBO"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "HBO",
+          "rawNetworkLabels": [
+            "HBO"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 1999,
+        "requestedTitle": "The Comeback",
+        "title": "The Comeback",
+        "networks": [
+          {
+            "id": 49,
+            "name": "HBO"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "HBO",
+          "rawNetworkLabels": [
+            "HBO"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      }
+    ],
+    "MAX": [
+      {
+        "tmdbId": 250307,
+        "requestedTitle": "The Pitt",
+        "title": "The Pitt",
+        "networks": [
+          {
+            "id": 6783,
+            "name": "Max"
+          },
+          {
+            "id": 8304,
+            "name": "HBO Max"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "MAX",
+          "rawNetworkLabels": [
+            "Max",
+            "HBO Max"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 124101,
+        "requestedTitle": "Hacks",
+        "title": "Hacks",
+        "networks": [
+          {
+            "id": 3186,
+            "name": "HBO Max"
+          },
+          {
+            "id": 6783,
+            "name": "Max"
+          },
+          {
+            "id": 8304,
+            "name": "HBO Max"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "MAX",
+          "rawNetworkLabels": [
+            "HBO Max",
+            "Max",
+            "HBO Max"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 90296,
+        "requestedTitle": "Tokyo Vice",
+        "title": "Tokyo Vice",
+        "networks": [
+          {
+            "id": 3186,
+            "name": "HBO Max"
+          },
+          {
+            "id": 6783,
+            "name": "Max"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "MAX",
+          "rawNetworkLabels": [
+            "HBO Max",
+            "Max"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 250307,
+        "requestedTitle": "The Pitt",
+        "title": "The Pitt",
+        "networks": [
+          {
+            "id": 6783,
+            "name": "Max"
+          },
+          {
+            "id": 8304,
+            "name": "HBO Max"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "MAX",
+          "rawNetworkLabels": [
+            "Max",
+            "HBO Max"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 124101,
+        "requestedTitle": "Hacks",
+        "title": "Hacks",
+        "networks": [
+          {
+            "id": 3186,
+            "name": "HBO Max"
+          },
+          {
+            "id": 6783,
+            "name": "Max"
+          },
+          {
+            "id": 8304,
+            "name": "HBO Max"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "MAX",
+          "rawNetworkLabels": [
+            "HBO Max",
+            "Max",
+            "HBO Max"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      },
+      {
+        "tmdbId": 116450,
+        "requestedTitle": "And Just Like That...",
+        "title": "And Just Like That…",
+        "networks": [
+          {
+            "id": 3186,
+            "name": "HBO Max"
+          },
+          {
+            "id": 6783,
+            "name": "Max"
+          },
+          {
+            "id": 8304,
+            "name": "HBO Max"
+          }
+        ],
+        "result": "FETCHED_IDENTITY_METADATA_ONLY",
+        "routeProposal": {
+          "route": "MAX",
+          "rawNetworkLabels": [
+            "HBO Max",
+            "Max",
+            "HBO Max"
+          ],
+          "result": "NETWORK_ONLY_CANDIDATE",
+          "ownershipHomepageDistributorIgnored": true
+        }
+      }
+    ]
+  },
+  "currentMetadataObservations": [
+    {
+      "tmdbId": 111803,
+      "requestedTitle": "The White Lotus",
+      "title": "The White Lotus",
+      "networks": [
+        {
+          "id": 49,
+          "name": "HBO"
+        }
+      ],
+      "result": "FETCHED_IDENTITY_METADATA_ONLY",
+      "routeProposal": {
+        "route": "HBO",
+        "rawNetworkLabels": [
+          "HBO"
+        ],
+        "result": "NETWORK_ONLY_CANDIDATE",
+        "ownershipHomepageDistributorIgnored": true
+      }
+    },
+    {
+      "tmdbId": 100088,
+      "requestedTitle": "The Last of Us",
+      "title": "The Last of Us",
+      "networks": [
+        {
+          "id": 49,
+          "name": "HBO"
+        }
+      ],
+      "result": "FETCHED_IDENTITY_METADATA_ONLY",
+      "routeProposal": {
+        "route": "HBO",
+        "rawNetworkLabels": [
+          "HBO"
+        ],
+        "result": "NETWORK_ONLY_CANDIDATE",
+        "ownershipHomepageDistributorIgnored": true
+      }
+    },
+    {
+      "tmdbId": 106308,
+      "requestedTitle": "Somebody Somewhere",
+      "title": "Somebody Somewhere",
+      "networks": [
+        {
+          "id": 49,
+          "name": "HBO"
+        }
+      ],
+      "result": "FETCHED_IDENTITY_METADATA_ONLY",
+      "routeProposal": {
+        "route": "HBO",
+        "rawNetworkLabels": [
+          "HBO"
+        ],
+        "result": "NETWORK_ONLY_CANDIDATE",
+        "ownershipHomepageDistributorIgnored": true
+      }
+    },
+    {
+      "tmdbId": 250307,
+      "requestedTitle": "The Pitt",
+      "title": "The Pitt",
+      "networks": [
+        {
+          "id": 6783,
+          "name": "Max"
+        },
+        {
+          "id": 8304,
+          "name": "HBO Max"
+        }
+      ],
+      "result": "FETCHED_IDENTITY_METADATA_ONLY",
+      "routeProposal": {
+        "route": "MAX",
+        "rawNetworkLabels": [
+          "Max",
+          "HBO Max"
+        ],
+        "result": "NETWORK_ONLY_CANDIDATE",
+        "ownershipHomepageDistributorIgnored": true
+      }
+    },
+    {
+      "tmdbId": 124101,
+      "requestedTitle": "Hacks",
+      "title": "Hacks",
+      "networks": [
+        {
+          "id": 3186,
+          "name": "HBO Max"
+        },
+        {
+          "id": 6783,
+          "name": "Max"
+        },
+        {
+          "id": 8304,
+          "name": "HBO Max"
+        }
+      ],
+      "result": "FETCHED_IDENTITY_METADATA_ONLY",
+      "routeProposal": {
+        "route": "MAX",
+        "rawNetworkLabels": [
+          "HBO Max",
+          "Max",
+          "HBO Max"
+        ],
+        "result": "NETWORK_ONLY_CANDIDATE",
+        "ownershipHomepageDistributorIgnored": true
+      }
+    },
+    {
+      "tmdbId": 90296,
+      "requestedTitle": "Tokyo Vice",
+      "title": "Tokyo Vice",
+      "networks": [
+        {
+          "id": 3186,
+          "name": "HBO Max"
+        },
+        {
+          "id": 6783,
+          "name": "Max"
+        }
+      ],
+      "result": "FETCHED_IDENTITY_METADATA_ONLY",
+      "routeProposal": {
+        "route": "MAX",
+        "rawNetworkLabels": [
+          "HBO Max",
+          "Max"
+        ],
+        "result": "NETWORK_ONLY_CANDIDATE",
+        "ownershipHomepageDistributorIgnored": true
+      }
+    },
+    {
+      "tmdbId": 111803,
+      "requestedTitle": "The White Lotus",
+      "title": "The White Lotus",
+      "networks": [
+        {
+          "id": 49,
+          "name": "HBO"
+        }
+      ],
+      "result": "FETCHED_IDENTITY_METADATA_ONLY",
+      "routeProposal": {
+        "route": "HBO",
+        "rawNetworkLabels": [
+          "HBO"
+        ],
+        "result": "NETWORK_ONLY_CANDIDATE",
+        "ownershipHomepageDistributorIgnored": true
+      }
+    },
+    {
+      "tmdbId": 250307,
+      "requestedTitle": "The Pitt",
+      "title": "The Pitt",
+      "networks": [
+        {
+          "id": 6783,
+          "name": "Max"
+        },
+        {
+          "id": 8304,
+          "name": "HBO Max"
+        }
+      ],
+      "result": "FETCHED_IDENTITY_METADATA_ONLY",
+      "routeProposal": {
+        "route": "MAX",
+        "rawNetworkLabels": [
+          "Max",
+          "HBO Max"
+        ],
+        "result": "NETWORK_ONLY_CANDIDATE",
+        "ownershipHomepageDistributorIgnored": true
+      }
+    },
+    {
+      "tmdbId": 106308,
+      "requestedTitle": "Somebody Somewhere",
+      "title": "Somebody Somewhere",
+      "networks": [
+        {
+          "id": 49,
+          "name": "HBO"
+        }
+      ],
+      "result": "FETCHED_IDENTITY_METADATA_ONLY",
+      "routeProposal": {
+        "route": "HBO",
+        "rawNetworkLabels": [
+          "HBO"
+        ],
+        "result": "NETWORK_ONLY_CANDIDATE",
+        "ownershipHomepageDistributorIgnored": true
+      }
+    },
+    {
+      "tmdbId": 124101,
+      "requestedTitle": "Hacks",
+      "title": "Hacks",
+      "networks": [
+        {
+          "id": 3186,
+          "name": "HBO Max"
+        },
+        {
+          "id": 6783,
+          "name": "Max"
+        },
+        {
+          "id": 8304,
+          "name": "HBO Max"
+        }
+      ],
+      "result": "FETCHED_IDENTITY_METADATA_ONLY",
+      "routeProposal": {
+        "route": "MAX",
+        "rawNetworkLabels": [
+          "HBO Max",
+          "Max",
+          "HBO Max"
+        ],
+        "result": "NETWORK_ONLY_CANDIDATE",
+        "ownershipHomepageDistributorIgnored": true
+      }
+    },
+    {
+      "tmdbId": 100088,
+      "requestedTitle": "The Last of Us",
+      "title": "The Last of Us",
+      "networks": [
+        {
+          "id": 49,
+          "name": "HBO"
+        }
+      ],
+      "result": "FETCHED_IDENTITY_METADATA_ONLY",
+      "routeProposal": {
+        "route": "HBO",
+        "rawNetworkLabels": [
+          "HBO"
+        ],
+        "result": "NETWORK_ONLY_CANDIDATE",
+        "ownershipHomepageDistributorIgnored": true
+      }
+    },
+    {
+      "tmdbId": null,
+      "requestedTitle": "Industry",
+      "result": "UNRESOLVED_TMDB_IDENTITY",
+      "networks": null,
+      "routeProposal": null
+    },
+    {
+      "tmdbId": 254953,
+      "requestedTitle": "Rooster",
+      "title": "Rooster",
+      "networks": [
+        {
+          "id": 49,
+          "name": "HBO"
+        }
+      ],
+      "result": "FETCHED_IDENTITY_METADATA_ONLY",
+      "routeProposal": {
+        "route": "HBO",
+        "rawNetworkLabels": [
+          "HBO"
+        ],
+        "result": "NETWORK_ONLY_CANDIDATE",
+        "ownershipHomepageDistributorIgnored": true
+      }
+    },
+    {
+      "tmdbId": 226698,
+      "requestedTitle": "Conan O'Brien Must Go",
+      "title": "Conan O'Brien Must Go",
+      "networks": [
+        {
+          "id": 49,
+          "name": "HBO"
+        },
+        {
+          "id": 6783,
+          "name": "Max"
+        }
+      ],
+      "result": "FETCHED_IDENTITY_METADATA_ONLY",
+      "routeProposal": {
+        "route": null,
+        "rawNetworkLabels": [
+          "HBO",
+          "Max"
+        ],
+        "result": "AMBIGUOUS_NETWORKS",
+        "ownershipHomepageDistributorIgnored": true
+      }
+    },
+    {
+      "tmdbId": 200875,
+      "requestedTitle": "IT: Welcome to Derry",
+      "title": "IT: Welcome to Derry",
+      "networks": [
+        {
+          "id": 49,
+          "name": "HBO"
+        }
+      ],
+      "result": "FETCHED_IDENTITY_METADATA_ONLY",
+      "routeProposal": {
+        "route": "HBO",
+        "rawNetworkLabels": [
+          "HBO"
+        ],
+        "result": "NETWORK_ONLY_CANDIDATE",
+        "ownershipHomepageDistributorIgnored": true
+      }
+    },
+    {
+      "tmdbId": 81723,
+      "requestedTitle": "The Gilded Age",
+      "title": "The Gilded Age",
+      "networks": [
+        {
+          "id": 49,
+          "name": "HBO"
+        }
+      ],
+      "result": "FETCHED_IDENTITY_METADATA_ONLY",
+      "routeProposal": {
+        "route": "HBO",
+        "rawNetworkLabels": [
+          "HBO"
+        ],
+        "result": "NETWORK_ONLY_CANDIDATE",
+        "ownershipHomepageDistributorIgnored": true
+      }
+    },
+    {
+      "tmdbId": 1999,
+      "requestedTitle": "The Comeback",
+      "title": "The Comeback",
+      "networks": [
+        {
+          "id": 49,
+          "name": "HBO"
+        }
+      ],
+      "result": "FETCHED_IDENTITY_METADATA_ONLY",
+      "routeProposal": {
+        "route": "HBO",
+        "rawNetworkLabels": [
+          "HBO"
+        ],
+        "result": "NETWORK_ONLY_CANDIDATE",
+        "ownershipHomepageDistributorIgnored": true
+      }
+    },
+    {
+      "tmdbId": 116450,
+      "requestedTitle": "And Just Like That...",
+      "title": "And Just Like That…",
+      "networks": [
+        {
+          "id": 3186,
+          "name": "HBO Max"
+        },
+        {
+          "id": 6783,
+          "name": "Max"
+        },
+        {
+          "id": 8304,
+          "name": "HBO Max"
+        }
+      ],
+      "result": "FETCHED_IDENTITY_METADATA_ONLY",
+      "routeProposal": {
+        "route": "MAX",
+        "rawNetworkLabels": [
+          "HBO Max",
+          "Max",
+          "HBO Max"
+        ],
+        "result": "NETWORK_ONLY_CANDIDATE",
+        "ownershipHomepageDistributorIgnored": true
+      }
+    }
+  ],
+  "httpAccessMatrix": [
+    {
+      "url": "https://press-spain.max.com/",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/sitemap",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/sitemap",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post?tab=all",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post?tab=contenidos",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post?tab=corporativo",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=&tab=all",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=&tab=contenidos",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post?limit=45&offset=0&searchKey=&tab=all",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post?limit=45&offset=0&searchKey=&tab=contenidos",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post?limit=60&offset=0&searchKey=&tab=all",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=And+Just+Like+That...&tab=all",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Conan+O%27Brien+Must+Go&tab=all",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Hacks&tab=all",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Industry&tab=all",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=IT%3A+Bienvenidos+a+Derry&tab=all",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=IT%3A+Welcome+to+Derry&tab=all",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=La+Edad+Dorada&tab=all",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Rooster&tab=all",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Siguiendo+a+Conan+O%27Brien&tab=all",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Somebody+Somewhere&tab=all",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Comeback&tab=all",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Gilded+Age&tab=all",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Last+of+Us&tab=all",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+Pitt&tab=all",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=The+White+Lotus&tab=all",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post?limit=30&offset=0&searchKey=Tokyo+Vice&tab=all",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/hbo-lanza-el-trailer-de-la-segunda-temporada-de-the-white-lotus",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/hbo-lanza-el-trailer-de-la-segunda-temporada-de-the-white-lotus",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/hbo-lanza-el-trailer-y-poster-oficiales-de-la-tercera-temporada-",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/hbo-lanza-el-trailer-y-poster-oficiales-de-la-tercera-temporada-",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/la-tercera-temporada-de-la-serie-original-de-hbo-the-white-lotus",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/la-tercera-temporada-de-la-serie-original-de-hbo-the-white-lotus",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/nuevas-incorporaciones-a-la-tercera-entrega-de-the-white-lotus",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/nuevas-incorporaciones-a-la-tercera-entrega-de-the-white-lotus",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/imagenes-disponibles-de-la-premiere-en-los-angeles-de-la-tercera",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/imagenes-disponibles-de-la-premiere-en-los-angeles-de-la-tercera",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-the-white-lotus-se-estrena-el-1",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-the-white-lotus-se-estrena-el-1",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/max-lanza-un-plan-basico-con-anuncios-en-espana-para-ampliar-las",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/max-lanza-un-plan-basico-con-anuncios-en-espana-para-ampliar-las",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/hbo-max-lanza-el-avance-oficial-de-la-segunda-temporada-de-la-se",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/hbo-max-lanza-el-avance-oficial-de-la-segunda-temporada-de-la-se",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/la-serie-original-de-max-the-pitt-se-estrena-el-proximo-10-de-en",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/la-serie-original-de-max-the-pitt-se-estrena-el-proximo-10-de-en",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/the-pitt-la-nueva-serie-original-de-max-se-estrena-en-enero",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/the-pitt-la-nueva-serie-original-de-max-se-estrena-en-enero",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/hbo-lanza-el-trailer-oficial-y-el-cartel-de-la-segunda-temporada",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/hbo-lanza-el-trailer-oficial-y-el-cartel-de-la-segunda-temporada",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/the-pitt-reconoce-la-labor-de-la-comunidad-sanitaria-en-espana",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/the-pitt-reconoce-la-labor-de-la-comunidad-sanitaria-en-espana",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/hbo-max-renueva-la-serie-tokyo-vice-por-una-segunda-temporada",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/hbo-max-renueva-la-serie-tokyo-vice-por-una-segunda-temporada",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/hbo-max-renueva-la-serie-tokyo-vice-por-una-segunda-temporada",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/hbo-max-renueva-la-serie-tokyo-vice-por-una-segunda-temporada",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/avance-de-estrenos-de-octubre-3",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/avance-de-estrenos-de-octubre-3",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-original-de-hbo-the-last-of-us-",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-original-de-hbo-the-last-of-us-",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/hbo-renueva-industry-por-una-cuarta-temporada",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/hbo-renueva-industry-por-una-cuarta-temporada",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/hbo-renueva-industry-por-una-quinta-y-ultima-temporada",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/hbo-renueva-industry-por-una-quinta-y-ultima-temporada",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/hbo-publica-el-trailer-y-poster-oficiales-de-la-tercera-temporad",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/hbo-publica-el-trailer-y-poster-oficiales-de-la-tercera-temporad",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-dramatica-original-de-hbo-indust",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-dramatica-original-de-hbo-indust",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/la-segunda-temporada-de-industry-se-estrena-el-proximo-2-de-agos",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/la-segunda-temporada-de-industry-se-estrena-el-proximo-2-de-agos",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/la-tercera-temporada-de-la-serie-original-de-hbo-industry-se-est",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/la-tercera-temporada-de-la-serie-original-de-hbo-industry-se-est",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/max-renueva-siguiendo-a-conan-obrien-por-una-tercera-temporada-y",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/max-renueva-siguiendo-a-conan-obrien-por-una-tercera-temporada-y",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/hbo-renueva-la-serie-dramatica-original-la-edad-dorada-por-una-c",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/hbo-renueva-la-serie-dramatica-original-la-edad-dorada-por-una-c",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/hbo-renueva-la-serie-dramatica-original-la-edad-dorada-por-una-c",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/hbo-renueva-la-serie-dramatica-original-la-edad-dorada-por-una-c",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/la-comedia-original-de-hbo-the-comeback-vuelve-con-una-tercera-y",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/la-comedia-original-de-hbo-the-comeback-vuelve-con-una-tercera-y",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/la-comedia-original-de-hbo-the-comeback-vuelve-con-una-tercera-y",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/la-comedia-original-de-hbo-the-comeback-vuelve-con-una-tercera-y",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/hbo-max-renueva-su-serie-and-just-like-that-por-una-segunda-temp",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/hbo-max-renueva-su-serie-and-just-like-that-por-una-segunda-temp",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/and-just-like-that-el-documental-llega-manana-a-hbo-max",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/and-just-like-that-el-documental-llega-manana-a-hbo-max",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/and-just-like-that-la-serie-max-original-que-continua-la-histori",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/and-just-like-that-la-serie-max-original-que-continua-la-histori",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/hbo-max-lanza-el-trailer-oficial-de-la-segunda-temporada-de-and-",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/hbo-max-lanza-el-trailer-oficial-de-la-segunda-temporada-de-and-",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press-spain.max.com/post/la-segunda-temporada-de-and-just-like-that-se-estrena-el-proximo",
+      "httpStatus": 200,
+      "finalUrl": "https://press-spain.max.com/post/la-segunda-temporada-de-and-just-like-that-se-estrena-el-proximo",
+      "redirectChain": [],
+      "accessClassification": "ACCESSIBLE",
+      "failureCategory": null,
+      "bodyExtractable": true
+    },
+    {
+      "url": "https://press.wbd.com/ca/media-release/hbo-0/hbo-renews-white-lotus-fourth-season",
+      "httpStatus": 403,
+      "finalUrl": "https://press.wbd.com/ca/media-release/hbo-0/hbo-renews-white-lotus-fourth-season",
+      "redirectChain": [],
+      "accessClassification": "HTTP_403",
+      "failureCategory": "HTTP_403",
+      "bodyExtractable": false
+    }
+  ],
+  "hbo": {
+    "distinctPositiveSeries": 5,
+    "genericDiscoveryPassingSeries": 5,
+    "independentReconstructionPassingSeries": 5,
+    "minimumDistinctSeries": 3,
+    "qualificationState": "QUALIFIED_ON_GITHUB_RUNNER",
+    "cases": [
+      {
+        "caseId": "the-white-lotus-lifecycle",
+        "tmdbId": 111803,
+        "requestedTitle": "The White Lotus",
+        "kind": "positive",
+        "route": "HBO",
+        "candidateRouteNotIdentity": "HBO",
+        "rawNetworkLabels": [
+          "HBO"
+        ],
+        "metadataResult": "FETCHED_IDENTITY_METADATA_ONLY",
+        "discoverySource": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post/hbo-lanza-el-trailer-de-la-segunda-temporada-de-the-white-lotus"
+        ],
+        "discoveryMethod": "DISCOVERED_FROM_FIRST_PARTY_INDEX",
+        "discoveredUrl": "https://press-spain.max.com/post/hbo-lanza-el-trailer-de-la-segunda-temporada-de-the-white-lotus",
+        "evidenceSource": "https://press-spain.max.com/post/hbo-lanza-el-trailer-de-la-segunda-temporada-de-the-white-lotus",
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": 200,
+        "identityResult": {
+          "acceptedForAudit": true,
+          "pageTitle": "HBO lanza el tráiler de la segunda temporada de THE WHITE LOTUS | Max | Notas de prensa",
+          "articleHeading": "HBO lanza el tráiler de la segunda temporada de THE WHITE LOTUS",
+          "canonicalUrl": "https://press-spain.max.com/post/hbo-lanza-el-trailer-de-la-segunda-temporada-de-the-white-lotus",
+          "canonicalDeclared": true,
+          "structuredDataAvailable": true,
+          "failure": null
+        },
+        "originalBrandLabels": [],
+        "providerIdentityMatched": false,
+        "parserFacts": [],
+        "signalsDiagnosticOnly": [
+          "trailer_teaser",
+          "release"
+        ],
+        "relevantEvidenceSnippet": [
+          "HBO lanza el tráiler de la segunda temporada de THE WHITE LOTUS"
+        ],
+        "status": null,
+        "nextSeasonNumber": null,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/hbo-lanza-el-trailer-de-la-segunda-temporada-de-the-white-lotus",
+        "announcementDate": "2022-10-07",
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "not_applicable",
+          "mismatchedFields": []
+        },
+        "mismatchedFields": [],
+        "contentPassed": false,
+        "passed": false,
+        "failureStage": "routing",
+        "failureReason": "QUALIFICATION_REQUIREMENT_NOT_MET",
+        "negativeTargetContentValidated": null,
+        "discoveryEntryPoint": "https://press-spain.max.com/post",
+        "candidateCountBeforeFilter": 416,
+        "candidateCountAfterFilter": 8,
+        "candidateCountSelected": 8,
+        "knownUrlOracle": [],
+        "knownUrlUsedAsSeed": false,
+        "oracleMatched": false,
+        "requiredPositive": false,
+        "attempts": [
+          {
+            "url": "https://press-spain.max.com/post/hbo-lanza-el-trailer-de-la-segunda-temporada-de-the-white-lotus",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": "routing"
+          },
+          {
+            "url": "https://press-spain.max.com/post/hbo-lanza-el-trailer-y-poster-oficiales-de-la-tercera-temporada-",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": "routing"
+          },
+          {
+            "url": "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": "parser"
+          },
+          {
+            "url": "https://press-spain.max.com/post/la-tercera-temporada-de-la-serie-original-de-hbo-the-white-lotus",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": "parser"
+          },
+          {
+            "url": "https://press-spain.max.com/post/nuevas-incorporaciones-a-la-tercera-entrega-de-the-white-lotus",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": "parser"
+          },
+          {
+            "url": "https://press-spain.max.com/post/imagenes-disponibles-de-la-premiere-en-los-angeles-de-la-tercera",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": "routing"
+          },
+          {
+            "url": "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-the-white-lotus-se-estrena-el-1",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": "routing"
+          },
+          {
+            "url": "https://press-spain.max.com/post/max-lanza-un-plan-basico-con-anuncios-en-espana-para-ampliar-las",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": "routing"
+          }
+        ]
+      },
+      {
+        "caseId": "the-last-of-us-lifecycle",
+        "tmdbId": 100088,
+        "requestedTitle": "The Last of Us",
+        "kind": "positive",
+        "route": "HBO",
+        "candidateRouteNotIdentity": "HBO",
+        "rawNetworkLabels": [
+          "HBO"
+        ],
+        "metadataResult": "FETCHED_IDENTITY_METADATA_ONLY",
+        "discoverySource": [
+          "https://press-spain.max.com/sitemap",
+          "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada"
+        ],
+        "discoveryMethod": "DISCOVERED_FROM_FIRST_PARTY_INDEX",
+        "discoveredUrl": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+        "evidenceSource": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": 200,
+        "identityResult": {
+          "acceptedForAudit": true,
+          "pageTitle": "HBO renueva THE LAST OF US por una tercera temporada | Max | Notas de prensa",
+          "articleHeading": "HBO renueva THE LAST OF US por una tercera temporada",
+          "canonicalUrl": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+          "canonicalDeclared": true,
+          "structuredDataAvailable": true,
+          "failure": null
+        },
+        "originalBrandLabels": [
+          "HBO"
+        ],
+        "providerIdentityMatched": true,
+        "parserFacts": [
+          {
+            "tmdbId": 100088,
+            "title": "The Last of Us",
+            "factType": "LIFECYCLE",
+            "status": "RENEWED",
+            "nextSeasonNumber": 3,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+            "announcementDate": "2025-04-09",
+            "rule": "explicit-renewal",
+            "evidenceText": "HBO renueva THE LAST OF US por una tercera temporada"
+          },
+          {
+            "tmdbId": 100088,
+            "title": "The Last of Us",
+            "factType": "LIFECYCLE",
+            "status": "RENEWED",
+            "nextSeasonNumber": 3,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+            "announcementDate": "2025-04-09",
+            "rule": "explicit-renewal",
+            "evidenceText": "THE LAST OF US , ha sido renovada por una tercera temporada"
+          }
+        ],
+        "signalsDiagnosticOnly": [
+          "renewal",
+          "release"
+        ],
+        "relevantEvidenceSnippet": [
+          "HBO renueva THE LAST OF US por una tercera temporada",
+          "THE LAST OF US , ha sido renovada por una tercera temporada"
+        ],
+        "status": "RENEWED",
+        "nextSeasonNumber": 3,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+        "announcementDate": "2025-04-09",
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "passed",
+          "fieldsCompared": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "mismatchedFields": [],
+          "regionalDiagnosticMatches": true,
+          "reconstructedFacts": {
+            "status": "RENEWED",
+            "nextSeasonNumber": 3,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+            "announcementDate": "2025-04-09"
+          },
+          "boundedSourceEvidence": [
+            {
+              "status": "RENEWED",
+              "nextSeasonNumber": 3,
+              "releaseDate": null,
+              "releaseYear": null,
+              "sourceName": "Max Press Spain",
+              "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+              "announcementDate": "2025-04-09",
+              "rule": "explicit-renewal",
+              "factType": "LIFECYCLE",
+              "evidenceText": "HBO renueva THE LAST OF US por una tercera temporada",
+              "publicationDateSource": "structured_metadata"
+            },
+            {
+              "status": "RENEWED",
+              "nextSeasonNumber": 3,
+              "releaseDate": null,
+              "releaseYear": null,
+              "sourceName": "Max Press Spain",
+              "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+              "announcementDate": "2025-04-09",
+              "rule": "explicit-renewal",
+              "factType": "LIFECYCLE",
+              "evidenceText": "THE LAST OF US , ha sido renovada por una tercera temporada",
+              "publicationDateSource": "structured_metadata"
+            }
+          ],
+          "freshArticleAndPersistedExcerptReplay": true
+        },
+        "mismatchedFields": [],
+        "contentPassed": true,
+        "passed": true,
+        "failureStage": null,
+        "failureReason": null,
+        "negativeTargetContentValidated": null,
+        "discoveryEntryPoint": "https://press-spain.max.com/sitemap",
+        "candidateCountBeforeFilter": 416,
+        "candidateCountAfterFilter": 8,
+        "candidateCountSelected": 8,
+        "knownUrlOracle": [
+          "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+          "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-original-de-hbo-the-last-of-us-"
+        ],
+        "knownUrlUsedAsSeed": false,
+        "oracleMatched": true,
+        "requiredPositive": true,
+        "attempts": [
+          {
+            "url": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+            "identityAccepted": true,
+            "factCount": 2,
+            "failureStage": null
+          }
+        ]
+      },
+      {
+        "caseId": "somebody-somewhere-lifecycle",
+        "tmdbId": 106308,
+        "requestedTitle": "Somebody Somewhere",
+        "kind": "positive",
+        "candidateRouteNotIdentity": "HBO",
+        "route": "HBO",
+        "rawNetworkLabels": [
+          "HBO"
+        ],
+        "discoverySource": [],
+        "discoveryMethod": "NO_CANDIDATE",
+        "discoveredUrl": null,
+        "evidenceSource": null,
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": null,
+        "identityResult": {
+          "acceptedForAudit": false
+        },
+        "parserFacts": [],
+        "signalsDiagnosticOnly": [],
+        "relevantEvidenceSnippet": [],
+        "status": null,
+        "nextSeasonNumber": null,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": null,
+        "announcementDate": null,
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "not_applicable",
+          "mismatchedFields": []
+        },
+        "mismatchedFields": [],
+        "contentPassed": false,
+        "passed": false,
+        "failureStage": "discovery",
+        "failureReason": "NO_FIRST_PARTY_CANDIDATE",
+        "metadataResult": "FETCHED_IDENTITY_METADATA_ONLY",
+        "discoveryEntryPoint": null,
+        "candidateCountBeforeFilter": 416,
+        "candidateCountAfterFilter": 0,
+        "candidateCountSelected": 0,
+        "knownUrlOracle": [],
+        "knownUrlUsedAsSeed": false,
+        "oracleMatched": false,
+        "providerIdentityMatched": false,
+        "requiredPositive": false,
+        "attempts": []
+      },
+      {
+        "caseId": "white-lotus-spanish-filming",
+        "tmdbId": 111803,
+        "requestedTitle": "The White Lotus",
+        "kind": "negative",
+        "route": "HBO",
+        "candidateRouteNotIdentity": "HBO",
+        "rawNetworkLabels": [
+          "HBO"
+        ],
+        "metadataResult": "FETCHED_IDENTITY_METADATA_ONLY",
+        "discoverySource": [
+          "https://press-spain.max.com/sitemap",
+          "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-"
+        ],
+        "discoveryMethod": "DISCOVERED_FROM_FIRST_PARTY_INDEX",
+        "discoveredUrl": "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-",
+        "evidenceSource": "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-",
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": 200,
+        "identityResult": {
+          "acceptedForAudit": true,
+          "pageTitle": "La cuarta temporada de la serie original de HBO THE WHITE LOTUS comienza a rodarse en Francia | Max | Notas de prensa",
+          "articleHeading": "La cuarta temporada de la serie original de HBO THE WHITE LOTUS comienza a rodarse en Francia",
+          "canonicalUrl": "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-",
+          "canonicalDeclared": true,
+          "structuredDataAvailable": true,
+          "failure": null
+        },
+        "originalBrandLabels": [
+          "HBO"
+        ],
+        "providerIdentityMatched": true,
+        "parserFacts": [],
+        "signalsDiagnosticOnly": [
+          "production_start"
+        ],
+        "relevantEvidenceSnippet": [
+          "La cuarta temporada de la serie original de HBO THE WHITE LOTUS comienza a rodarse en Francia"
+        ],
+        "status": null,
+        "nextSeasonNumber": null,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-",
+        "announcementDate": "2026-04-15",
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "not_applicable",
+          "mismatchedFields": []
+        },
+        "mismatchedFields": [],
+        "contentPassed": false,
+        "passed": true,
+        "failureStage": null,
+        "failureReason": null,
+        "negativeTargetContentValidated": true,
+        "discoveryEntryPoint": "https://press-spain.max.com/sitemap",
+        "candidateCountBeforeFilter": 416,
+        "candidateCountAfterFilter": 8,
+        "candidateCountSelected": 8,
+        "knownUrlOracle": [
+          "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-"
+        ],
+        "knownUrlUsedAsSeed": false,
+        "oracleMatched": true,
+        "requiredPositive": false,
+        "attempts": [
+          {
+            "url": "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": null
+          }
+        ]
+      },
+      {
+        "caseId": "somebody-spanish-slate",
+        "tmdbId": 106308,
+        "requestedTitle": "Somebody Somewhere",
+        "kind": "ambiguity",
+        "route": "HBO",
+        "candidateRouteNotIdentity": "HBO",
+        "rawNetworkLabels": [
+          "HBO"
+        ],
+        "metadataResult": "FETCHED_IDENTITY_METADATA_ONLY",
+        "discoverySource": [],
+        "discoveryMethod": "DIRECT_KNOWN_URL_ONLY",
+        "discoveredUrl": null,
+        "evidenceSource": "https://press-spain.max.com/post/avance-de-estrenos-de-octubre-3",
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": 200,
+        "identityResult": {
+          "acceptedForAudit": false,
+          "pageTitle": "Avance de estrenos de OCTUBRE | Max | Notas de prensa",
+          "articleHeading": "Avance de estrenos de OCTUBRE",
+          "canonicalUrl": "https://press-spain.max.com/post/avance-de-estrenos-de-octubre-3",
+          "canonicalDeclared": true,
+          "structuredDataAvailable": true,
+          "failure": "ARTICLE_IDENTITY_MISMATCH"
+        },
+        "originalBrandLabels": [],
+        "providerIdentityMatched": false,
+        "parserFacts": [],
+        "signalsDiagnosticOnly": [
+          "production_start",
+          "release"
+        ],
+        "relevantEvidenceSnippet": [
+          "Avance de estrenos de OCTUBRE"
+        ],
+        "status": null,
+        "nextSeasonNumber": null,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/avance-de-estrenos-de-octubre-3",
+        "announcementDate": "2024-09-30",
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "not_applicable",
+          "mismatchedFields": []
+        },
+        "mismatchedFields": [],
+        "contentPassed": false,
+        "passed": true,
+        "failureStage": null,
+        "failureReason": null,
+        "negativeTargetContentValidated": null,
+        "discoveryEntryPoint": null,
+        "candidateCountBeforeFilter": 416,
+        "candidateCountAfterFilter": 0,
+        "candidateCountSelected": 0,
+        "knownUrlOracle": [
+          "https://press-spain.max.com/post/avance-de-estrenos-de-octubre-3"
+        ],
+        "knownUrlUsedAsSeed": false,
+        "oracleMatched": true,
+        "requiredPositive": false,
+        "attempts": [
+          {
+            "url": "https://press-spain.max.com/post/avance-de-estrenos-de-octubre-3",
+            "identityAccepted": false,
+            "factCount": 0,
+            "failureStage": null
+          }
+        ]
+      },
+      {
+        "caseId": "last-of-us-spanish-date",
+        "tmdbId": 100088,
+        "requestedTitle": "The Last of Us",
+        "kind": "regional",
+        "route": "HBO",
+        "candidateRouteNotIdentity": "HBO",
+        "rawNetworkLabels": [
+          "HBO"
+        ],
+        "metadataResult": "FETCHED_IDENTITY_METADATA_ONLY",
+        "discoverySource": [
+          "https://press-spain.max.com/sitemap",
+          "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-original-de-hbo-the-last-of-us-"
+        ],
+        "discoveryMethod": "DISCOVERED_FROM_FIRST_PARTY_INDEX",
+        "discoveredUrl": "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-original-de-hbo-the-last-of-us-",
+        "evidenceSource": "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-original-de-hbo-the-last-of-us-",
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": 200,
+        "identityResult": {
+          "acceptedForAudit": true,
+          "pageTitle": "La segunda temporada de la serie original de HBO THE LAST OF US se estrena el 14 de abril. Nuevos teaser posters disponibles. | Max | Notas de prensa",
+          "articleHeading": "La segunda temporada de la serie original de HBO THE LAST OF US se estrena el 14 de abril. Nuevos teaser posters disponibles.",
+          "canonicalUrl": "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-original-de-hbo-the-last-of-us-",
+          "canonicalDeclared": true,
+          "structuredDataAvailable": true,
+          "failure": null
+        },
+        "originalBrandLabels": [
+          "HBO"
+        ],
+        "providerIdentityMatched": true,
+        "parserFacts": [],
+        "signalsDiagnosticOnly": [
+          "trailer_teaser",
+          "release"
+        ],
+        "relevantEvidenceSnippet": [
+          "segunda temporada de la serie original de HBO THE LAST OF US se estrena el 14 de abril"
+        ],
+        "status": null,
+        "nextSeasonNumber": null,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-original-de-hbo-the-last-of-us-",
+        "announcementDate": "2025-02-19",
+        "regionalReleaseDateDiagnosticOnly": [
+          {
+            "scope": "REGIONAL_RELEASE_DATE",
+            "language": "es",
+            "territory": "ES",
+            "nextSeasonNumber": 2,
+            "regionalReleaseDate": "2025-04-14",
+            "releaseYear": 2025,
+            "productionReleaseDate": null,
+            "productionReleaseYear": null,
+            "evidenceText": "segunda temporada de la serie original de HBO THE LAST OF US se estrena el 14 de abril"
+          }
+        ],
+        "independentReconstruction": {
+          "result": "not_applicable",
+          "mismatchedFields": []
+        },
+        "mismatchedFields": [],
+        "contentPassed": false,
+        "passed": true,
+        "failureStage": null,
+        "failureReason": null,
+        "negativeTargetContentValidated": null,
+        "discoveryEntryPoint": "https://press-spain.max.com/sitemap",
+        "candidateCountBeforeFilter": 416,
+        "candidateCountAfterFilter": 8,
+        "candidateCountSelected": 8,
+        "knownUrlOracle": [
+          "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-original-de-hbo-the-last-of-us-"
+        ],
+        "knownUrlUsedAsSeed": false,
+        "oracleMatched": true,
+        "requiredPositive": false,
+        "attempts": [
+          {
+            "url": "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-original-de-hbo-the-last-of-us-",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": null
+          }
+        ]
+      },
+      {
+        "caseId": "industry-lifecycle",
+        "tmdbId": null,
+        "requestedTitle": "Industry",
+        "kind": "positive",
+        "route": null,
+        "candidateRouteNotIdentity": "HBO",
+        "rawNetworkLabels": null,
+        "metadataResult": "UNRESOLVED_TMDB_IDENTITY",
+        "discoverySource": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post/hbo-renueva-industry-por-una-cuarta-temporada"
+        ],
+        "discoveryMethod": "DISCOVERED_FROM_FIRST_PARTY_INDEX",
+        "discoveredUrl": "https://press-spain.max.com/post/hbo-renueva-industry-por-una-cuarta-temporada",
+        "evidenceSource": "https://press-spain.max.com/post/hbo-renueva-industry-por-una-cuarta-temporada",
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": 200,
+        "identityResult": {
+          "acceptedForAudit": true,
+          "pageTitle": "HBO renueva INDUSTRY por una cuarta temporada | Max | Notas de prensa",
+          "articleHeading": "HBO renueva INDUSTRY por una cuarta temporada",
+          "canonicalUrl": "https://press-spain.max.com/post/hbo-renueva-industry-por-una-cuarta-temporada",
+          "canonicalDeclared": true,
+          "structuredDataAvailable": true,
+          "failure": null
+        },
+        "originalBrandLabels": [
+          "HBO"
+        ],
+        "providerIdentityMatched": false,
+        "parserFacts": [
+          {
+            "tmdbId": null,
+            "title": "Industry",
+            "factType": "LIFECYCLE",
+            "status": "RENEWED",
+            "nextSeasonNumber": 4,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-industry-por-una-cuarta-temporada",
+            "announcementDate": "2024-09-20",
+            "rule": "explicit-renewal",
+            "evidenceText": "HBO renueva INDUSTRY por una cuarta temporada"
+          }
+        ],
+        "signalsDiagnosticOnly": [
+          "renewal"
+        ],
+        "relevantEvidenceSnippet": [
+          "HBO renueva INDUSTRY por una cuarta temporada"
+        ],
+        "status": null,
+        "nextSeasonNumber": null,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-industry-por-una-cuarta-temporada",
+        "announcementDate": "2024-09-20",
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "not_applicable",
+          "mismatchedFields": []
+        },
+        "mismatchedFields": [],
+        "contentPassed": false,
+        "passed": false,
+        "failureStage": "routing",
+        "failureReason": "UNRESOLVED_TMDB_IDENTITY",
+        "negativeTargetContentValidated": null,
+        "discoveryEntryPoint": "https://press-spain.max.com/post",
+        "candidateCountBeforeFilter": 416,
+        "candidateCountAfterFilter": 6,
+        "candidateCountSelected": 6,
+        "knownUrlOracle": [],
+        "knownUrlUsedAsSeed": false,
+        "oracleMatched": false,
+        "requiredPositive": false,
+        "attempts": [
+          {
+            "url": "https://press-spain.max.com/post/hbo-renueva-industry-por-una-cuarta-temporada",
+            "identityAccepted": true,
+            "factCount": 1,
+            "failureStage": "routing"
+          },
+          {
+            "url": "https://press-spain.max.com/post/hbo-renueva-industry-por-una-quinta-y-ultima-temporada",
+            "identityAccepted": true,
+            "factCount": 1,
+            "failureStage": "routing"
+          },
+          {
+            "url": "https://press-spain.max.com/post/hbo-publica-el-trailer-y-poster-oficiales-de-la-tercera-temporad",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": "routing"
+          },
+          {
+            "url": "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-dramatica-original-de-hbo-indust",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": "routing"
+          },
+          {
+            "url": "https://press-spain.max.com/post/la-segunda-temporada-de-industry-se-estrena-el-proximo-2-de-agos",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": "routing"
+          },
+          {
+            "url": "https://press-spain.max.com/post/la-tercera-temporada-de-la-serie-original-de-hbo-industry-se-est",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": "routing"
+          }
+        ]
+      },
+      {
+        "caseId": "rooster-lifecycle",
+        "tmdbId": 254953,
+        "requestedTitle": "Rooster",
+        "kind": "positive",
+        "route": "HBO",
+        "candidateRouteNotIdentity": "HBO",
+        "rawNetworkLabels": [
+          "HBO"
+        ],
+        "metadataResult": "FETCHED_IDENTITY_METADATA_ONLY",
+        "discoverySource": [
+          "https://press-spain.max.com/sitemap",
+          "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr"
+        ],
+        "discoveryMethod": "DISCOVERED_FROM_FIRST_PARTY_INDEX",
+        "discoveredUrl": "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
+        "evidenceSource": "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": 200,
+        "identityResult": {
+          "acceptedForAudit": true,
+          "pageTitle": "HBO renueva ROOSTER, la comedia más vista en más de una década, protagonizada por Steve Carell | Max | Notas de prensa",
+          "articleHeading": "HBO renueva ROOSTER, la comedia más vista en más de una década, protagonizada por Steve Carell",
+          "canonicalUrl": "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
+          "canonicalDeclared": true,
+          "structuredDataAvailable": true,
+          "failure": null
+        },
+        "originalBrandLabels": [
+          "HBO"
+        ],
+        "providerIdentityMatched": true,
+        "parserFacts": [
+          {
+            "tmdbId": 254953,
+            "title": "Rooster",
+            "factType": "LIFECYCLE",
+            "status": "RENEWED",
+            "nextSeasonNumber": 2,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
+            "announcementDate": "2026-04-09",
+            "rule": "explicit-renewal",
+            "evidenceText": "HBO ha renovado su nueva serie de comedia ROOSTER para una segunda temporada"
+          }
+        ],
+        "signalsDiagnosticOnly": [
+          "renewal",
+          "release"
+        ],
+        "relevantEvidenceSnippet": [
+          "HBO ha renovado su nueva serie de comedia ROOSTER para una segunda temporada"
+        ],
+        "status": "RENEWED",
+        "nextSeasonNumber": 2,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
+        "announcementDate": "2026-04-09",
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "passed",
+          "fieldsCompared": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "mismatchedFields": [],
+          "regionalDiagnosticMatches": true,
+          "reconstructedFacts": {
+            "status": "RENEWED",
+            "nextSeasonNumber": 2,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
+            "announcementDate": "2026-04-09"
+          },
+          "boundedSourceEvidence": [
+            {
+              "status": "RENEWED",
+              "nextSeasonNumber": 2,
+              "releaseDate": null,
+              "releaseYear": null,
+              "sourceName": "Max Press Spain",
+              "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
+              "announcementDate": "2026-04-09",
+              "rule": "explicit-renewal",
+              "factType": "LIFECYCLE",
+              "evidenceText": "HBO ha renovado su nueva serie de comedia ROOSTER para una segunda temporada",
+              "publicationDateSource": "structured_metadata"
+            }
+          ],
+          "freshArticleAndPersistedExcerptReplay": true
+        },
+        "mismatchedFields": [],
+        "contentPassed": true,
+        "passed": true,
+        "failureStage": null,
+        "failureReason": null,
+        "negativeTargetContentValidated": null,
+        "discoveryEntryPoint": "https://press-spain.max.com/sitemap",
+        "candidateCountBeforeFilter": 416,
+        "candidateCountAfterFilter": 3,
+        "candidateCountSelected": 3,
+        "knownUrlOracle": [],
+        "knownUrlUsedAsSeed": false,
+        "oracleMatched": false,
+        "requiredPositive": false,
+        "attempts": [
+          {
+            "url": "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
+            "identityAccepted": true,
+            "factCount": 1,
+            "failureStage": null
+          }
+        ]
+      },
+      {
+        "caseId": "it-welcome-derry-lifecycle",
+        "tmdbId": 200875,
+        "requestedTitle": "IT: Welcome to Derry",
+        "kind": "positive",
+        "route": "HBO",
+        "candidateRouteNotIdentity": "HBO",
+        "rawNetworkLabels": [
+          "HBO"
+        ],
+        "metadataResult": "FETCHED_IDENTITY_METADATA_ONLY",
+        "discoverySource": [
+          "https://press-spain.max.com/sitemap",
+          "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada"
+        ],
+        "discoveryMethod": "DISCOVERED_FROM_FIRST_PARTY_INDEX",
+        "discoveredUrl": "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+        "evidenceSource": "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": 200,
+        "identityResult": {
+          "acceptedForAudit": true,
+          "pageTitle": "HBO renueva IT: BIENVENIDOS A DERRY para una segunda temporada | Max | Notas de prensa",
+          "articleHeading": "HBO renueva IT: BIENVENIDOS A DERRY para una segunda temporada",
+          "canonicalUrl": "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+          "canonicalDeclared": true,
+          "structuredDataAvailable": true,
+          "failure": null
+        },
+        "originalBrandLabels": [
+          "HBO"
+        ],
+        "providerIdentityMatched": true,
+        "parserFacts": [
+          {
+            "tmdbId": 200875,
+            "title": "IT: Welcome to Derry",
+            "factType": "LIFECYCLE",
+            "status": "RENEWED",
+            "nextSeasonNumber": 2,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+            "announcementDate": "2026-08-17",
+            "rule": "explicit-renewal",
+            "evidenceText": "HBO renueva IT: BIENVENIDOS A DERRY para una segunda temporada"
+          }
+        ],
+        "signalsDiagnosticOnly": [
+          "renewal",
+          "release"
+        ],
+        "relevantEvidenceSnippet": [
+          "HBO renueva IT: BIENVENIDOS A DERRY para una segunda temporada"
+        ],
+        "status": "RENEWED",
+        "nextSeasonNumber": 2,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+        "announcementDate": "2026-08-17",
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "passed",
+          "fieldsCompared": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "mismatchedFields": [],
+          "regionalDiagnosticMatches": true,
+          "reconstructedFacts": {
+            "status": "RENEWED",
+            "nextSeasonNumber": 2,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+            "announcementDate": "2026-08-17"
+          },
+          "boundedSourceEvidence": [
+            {
+              "status": "RENEWED",
+              "nextSeasonNumber": 2,
+              "releaseDate": null,
+              "releaseYear": null,
+              "sourceName": "Max Press Spain",
+              "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+              "announcementDate": "2026-08-17",
+              "rule": "explicit-renewal",
+              "factType": "LIFECYCLE",
+              "evidenceText": "HBO renueva IT: BIENVENIDOS A DERRY para una segunda temporada",
+              "publicationDateSource": "structured_metadata"
+            }
+          ],
+          "freshArticleAndPersistedExcerptReplay": true
+        },
+        "mismatchedFields": [],
+        "contentPassed": true,
+        "passed": true,
+        "failureStage": null,
+        "failureReason": null,
+        "negativeTargetContentValidated": null,
+        "discoveryEntryPoint": "https://press-spain.max.com/sitemap",
+        "candidateCountBeforeFilter": 416,
+        "candidateCountAfterFilter": 7,
+        "candidateCountSelected": 7,
+        "knownUrlOracle": [
+          "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada"
+        ],
+        "knownUrlUsedAsSeed": false,
+        "oracleMatched": true,
+        "requiredPositive": false,
+        "attempts": [
+          {
+            "url": "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+            "identityAccepted": true,
+            "factCount": 1,
+            "failureStage": null
+          }
+        ]
+      },
+      {
+        "caseId": "gilded-age-lifecycle",
+        "tmdbId": 81723,
+        "requestedTitle": "The Gilded Age",
+        "kind": "positive",
+        "route": "HBO",
+        "candidateRouteNotIdentity": "HBO",
+        "rawNetworkLabels": [
+          "HBO"
+        ],
+        "metadataResult": "FETCHED_IDENTITY_METADATA_ONLY",
+        "discoverySource": [
+          "https://press-spain.max.com/sitemap",
+          "https://press-spain.max.com/post/hbo-renueva-la-serie-dramatica-original-la-edad-dorada-por-una-c"
+        ],
+        "discoveryMethod": "DISCOVERED_FROM_FIRST_PARTY_INDEX",
+        "discoveredUrl": "https://press-spain.max.com/post/hbo-renueva-la-serie-dramatica-original-la-edad-dorada-por-una-c",
+        "evidenceSource": "https://press-spain.max.com/post/hbo-renueva-la-serie-dramatica-original-la-edad-dorada-por-una-c",
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": 200,
+        "identityResult": {
+          "acceptedForAudit": true,
+          "pageTitle": "HBO renueva la serie dramática original LA EDAD DORADA por una cuarta temporada | Max | Notas de prensa",
+          "articleHeading": "HBO renueva la serie dramática original LA EDAD DORADA por una cuarta temporada",
+          "canonicalUrl": "https://press-spain.max.com/post/hbo-renueva-la-serie-dramatica-original-la-edad-dorada-por-una-c",
+          "canonicalDeclared": true,
+          "structuredDataAvailable": true,
+          "failure": null
+        },
+        "originalBrandLabels": [
+          "HBO"
+        ],
+        "providerIdentityMatched": true,
+        "parserFacts": [
+          {
+            "tmdbId": 81723,
+            "title": "The Gilded Age",
+            "factType": "LIFECYCLE",
+            "status": "RENEWED",
+            "nextSeasonNumber": 4,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-la-serie-dramatica-original-la-edad-dorada-por-una-c",
+            "announcementDate": "2025-07-29",
+            "rule": "explicit-renewal",
+            "evidenceText": "HBO renueva la serie dramática original LA EDAD DORADA por una cuarta temporada"
+          },
+          {
+            "tmdbId": 81723,
+            "title": "The Gilded Age",
+            "factType": "LIFECYCLE",
+            "status": "RENEWED",
+            "nextSeasonNumber": 4,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-la-serie-dramatica-original-la-edad-dorada-por-una-c",
+            "announcementDate": "2025-07-29",
+            "rule": "explicit-renewal",
+            "evidenceText": "LA EDAD DORADA ha sido renovada para una cuarta temporada"
+          }
+        ],
+        "signalsDiagnosticOnly": [
+          "renewal"
+        ],
+        "relevantEvidenceSnippet": [
+          "HBO renueva la serie dramática original LA EDAD DORADA por una cuarta temporada",
+          "LA EDAD DORADA ha sido renovada para una cuarta temporada"
+        ],
+        "status": "RENEWED",
+        "nextSeasonNumber": 4,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-la-serie-dramatica-original-la-edad-dorada-por-una-c",
+        "announcementDate": "2025-07-29",
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "passed",
+          "fieldsCompared": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "mismatchedFields": [],
+          "regionalDiagnosticMatches": true,
+          "reconstructedFacts": {
+            "status": "RENEWED",
+            "nextSeasonNumber": 4,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-la-serie-dramatica-original-la-edad-dorada-por-una-c",
+            "announcementDate": "2025-07-29"
+          },
+          "boundedSourceEvidence": [
+            {
+              "status": "RENEWED",
+              "nextSeasonNumber": 4,
+              "releaseDate": null,
+              "releaseYear": null,
+              "sourceName": "Max Press Spain",
+              "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-la-serie-dramatica-original-la-edad-dorada-por-una-c",
+              "announcementDate": "2025-07-29",
+              "rule": "explicit-renewal",
+              "factType": "LIFECYCLE",
+              "evidenceText": "HBO renueva la serie dramática original LA EDAD DORADA por una cuarta temporada",
+              "publicationDateSource": "structured_metadata"
+            },
+            {
+              "status": "RENEWED",
+              "nextSeasonNumber": 4,
+              "releaseDate": null,
+              "releaseYear": null,
+              "sourceName": "Max Press Spain",
+              "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-la-serie-dramatica-original-la-edad-dorada-por-una-c",
+              "announcementDate": "2025-07-29",
+              "rule": "explicit-renewal",
+              "factType": "LIFECYCLE",
+              "evidenceText": "LA EDAD DORADA ha sido renovada para una cuarta temporada",
+              "publicationDateSource": "structured_metadata"
+            }
+          ],
+          "freshArticleAndPersistedExcerptReplay": true
+        },
+        "mismatchedFields": [],
+        "contentPassed": true,
+        "passed": true,
+        "failureStage": null,
+        "failureReason": null,
+        "negativeTargetContentValidated": null,
+        "discoveryEntryPoint": "https://press-spain.max.com/sitemap",
+        "candidateCountBeforeFilter": 416,
+        "candidateCountAfterFilter": 6,
+        "candidateCountSelected": 6,
+        "knownUrlOracle": [
+          "https://press-spain.max.com/post/hbo-renueva-la-serie-dramatica-original-la-edad-dorada-por-una-c"
+        ],
+        "knownUrlUsedAsSeed": false,
+        "oracleMatched": true,
+        "requiredPositive": false,
+        "attempts": [
+          {
+            "url": "https://press-spain.max.com/post/hbo-renueva-la-serie-dramatica-original-la-edad-dorada-por-una-c",
+            "identityAccepted": true,
+            "factCount": 2,
+            "failureStage": null
+          }
+        ]
+      },
+      {
+        "caseId": "comeback-lifecycle",
+        "tmdbId": 1999,
+        "requestedTitle": "The Comeback",
+        "kind": "positive",
+        "route": "HBO",
+        "candidateRouteNotIdentity": "HBO",
+        "rawNetworkLabels": [
+          "HBO"
+        ],
+        "metadataResult": "FETCHED_IDENTITY_METADATA_ONLY",
+        "discoverySource": [
+          "https://press-spain.max.com/sitemap",
+          "https://press-spain.max.com/post/la-comedia-original-de-hbo-the-comeback-vuelve-con-una-tercera-y"
+        ],
+        "discoveryMethod": "DISCOVERED_FROM_FIRST_PARTY_INDEX",
+        "discoveredUrl": "https://press-spain.max.com/post/la-comedia-original-de-hbo-the-comeback-vuelve-con-una-tercera-y",
+        "evidenceSource": "https://press-spain.max.com/post/la-comedia-original-de-hbo-the-comeback-vuelve-con-una-tercera-y",
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": 200,
+        "identityResult": {
+          "acceptedForAudit": true,
+          "pageTitle": "La comedia original de HBO THE COMEBACK vuelve con una tercera y última temporada | Max | Notas de prensa",
+          "articleHeading": "La comedia original de HBO THE COMEBACK vuelve con una tercera y última temporada",
+          "canonicalUrl": "https://press-spain.max.com/post/la-comedia-original-de-hbo-the-comeback-vuelve-con-una-tercera-y",
+          "canonicalDeclared": true,
+          "structuredDataAvailable": true,
+          "failure": null
+        },
+        "originalBrandLabels": [
+          "HBO"
+        ],
+        "providerIdentityMatched": true,
+        "parserFacts": [
+          {
+            "tmdbId": 1999,
+            "title": "The Comeback",
+            "factType": "LIFECYCLE",
+            "status": "FINAL_SEASON",
+            "nextSeasonNumber": 3,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/la-comedia-original-de-hbo-the-comeback-vuelve-con-una-tercera-y",
+            "announcementDate": "2025-06-27",
+            "rule": "explicit-final-season",
+            "evidenceText": "THE COMEBACK vuelve con una tercera y última temporada"
+          }
+        ],
+        "signalsDiagnosticOnly": [
+          "final_season",
+          "release"
+        ],
+        "relevantEvidenceSnippet": [
+          "THE COMEBACK vuelve con una tercera y última temporada"
+        ],
+        "status": "FINAL_SEASON",
+        "nextSeasonNumber": 3,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/la-comedia-original-de-hbo-the-comeback-vuelve-con-una-tercera-y",
+        "announcementDate": "2025-06-27",
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "passed",
+          "fieldsCompared": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "mismatchedFields": [],
+          "regionalDiagnosticMatches": true,
+          "reconstructedFacts": {
+            "status": "FINAL_SEASON",
+            "nextSeasonNumber": 3,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/la-comedia-original-de-hbo-the-comeback-vuelve-con-una-tercera-y",
+            "announcementDate": "2025-06-27"
+          },
+          "boundedSourceEvidence": [
+            {
+              "status": "FINAL_SEASON",
+              "nextSeasonNumber": 3,
+              "releaseDate": null,
+              "releaseYear": null,
+              "sourceName": "Max Press Spain",
+              "sourceUrl": "https://press-spain.max.com/post/la-comedia-original-de-hbo-the-comeback-vuelve-con-una-tercera-y",
+              "announcementDate": "2025-06-27",
+              "rule": "explicit-final-season",
+              "factType": "LIFECYCLE",
+              "evidenceText": "THE COMEBACK vuelve con una tercera y última temporada",
+              "publicationDateSource": "structured_metadata"
+            }
+          ],
+          "freshArticleAndPersistedExcerptReplay": true
+        },
+        "mismatchedFields": [],
+        "contentPassed": true,
+        "passed": true,
+        "failureStage": null,
+        "failureReason": null,
+        "negativeTargetContentValidated": null,
+        "discoveryEntryPoint": "https://press-spain.max.com/sitemap",
+        "candidateCountBeforeFilter": 416,
+        "candidateCountAfterFilter": 2,
+        "candidateCountSelected": 2,
+        "knownUrlOracle": [
+          "https://press-spain.max.com/post/la-comedia-original-de-hbo-the-comeback-vuelve-con-una-tercera-y"
+        ],
+        "knownUrlUsedAsSeed": false,
+        "oracleMatched": true,
+        "requiredPositive": false,
+        "attempts": [
+          {
+            "url": "https://press-spain.max.com/post/la-comedia-original-de-hbo-the-comeback-vuelve-con-una-tercera-y",
+            "identityAccepted": true,
+            "factCount": 1,
+            "failureStage": null
+          }
+        ]
+      }
+    ]
+  },
+  "max": {
+    "distinctPositiveSeries": 2,
+    "genericDiscoveryPassingSeries": 2,
+    "independentReconstructionPassingSeries": 2,
+    "minimumDistinctSeries": 3,
+    "qualificationState": "INSUFFICIENT_DISTINCT_FIRST_PARTY_CASES",
+    "cases": [
+      {
+        "caseId": "the-pitt-lifecycle",
+        "tmdbId": 250307,
+        "requestedTitle": "The Pitt",
+        "kind": "positive",
+        "route": "MAX",
+        "candidateRouteNotIdentity": "MAX",
+        "rawNetworkLabels": [
+          "Max",
+          "HBO Max"
+        ],
+        "metadataResult": "FETCHED_IDENTITY_METADATA_ONLY",
+        "discoverySource": [
+          "https://press-spain.max.com/sitemap",
+          "https://press-spain.max.com/post/hbo-max-lanza-el-avance-oficial-de-la-segunda-temporada-de-la-se"
+        ],
+        "discoveryMethod": "DISCOVERED_FROM_FIRST_PARTY_INDEX",
+        "discoveredUrl": "https://press-spain.max.com/post/hbo-max-lanza-el-avance-oficial-de-la-segunda-temporada-de-la-se",
+        "evidenceSource": "https://press-spain.max.com/post/hbo-max-lanza-el-avance-oficial-de-la-segunda-temporada-de-la-se",
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": 200,
+        "identityResult": {
+          "acceptedForAudit": true,
+          "pageTitle": "HBO Max lanza el avance oficial de la segunda temporada de la serie dramática original de Max THE PITT | Max | Notas de prensa",
+          "articleHeading": "HBO Max lanza el avance oficial de la segunda temporada de la serie dramática original de Max THE PITT",
+          "canonicalUrl": "https://press-spain.max.com/post/hbo-max-lanza-el-avance-oficial-de-la-segunda-temporada-de-la-se",
+          "canonicalDeclared": true,
+          "structuredDataAvailable": true,
+          "failure": null
+        },
+        "originalBrandLabels": [
+          "MAX"
+        ],
+        "providerIdentityMatched": true,
+        "parserFacts": [],
+        "signalsDiagnosticOnly": [],
+        "relevantEvidenceSnippet": [
+          "HBO Max lanza el avance oficial de la segunda temporada de la serie dramática original de Max THE PITT"
+        ],
+        "status": null,
+        "nextSeasonNumber": null,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/hbo-max-lanza-el-avance-oficial-de-la-segunda-temporada-de-la-se",
+        "announcementDate": "2025-08-21",
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "not_applicable",
+          "mismatchedFields": []
+        },
+        "mismatchedFields": [],
+        "contentPassed": false,
+        "passed": false,
+        "failureStage": "parser",
+        "failureReason": "QUALIFICATION_REQUIREMENT_NOT_MET",
+        "negativeTargetContentValidated": null,
+        "discoveryEntryPoint": "https://press-spain.max.com/sitemap",
+        "candidateCountBeforeFilter": 416,
+        "candidateCountAfterFilter": 6,
+        "candidateCountSelected": 6,
+        "knownUrlOracle": [],
+        "knownUrlUsedAsSeed": false,
+        "oracleMatched": false,
+        "requiredPositive": false,
+        "attempts": [
+          {
+            "url": "https://press-spain.max.com/post/hbo-max-lanza-el-avance-oficial-de-la-segunda-temporada-de-la-se",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": "parser"
+          },
+          {
+            "url": "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": "parser"
+          },
+          {
+            "url": "https://press-spain.max.com/post/la-serie-original-de-max-the-pitt-se-estrena-el-proximo-10-de-en",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": "parser"
+          },
+          {
+            "url": "https://press-spain.max.com/post/the-pitt-la-nueva-serie-original-de-max-se-estrena-en-enero",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": "routing"
+          },
+          {
+            "url": "https://press-spain.max.com/post/hbo-lanza-el-trailer-oficial-y-el-cartel-de-la-segunda-temporada",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": "parser"
+          },
+          {
+            "url": "https://press-spain.max.com/post/the-pitt-reconoce-la-labor-de-la-comunidad-sanitaria-en-espana",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": "routing"
+          }
+        ]
+      },
+      {
+        "caseId": "hacks-lifecycle",
+        "tmdbId": 124101,
+        "requestedTitle": "Hacks",
+        "kind": "positive",
+        "route": "MAX",
+        "candidateRouteNotIdentity": "MAX",
+        "rawNetworkLabels": [
+          "HBO Max",
+          "Max",
+          "HBO Max"
+        ],
+        "metadataResult": "FETCHED_IDENTITY_METADATA_ONLY",
+        "discoverySource": [
+          "https://press-spain.max.com/sitemap",
+          "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h"
+        ],
+        "discoveryMethod": "DISCOVERED_FROM_FIRST_PARTY_INDEX",
+        "discoveredUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+        "evidenceSource": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": 200,
+        "identityResult": {
+          "acceptedForAudit": true,
+          "pageTitle": "HACKS vuelve con su quinta y última temporada el 10 de abril a HBO Max | Max | Notas de prensa",
+          "articleHeading": "HACKS vuelve con su quinta y última temporada el 10 de abril a HBO Max",
+          "canonicalUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+          "canonicalDeclared": true,
+          "structuredDataAvailable": true,
+          "failure": null
+        },
+        "originalBrandLabels": [
+          "MAX"
+        ],
+        "providerIdentityMatched": true,
+        "parserFacts": [
+          {
+            "tmdbId": 124101,
+            "title": "Hacks",
+            "factType": "LIFECYCLE",
+            "status": "FINAL_SEASON",
+            "nextSeasonNumber": 5,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+            "announcementDate": "2026-03-23",
+            "rule": "explicit-final-season",
+            "evidenceText": "HACKS vuelve con su quinta y última temporada"
+          }
+        ],
+        "signalsDiagnosticOnly": [
+          "final_season",
+          "release"
+        ],
+        "relevantEvidenceSnippet": [
+          "HACKS vuelve con su quinta y última temporada",
+          "HACKS vuelve con su quinta y última temporada el 10 de abril"
+        ],
+        "status": "FINAL_SEASON",
+        "nextSeasonNumber": 5,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+        "announcementDate": "2026-03-23",
+        "regionalReleaseDateDiagnosticOnly": [
+          {
+            "scope": "REGIONAL_RELEASE_DATE",
+            "language": "es",
+            "territory": "ES",
+            "nextSeasonNumber": 5,
+            "regionalReleaseDate": "2026-04-10",
+            "releaseYear": 2026,
+            "productionReleaseDate": null,
+            "productionReleaseYear": null,
+            "evidenceText": "HACKS vuelve con su quinta y última temporada el 10 de abril"
+          }
+        ],
+        "independentReconstruction": {
+          "result": "passed",
+          "fieldsCompared": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "mismatchedFields": [],
+          "regionalDiagnosticMatches": true,
+          "reconstructedFacts": {
+            "status": "FINAL_SEASON",
+            "nextSeasonNumber": 5,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+            "announcementDate": "2026-03-23"
+          },
+          "boundedSourceEvidence": [
+            {
+              "status": "FINAL_SEASON",
+              "nextSeasonNumber": 5,
+              "releaseDate": null,
+              "releaseYear": null,
+              "sourceName": "Max Press Spain",
+              "sourceUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+              "announcementDate": "2026-03-23",
+              "rule": "explicit-final-season",
+              "factType": "LIFECYCLE",
+              "evidenceText": "HACKS vuelve con su quinta y última temporada",
+              "publicationDateSource": "structured_metadata"
+            }
+          ],
+          "freshArticleAndPersistedExcerptReplay": true
+        },
+        "mismatchedFields": [],
+        "contentPassed": true,
+        "passed": true,
+        "failureStage": null,
+        "failureReason": null,
+        "negativeTargetContentValidated": null,
+        "discoveryEntryPoint": "https://press-spain.max.com/sitemap",
+        "candidateCountBeforeFilter": 416,
+        "candidateCountAfterFilter": 6,
+        "candidateCountSelected": 6,
+        "knownUrlOracle": [
+          "https://press-spain.max.com/post/max-renueva-hacks-la-comedia-ganadora-de-un-emmy-por-una-cuarta-",
+          "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h"
+        ],
+        "knownUrlUsedAsSeed": false,
+        "oracleMatched": true,
+        "requiredPositive": true,
+        "attempts": [
+          {
+            "url": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+            "identityAccepted": true,
+            "factCount": 1,
+            "failureStage": null
+          }
+        ]
+      },
+      {
+        "caseId": "tokyo-vice-lifecycle",
+        "tmdbId": 90296,
+        "requestedTitle": "Tokyo Vice",
+        "kind": "positive",
+        "route": "MAX",
+        "candidateRouteNotIdentity": "MAX",
+        "rawNetworkLabels": [
+          "HBO Max",
+          "Max"
+        ],
+        "metadataResult": "FETCHED_IDENTITY_METADATA_ONLY",
+        "discoverySource": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post/hbo-max-renueva-la-serie-tokyo-vice-por-una-segunda-temporada"
+        ],
+        "discoveryMethod": "DISCOVERED_FROM_FIRST_PARTY_INDEX",
+        "discoveredUrl": "https://press-spain.max.com/post/hbo-max-renueva-la-serie-tokyo-vice-por-una-segunda-temporada",
+        "evidenceSource": "https://press-spain.max.com/post/hbo-max-renueva-la-serie-tokyo-vice-por-una-segunda-temporada",
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": 200,
+        "identityResult": {
+          "acceptedForAudit": true,
+          "pageTitle": "HBO Max renueva la serie TOKYO VICE por una segunda temporada | Max | Notas de prensa",
+          "articleHeading": "HBO Max renueva la serie TOKYO VICE por una segunda temporada",
+          "canonicalUrl": "https://press-spain.max.com/post/hbo-max-renueva-la-serie-tokyo-vice-por-una-segunda-temporada",
+          "canonicalDeclared": true,
+          "structuredDataAvailable": true,
+          "failure": null
+        },
+        "originalBrandLabels": [
+          "MAX"
+        ],
+        "providerIdentityMatched": true,
+        "parserFacts": [
+          {
+            "tmdbId": 90296,
+            "title": "Tokyo Vice",
+            "factType": "LIFECYCLE",
+            "status": "RENEWED",
+            "nextSeasonNumber": 2,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/hbo-max-renueva-la-serie-tokyo-vice-por-una-segunda-temporada",
+            "announcementDate": "2022-06-07",
+            "rule": "explicit-renewal",
+            "evidenceText": "HBO Max renueva la serie TOKYO VICE por una segunda temporada"
+          }
+        ],
+        "signalsDiagnosticOnly": [
+          "renewal"
+        ],
+        "relevantEvidenceSnippet": [
+          "HBO Max renueva la serie TOKYO VICE por una segunda temporada"
+        ],
+        "status": "RENEWED",
+        "nextSeasonNumber": 2,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/hbo-max-renueva-la-serie-tokyo-vice-por-una-segunda-temporada",
+        "announcementDate": "2022-06-07",
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "passed",
+          "fieldsCompared": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "mismatchedFields": [],
+          "regionalDiagnosticMatches": true,
+          "reconstructedFacts": {
+            "status": "RENEWED",
+            "nextSeasonNumber": 2,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/hbo-max-renueva-la-serie-tokyo-vice-por-una-segunda-temporada",
+            "announcementDate": "2022-06-07"
+          },
+          "boundedSourceEvidence": [
+            {
+              "status": "RENEWED",
+              "nextSeasonNumber": 2,
+              "releaseDate": null,
+              "releaseYear": null,
+              "sourceName": "Max Press Spain",
+              "sourceUrl": "https://press-spain.max.com/post/hbo-max-renueva-la-serie-tokyo-vice-por-una-segunda-temporada",
+              "announcementDate": "2022-06-07",
+              "rule": "explicit-renewal",
+              "factType": "LIFECYCLE",
+              "evidenceText": "HBO Max renueva la serie TOKYO VICE por una segunda temporada",
+              "publicationDateSource": "structured_metadata"
+            }
+          ],
+          "freshArticleAndPersistedExcerptReplay": true
+        },
+        "mismatchedFields": [],
+        "contentPassed": true,
+        "passed": true,
+        "failureStage": null,
+        "failureReason": null,
+        "negativeTargetContentValidated": null,
+        "discoveryEntryPoint": "https://press-spain.max.com/post",
+        "candidateCountBeforeFilter": 416,
+        "candidateCountAfterFilter": 3,
+        "candidateCountSelected": 3,
+        "knownUrlOracle": [],
+        "knownUrlUsedAsSeed": false,
+        "oracleMatched": false,
+        "requiredPositive": false,
+        "attempts": [
+          {
+            "url": "https://press-spain.max.com/post/hbo-max-renueva-la-serie-tokyo-vice-por-una-segunda-temporada",
+            "identityAccepted": true,
+            "factCount": 1,
+            "failureStage": null
+          }
+        ]
+      },
+      {
+        "caseId": "pitt-spanish-teaser",
+        "tmdbId": 250307,
+        "requestedTitle": "The Pitt",
+        "kind": "negative",
+        "route": "MAX",
+        "candidateRouteNotIdentity": "MAX",
+        "rawNetworkLabels": [
+          "Max",
+          "HBO Max"
+        ],
+        "metadataResult": "FETCHED_IDENTITY_METADATA_ONLY",
+        "discoverySource": [
+          "https://press-spain.max.com/sitemap",
+          "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te"
+        ],
+        "discoveryMethod": "DISCOVERED_FROM_FIRST_PARTY_INDEX",
+        "discoveredUrl": "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te",
+        "evidenceSource": "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te",
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": 200,
+        "identityResult": {
+          "acceptedForAudit": true,
+          "pageTitle": "HBO Max lanza el teaser oficial y las primeras imágenes de la tercera temporada de la serie dramática original de Max THE PITT | Max | Notas de prensa",
+          "articleHeading": "HBO Max lanza el teaser oficial y las primeras imágenes de la tercera temporada de la serie dramática original de Max THE PITT",
+          "canonicalUrl": "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te",
+          "canonicalDeclared": true,
+          "structuredDataAvailable": true,
+          "failure": null
+        },
+        "originalBrandLabels": [
+          "MAX"
+        ],
+        "providerIdentityMatched": true,
+        "parserFacts": [],
+        "signalsDiagnosticOnly": [
+          "trailer_teaser",
+          "release"
+        ],
+        "relevantEvidenceSnippet": [
+          "HBO Max lanza el teaser oficial y las primeras imágenes de la tercera temporada de la serie dramática original de Max THE PITT"
+        ],
+        "status": null,
+        "nextSeasonNumber": null,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te",
+        "announcementDate": "2026-08-21",
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "not_applicable",
+          "mismatchedFields": []
+        },
+        "mismatchedFields": [],
+        "contentPassed": false,
+        "passed": true,
+        "failureStage": null,
+        "failureReason": null,
+        "negativeTargetContentValidated": true,
+        "discoveryEntryPoint": "https://press-spain.max.com/sitemap",
+        "candidateCountBeforeFilter": 416,
+        "candidateCountAfterFilter": 6,
+        "candidateCountSelected": 6,
+        "knownUrlOracle": [
+          "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te"
+        ],
+        "knownUrlUsedAsSeed": false,
+        "oracleMatched": true,
+        "requiredPositive": false,
+        "attempts": [
+          {
+            "url": "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": null
+          }
+        ]
+      },
+      {
+        "caseId": "hacks-spanish-final",
+        "tmdbId": 124101,
+        "requestedTitle": "Hacks",
+        "kind": "regional",
+        "route": "MAX",
+        "candidateRouteNotIdentity": "MAX",
+        "rawNetworkLabels": [
+          "HBO Max",
+          "Max",
+          "HBO Max"
+        ],
+        "metadataResult": "FETCHED_IDENTITY_METADATA_ONLY",
+        "discoverySource": [
+          "https://press-spain.max.com/sitemap",
+          "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h"
+        ],
+        "discoveryMethod": "DISCOVERED_FROM_FIRST_PARTY_INDEX",
+        "discoveredUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+        "evidenceSource": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": 200,
+        "identityResult": {
+          "acceptedForAudit": true,
+          "pageTitle": "HACKS vuelve con su quinta y última temporada el 10 de abril a HBO Max | Max | Notas de prensa",
+          "articleHeading": "HACKS vuelve con su quinta y última temporada el 10 de abril a HBO Max",
+          "canonicalUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+          "canonicalDeclared": true,
+          "structuredDataAvailable": true,
+          "failure": null
+        },
+        "originalBrandLabels": [
+          "MAX"
+        ],
+        "providerIdentityMatched": true,
+        "parserFacts": [
+          {
+            "tmdbId": 124101,
+            "title": "Hacks",
+            "factType": "LIFECYCLE",
+            "status": "FINAL_SEASON",
+            "nextSeasonNumber": 5,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+            "announcementDate": "2026-03-23",
+            "rule": "explicit-final-season",
+            "evidenceText": "HACKS vuelve con su quinta y última temporada"
+          }
+        ],
+        "signalsDiagnosticOnly": [
+          "final_season",
+          "release"
+        ],
+        "relevantEvidenceSnippet": [
+          "HACKS vuelve con su quinta y última temporada",
+          "HACKS vuelve con su quinta y última temporada el 10 de abril"
+        ],
+        "status": "FINAL_SEASON",
+        "nextSeasonNumber": 5,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+        "announcementDate": "2026-03-23",
+        "regionalReleaseDateDiagnosticOnly": [
+          {
+            "scope": "REGIONAL_RELEASE_DATE",
+            "language": "es",
+            "territory": "ES",
+            "nextSeasonNumber": 5,
+            "regionalReleaseDate": "2026-04-10",
+            "releaseYear": 2026,
+            "productionReleaseDate": null,
+            "productionReleaseYear": null,
+            "evidenceText": "HACKS vuelve con su quinta y última temporada el 10 de abril"
+          }
+        ],
+        "independentReconstruction": {
+          "result": "passed",
+          "fieldsCompared": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "mismatchedFields": [],
+          "regionalDiagnosticMatches": true,
+          "reconstructedFacts": {
+            "status": "FINAL_SEASON",
+            "nextSeasonNumber": 5,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+            "announcementDate": "2026-03-23"
+          },
+          "boundedSourceEvidence": [
+            {
+              "status": "FINAL_SEASON",
+              "nextSeasonNumber": 5,
+              "releaseDate": null,
+              "releaseYear": null,
+              "sourceName": "Max Press Spain",
+              "sourceUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+              "announcementDate": "2026-03-23",
+              "rule": "explicit-final-season",
+              "factType": "LIFECYCLE",
+              "evidenceText": "HACKS vuelve con su quinta y última temporada",
+              "publicationDateSource": "structured_metadata"
+            }
+          ],
+          "freshArticleAndPersistedExcerptReplay": true
+        },
+        "mismatchedFields": [],
+        "contentPassed": true,
+        "passed": true,
+        "failureStage": null,
+        "failureReason": null,
+        "negativeTargetContentValidated": null,
+        "discoveryEntryPoint": "https://press-spain.max.com/sitemap",
+        "candidateCountBeforeFilter": 416,
+        "candidateCountAfterFilter": 6,
+        "candidateCountSelected": 6,
+        "knownUrlOracle": [
+          "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h"
+        ],
+        "knownUrlUsedAsSeed": false,
+        "oracleMatched": true,
+        "requiredPositive": false,
+        "attempts": [
+          {
+            "url": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+            "identityAccepted": true,
+            "factCount": 1,
+            "failureStage": null
+          }
+        ]
+      },
+      {
+        "caseId": "conan-lifecycle",
+        "tmdbId": 226698,
+        "requestedTitle": "Conan O'Brien Must Go",
+        "kind": "positive",
+        "route": null,
+        "candidateRouteNotIdentity": "MAX",
+        "rawNetworkLabels": [
+          "HBO",
+          "Max"
+        ],
+        "metadataResult": "FETCHED_IDENTITY_METADATA_ONLY",
+        "discoverySource": [
+          "https://press-spain.max.com/sitemap",
+          "https://press-spain.max.com/post/max-renueva-siguiendo-a-conan-obrien-por-una-tercera-temporada-y"
+        ],
+        "discoveryMethod": "DISCOVERED_FROM_FIRST_PARTY_INDEX",
+        "discoveredUrl": "https://press-spain.max.com/post/max-renueva-siguiendo-a-conan-obrien-por-una-tercera-temporada-y",
+        "evidenceSource": "https://press-spain.max.com/post/max-renueva-siguiendo-a-conan-obrien-por-una-tercera-temporada-y",
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": 200,
+        "identityResult": {
+          "acceptedForAudit": true,
+          "pageTitle": "Max renueva SIGUIENDO A CONAN O'BRIEN por una tercera temporada y comparte las primeras imágenes de la segunda temporada que se estrenará en mayo | Max | Notas de prensa",
+          "articleHeading": "Max renueva SIGUIENDO A CONAN O'BRIEN por una tercera temporada y comparte las primeras imágenes de la segunda temporada que se estrenará en mayo",
+          "canonicalUrl": "https://press-spain.max.com/post/max-renueva-siguiendo-a-conan-obrien-por-una-tercera-temporada-y",
+          "canonicalDeclared": true,
+          "structuredDataAvailable": true,
+          "failure": null
+        },
+        "originalBrandLabels": [
+          "MAX"
+        ],
+        "providerIdentityMatched": false,
+        "parserFacts": [
+          {
+            "tmdbId": 226698,
+            "title": "Conan O'Brien Must Go",
+            "factType": "LIFECYCLE",
+            "status": "RENEWED",
+            "nextSeasonNumber": 3,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/max-renueva-siguiendo-a-conan-obrien-por-una-tercera-temporada-y",
+            "announcementDate": "2025-03-13",
+            "rule": "explicit-renewal",
+            "evidenceText": "Max renueva SIGUIENDO A CONAN O'BRIEN por una tercera temporada"
+          }
+        ],
+        "signalsDiagnosticOnly": [
+          "renewal",
+          "release"
+        ],
+        "relevantEvidenceSnippet": [
+          "Max renueva SIGUIENDO A CONAN O'BRIEN por una tercera temporada"
+        ],
+        "status": null,
+        "nextSeasonNumber": null,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/max-renueva-siguiendo-a-conan-obrien-por-una-tercera-temporada-y",
+        "announcementDate": "2025-03-13",
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "not_applicable",
+          "mismatchedFields": []
+        },
+        "mismatchedFields": [],
+        "contentPassed": false,
+        "passed": false,
+        "failureStage": "routing",
+        "failureReason": "AMBIGUOUS_NETWORKS",
+        "negativeTargetContentValidated": null,
+        "discoveryEntryPoint": "https://press-spain.max.com/sitemap",
+        "candidateCountBeforeFilter": 416,
+        "candidateCountAfterFilter": 1,
+        "candidateCountSelected": 1,
+        "knownUrlOracle": [],
+        "knownUrlUsedAsSeed": false,
+        "oracleMatched": false,
+        "requiredPositive": false,
+        "attempts": [
+          {
+            "url": "https://press-spain.max.com/post/max-renueva-siguiendo-a-conan-obrien-por-una-tercera-temporada-y",
+            "identityAccepted": true,
+            "factCount": 1,
+            "failureStage": "routing"
+          }
+        ]
+      },
+      {
+        "caseId": "and-just-like-that-lifecycle",
+        "tmdbId": 116450,
+        "requestedTitle": "And Just Like That...",
+        "kind": "positive",
+        "route": "MAX",
+        "candidateRouteNotIdentity": "MAX",
+        "rawNetworkLabels": [
+          "HBO Max",
+          "Max",
+          "HBO Max"
+        ],
+        "metadataResult": "FETCHED_IDENTITY_METADATA_ONLY",
+        "discoverySource": [
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post",
+          "https://press-spain.max.com/post/hbo-max-renueva-su-serie-and-just-like-that-por-una-segunda-temp"
+        ],
+        "discoveryMethod": "DISCOVERED_FROM_FIRST_PARTY_INDEX",
+        "discoveredUrl": "https://press-spain.max.com/post/hbo-max-renueva-su-serie-and-just-like-that-por-una-segunda-temp",
+        "evidenceSource": "https://press-spain.max.com/post/hbo-max-renueva-su-serie-and-just-like-that-por-una-segunda-temp",
+        "sourceFamily": "MAX_PRESS",
+        "language": "es",
+        "territory": "ES",
+        "httpStatus": 200,
+        "identityResult": {
+          "acceptedForAudit": true,
+          "pageTitle": "HBO Max renueva su serie AND JUST LIKE THAT..., por una segunda temporada | Max | Notas de prensa",
+          "articleHeading": "HBO Max renueva su serie AND JUST LIKE THAT..., por una segunda temporada",
+          "canonicalUrl": "https://press-spain.max.com/post/hbo-max-renueva-su-serie-and-just-like-that-por-una-segunda-temp",
+          "canonicalDeclared": true,
+          "structuredDataAvailable": true,
+          "failure": null
+        },
+        "originalBrandLabels": [],
+        "providerIdentityMatched": false,
+        "parserFacts": [],
+        "signalsDiagnosticOnly": [
+          "renewal"
+        ],
+        "relevantEvidenceSnippet": [
+          "HBO Max renueva su serie AND JUST LIKE THAT..., por una segunda temporada"
+        ],
+        "status": null,
+        "nextSeasonNumber": null,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/hbo-max-renueva-su-serie-and-just-like-that-por-una-segunda-temp",
+        "announcementDate": "2022-03-22",
+        "regionalReleaseDateDiagnosticOnly": [],
+        "independentReconstruction": {
+          "result": "not_applicable",
+          "mismatchedFields": []
+        },
+        "mismatchedFields": [],
+        "contentPassed": false,
+        "passed": false,
+        "failureStage": "routing",
+        "failureReason": "QUALIFICATION_REQUIREMENT_NOT_MET",
+        "negativeTargetContentValidated": null,
+        "discoveryEntryPoint": "https://press-spain.max.com/post",
+        "candidateCountBeforeFilter": 416,
+        "candidateCountAfterFilter": 5,
+        "candidateCountSelected": 5,
+        "knownUrlOracle": [
+          "https://press-spain.max.com/post/hbo-max-renueva-su-serie-and-just-like-that-por-una-segunda-temp"
+        ],
+        "knownUrlUsedAsSeed": false,
+        "oracleMatched": true,
+        "requiredPositive": false,
+        "attempts": [
+          {
+            "url": "https://press-spain.max.com/post/hbo-max-renueva-su-serie-and-just-like-that-por-una-segunda-temp",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": "routing"
+          },
+          {
+            "url": "https://press-spain.max.com/post/and-just-like-that-el-documental-llega-manana-a-hbo-max",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": "routing"
+          },
+          {
+            "url": "https://press-spain.max.com/post/and-just-like-that-la-serie-max-original-que-continua-la-histori",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": "routing"
+          },
+          {
+            "url": "https://press-spain.max.com/post/hbo-max-lanza-el-trailer-oficial-de-la-segunda-temporada-de-and-",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": "routing"
+          },
+          {
+            "url": "https://press-spain.max.com/post/la-segunda-temporada-de-and-just-like-that-se-estrena-el-proximo",
+            "identityAccepted": true,
+            "factCount": 0,
+            "failureStage": "routing"
+          }
+        ]
+      }
+    ]
+  },
+  "sharedSafety": {
+    "crossSeason": {
+      "scope": "SYNTHETIC_SAFETY_NOT_REAL_SOURCE_COVERAGE",
+      "passed": true,
+      "checks": [
+        {
+          "name": "renewal_does_not_borrow_previous_date",
+          "passed": true
+        }
+      ]
+    },
+    "multiTitle": {
+      "scope": "SYNTHETIC_SAFETY_NOT_REAL_SOURCE_COVERAGE",
+      "passed": true,
+      "checks": [
+        {
+          "name": "separate_subjects",
+          "passed": true
+        },
+        {
+          "name": "final_season_not_borrowed",
+          "passed": true
+        }
+      ],
+      "realMonthlyCorpusPassed": true
+    },
+    "negation": {
+      "scope": "SYNTHETIC_SAFETY_NOT_REAL_SOURCE_COVERAGE",
+      "passed": true,
+      "checks": [
+        {
+          "name": "SERIES A no ha sido renovada por una tercera temporada.",
+          "passed": true
+        },
+        {
+          "name": "SERIES A todavía no ha sido renovada por una tercera temporada.",
+          "passed": true
+        },
+        {
+          "name": "SERIES A aún no ha sido renovado por una tercera temporada.",
+          "passed": true
+        },
+        {
+          "name": "SERIES A podría ser renovada para una tercera temporada.",
+          "passed": true
+        },
+        {
+          "name": "SERIES A espera ser renovada por una tercera temporada.",
+          "passed": true
+        },
+        {
+          "name": "No se ha confirmado una tercera temporada de SERIES A.",
+          "passed": true
+        }
+      ]
+    },
+    "teaserTrailer": {
+      "scope": "SYNTHETIC_SAFETY_NOT_REAL_SOURCE_COVERAGE",
+      "passed": true,
+      "checks": [
+        {
+          "name": "HBO Max lanza el teaser oficial y las primeras imágenes de la tercera temporada de SERIES A.",
+          "passed": true
+        },
+        {
+          "name": "El último episodio de la quinta temporada de SERIES A.",
+          "passed": true
+        },
+        {
+          "name": "El último tráiler de la temporada de SERIES A.",
+          "passed": true
+        },
+        {
+          "name": "La cuarta temporada de SERIES A comienza su rodaje.",
+          "passed": true
+        }
+      ]
+    },
+    "regionalReleaseDate": {
+      "scope": "SYNTHETIC_SAFETY_NOT_REAL_SOURCE_COVERAGE",
+      "passed": true,
+      "checks": [
+        {
+          "name": "regional_date_never_global",
+          "passed": true
+        }
+      ]
+    },
+    "firstPartyNegatives": {
+      "passed": true,
+      "validatedCases": 2,
+      "requiredCases": 2,
+      "unavailableIsNotPass": true
+    }
+  },
+  "wbd403": {
+    "historicalRunnerObserved": true,
+    "observed": true,
+    "currentClassification": "WBD_HTTP_403",
+    "bypassAttempted": false
+  },
+  "cancellationCoverage": "CANCELLATION_FIRST_PARTY_COVERAGE_INSUFFICIENT",
+  "budget": {
+    "maximumFetches": 120,
+    "actualFetches": 71,
+    "indexPages": 27
+  },
+  "productionActivation": {
+    "HBO": false,
+    "MAX": false
+  },
+  "protectedFileIntegrity": {
+    "algorithm": "sha256",
+    "before": {
+      "official-data/official_series_data.json": "4117b7f1a42fda619c8b19d1df9a28a8279f306933ab3da33de4bfc764d2c3b5",
+      "official-data/history/changes.jsonl": "e8c2c34133a4e99be5f5aedef5680dc2d303e379f4549ad6f436d2f820e77452",
+      "official-data/sources.json": "ed037e2743ce2e5db98746e9138f8fb750bbb1ab8dcc60a97182c54a170366ac",
+      "official-data/monitored_series.json": "441c86f7363f16048c641b0e3ecaed8022c0964d8d0a6bf3ec008f59466ffab1",
+      "official-data/history/monitored_changes.jsonl": "5e21c4ae444f707a37fc2a0dcd3bcdea7c99c8672fdcecdf11a5349f5da1ac2a"
+    },
+    "after": {
+      "official-data/official_series_data.json": "4117b7f1a42fda619c8b19d1df9a28a8279f306933ab3da33de4bfc764d2c3b5",
+      "official-data/history/changes.jsonl": "e8c2c34133a4e99be5f5aedef5680dc2d303e379f4549ad6f436d2f820e77452",
+      "official-data/sources.json": "ed037e2743ce2e5db98746e9138f8fb750bbb1ab8dcc60a97182c54a170366ac",
+      "official-data/monitored_series.json": "441c86f7363f16048c641b0e3ecaed8022c0964d8d0a6bf3ec008f59466ffab1",
+      "official-data/history/monitored_changes.jsonl": "5e21c4ae444f707a37fc2a0dcd3bcdea7c99c8672fdcecdf11a5349f5da1ac2a"
+    },
+    "unchanged": true,
+    "changedFiles": []
+  }
+}
