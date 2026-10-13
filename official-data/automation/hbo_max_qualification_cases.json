@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "minimumDistinctSeriesPerRoute": 3,
-  "notice": "Known URLs are direct regression probes only; generic discovery never uses them as seeds or ranks. Candidate routes are not actual network observations. Missing evidence fails qualification.",
+  "notice": "Positive knownUrlOracle fields are expectations only: never seeds, rankings or fetch fallback. Fixed negative/regional documents remain separate regression probes. Fresh strict network identity is always required.",
   "cases": [
     {
       "caseId": "the-white-lotus-lifecycle",
@@ -12,8 +12,8 @@
       "tmdbId": 111803,
       "candidateRoute": "HBO",
       "kind": "positive",
-      "knownUrls": [],
-      "requiredPositive": false
+      "requiredPositive": false,
+      "knownUrlOracle": []
     },
     {
       "caseId": "the-last-of-us-lifecycle",
@@ -24,11 +24,11 @@
       "tmdbId": 100088,
       "candidateRoute": "HBO",
       "kind": "positive",
-      "knownUrls": [
+      "requiredPositive": true,
+      "knownUrlOracle": [
         "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
         "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-original-de-hbo-the-last-of-us-"
-      ],
-      "requiredPositive": true
+      ]
     },
     {
       "caseId": "somebody-somewhere-lifecycle",
@@ -39,8 +39,8 @@
       "tmdbId": 106308,
       "candidateRoute": "HBO",
       "kind": "positive",
-      "knownUrls": [],
-      "requiredPositive": false
+      "requiredPositive": false,
+      "knownUrlOracle": []
     },
     {
       "caseId": "the-pitt-lifecycle",
@@ -51,8 +51,8 @@
       "tmdbId": 250307,
       "candidateRoute": "MAX",
       "kind": "positive",
-      "knownUrls": [],
-      "requiredPositive": false
+      "requiredPositive": false,
+      "knownUrlOracle": []
     },
     {
       "caseId": "hacks-lifecycle",
@@ -63,11 +63,11 @@
       "tmdbId": 124101,
       "candidateRoute": "MAX",
       "kind": "positive",
-      "knownUrls": [
+      "requiredPositive": true,
+      "knownUrlOracle": [
         "https://press-spain.max.com/post/max-renueva-hacks-la-comedia-ganadora-de-un-emmy-por-una-cuarta-",
         "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h"
-      ],
-      "requiredPositive": true
+      ]
     },
     {
       "caseId": "tokyo-vice-lifecycle",
@@ -78,8 +78,8 @@
       "tmdbId": 90296,
       "candidateRoute": "MAX",
       "kind": "positive",
-      "knownUrls": [],
-      "requiredPositive": false
+      "requiredPositive": false,
+      "knownUrlOracle": []
     },
     {
       "caseId": "white-lotus-spanish-filming",
@@ -90,10 +90,10 @@
       "tmdbId": 111803,
       "candidateRoute": "HBO",
       "kind": "negative",
-      "knownUrls": [
+      "requiredPositive": false,
+      "knownUrlOracle": [
         "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-"
-      ],
-      "requiredPositive": false
+      ]
     },
     {
       "caseId": "pitt-spanish-teaser",
@@ -104,10 +104,10 @@
       "tmdbId": 250307,
       "candidateRoute": "MAX",
       "kind": "negative",
-      "knownUrls": [
+      "requiredPositive": false,
+      "knownUrlOracle": [
         "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te"
-      ],
-      "requiredPositive": false
+      ]
     },
     {
       "caseId": "somebody-spanish-slate",
@@ -118,10 +118,10 @@
       "tmdbId": 106308,
       "candidateRoute": "HBO",
       "kind": "ambiguity",
-      "knownUrls": [
+      "requiredPositive": false,
+      "knownUrlOracle": [
         "https://press-spain.max.com/post/avance-de-estrenos-de-octubre-3"
-      ],
-      "requiredPositive": false
+      ]
     },
     {
       "caseId": "hacks-spanish-final",
@@ -132,10 +132,10 @@
       "tmdbId": 124101,
       "candidateRoute": "MAX",
       "kind": "regional",
-      "knownUrls": [
+      "requiredPositive": false,
+      "knownUrlOracle": [
         "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h"
-      ],
-      "requiredPositive": false
+      ]
     },
     {
       "caseId": "last-of-us-spanish-date",
@@ -146,10 +146,10 @@
       "tmdbId": 100088,
       "candidateRoute": "HBO",
       "kind": "regional",
-      "knownUrls": [
+      "requiredPositive": false,
+      "knownUrlOracle": [
         "https://press-spain.max.com/post/la-segunda-temporada-de-la-serie-original-de-hbo-the-last-of-us-"
-      ],
-      "requiredPositive": false
+      ]
     },
     {
       "caseId": "industry-lifecycle",
@@ -161,9 +161,9 @@
       "candidateRoute": "HBO",
       "kind": "positive",
       "requiredPositive": false,
-      "knownUrls": [],
       "researchDiscoveryUrlNotSeed": "https://press-spain.max.com/post/hbo-renueva-industry-por-una-quinta-y-ultima-temporada",
-      "identityPolicy": "Resolve unique exact English TMDB search title, then fetch ID/name/networks. Localized alias explicitly observed on this first-party article; no ownership inference."
+      "identityPolicy": "Resolve unique exact English TMDB search title, then fetch ID/name/networks. Localized alias explicitly observed on this first-party article; no ownership inference.",
+      "knownUrlOracle": []
     },
     {
       "caseId": "rooster-lifecycle",
@@ -171,13 +171,13 @@
       "aliases": [
         "Rooster"
       ],
-      "tmdbId": null,
+      "tmdbId": 254953,
       "candidateRoute": "HBO",
       "kind": "positive",
       "requiredPositive": false,
-      "knownUrls": [],
       "researchDiscoveryUrlNotSeed": "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
-      "identityPolicy": "Resolve unique exact English TMDB search title, then fetch ID/name/networks. Localized alias explicitly observed on this first-party article; no ownership inference."
+      "identityPolicy": "Resolve unique exact English TMDB search title, then fetch ID/name/networks. Localized alias explicitly observed on this first-party article; no ownership inference.",
+      "knownUrlOracle": []
     },
     {
       "caseId": "conan-lifecycle",
@@ -186,13 +186,76 @@
         "Conan O'Brien Must Go",
         "Siguiendo a Conan O'Brien"
       ],
+      "tmdbId": 226698,
+      "candidateRoute": "MAX",
+      "kind": "positive",
+      "requiredPositive": false,
+      "researchDiscoveryUrlNotSeed": "https://press-spain.max.com/post/max-renueva-siguiendo-a-conan-obrien-por-una-tercera-temporada-y",
+      "identityPolicy": "Resolve unique exact English TMDB search title, then fetch ID/name/networks. Localized alias explicitly observed on this first-party article; no ownership inference.",
+      "knownUrlOracle": [],
+      "baselineRouteDiagnostic": "AMBIGUOUS_NETWORKS: HBO + Max; never manually assigned"
+    },
+    {
+      "caseId": "it-welcome-derry-lifecycle",
+      "title": "IT: Welcome to Derry",
+      "aliases": [
+        "IT: Welcome to Derry",
+        "IT: Bienvenidos a Derry"
+      ],
+      "tmdbId": null,
+      "candidateRoute": "HBO",
+      "kind": "positive",
+      "requiredPositive": false,
+      "knownUrlOracle": [
+        "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada"
+      ],
+      "identityPolicy": "Unique exact TMDB identity search plus fresh metadata; official localized aliases only; unresolved/ambiguous identity never counts."
+    },
+    {
+      "caseId": "gilded-age-lifecycle",
+      "title": "The Gilded Age",
+      "aliases": [
+        "The Gilded Age",
+        "La Edad Dorada"
+      ],
+      "tmdbId": null,
+      "candidateRoute": "HBO",
+      "kind": "positive",
+      "requiredPositive": false,
+      "knownUrlOracle": [
+        "https://press-spain.max.com/post/hbo-renueva-la-serie-dramatica-original-la-edad-dorada-por-una-c"
+      ],
+      "identityPolicy": "Unique exact TMDB identity search plus fresh metadata; official localized aliases only; unresolved/ambiguous identity never counts."
+    },
+    {
+      "caseId": "comeback-lifecycle",
+      "title": "The Comeback",
+      "aliases": [
+        "The Comeback"
+      ],
+      "tmdbId": null,
+      "candidateRoute": "HBO",
+      "kind": "positive",
+      "requiredPositive": false,
+      "knownUrlOracle": [
+        "https://press-spain.max.com/post/la-comedia-original-de-hbo-the-comeback-vuelve-con-una-tercera-y"
+      ],
+      "identityPolicy": "Unique exact TMDB identity search plus fresh metadata; official localized aliases only; unresolved/ambiguous identity never counts."
+    },
+    {
+      "caseId": "and-just-like-that-lifecycle",
+      "title": "And Just Like That...",
+      "aliases": [
+        "And Just Like That..."
+      ],
       "tmdbId": null,
       "candidateRoute": "MAX",
       "kind": "positive",
       "requiredPositive": false,
-      "knownUrls": [],
-      "researchDiscoveryUrlNotSeed": "https://press-spain.max.com/post/max-renueva-siguiendo-a-conan-obrien-por-una-tercera-temporada-y",
-      "identityPolicy": "Resolve unique exact English TMDB search title, then fetch ID/name/networks. Localized alias explicitly observed on this first-party article; no ownership inference."
+      "knownUrlOracle": [
+        "https://press-spain.max.com/post/hbo-max-renueva-su-serie-and-just-like-that-por-una-segunda-temp"
+      ],
+      "identityPolicy": "Unique exact TMDB identity search plus fresh metadata; official localized aliases only; unresolved/ambiguous identity never counts."
     }
   ]
 }

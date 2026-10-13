@@ -4,7 +4,6 @@ Spanish parser is injected only into the existing independent evidence validator
 Current metadata and fresh fetched articles are required; baseline is historical.
 """
 import argparse
-from collections import deque
 import datetime as dt
 from functools import partial
 import hashlib
@@ -13,7 +12,7 @@ import json
 from pathlib import Path
 import re
 from unittest.mock import patch
-from urllib.parse import urljoin,urlsplit,urlencode
+from urllib.parse import urlsplit,urlencode
 
 import discovery
 import provider_audit as http
@@ -22,15 +21,16 @@ import update
 import fx_hulu_qualification as integrity
 import wbd_hbo_max_source_audit as audit
 import spanish_qualification_parser as spanish
+import hbo_max_discovery as generic
 
 HOST='press-spain.max.com'
 SOURCE='Max Press Spain'
-ROOTS=('https://'+HOST+'/', 'https://'+HOST+'/sitemap')
+ROOTS=generic.ENTRY_POINTS
 CONFIG=Path(__file__).with_name('hbo_max_qualification_cases.json')
-BASELINE=Path(__file__).with_name('fixtures')/'v277_wbd_runner.json'
-BASELINE_SHA='32efb7c7d21c11498e9ca4db1ac7b962a86de863ecfabf5947364ffe97be7d0e'
+BASELINE=Path(__file__).with_name('fixtures')/'v2781_hbo_max_runner.json'
+BASELINE_SHA='3c63bba62acb5e24342a93443831a123a8dd9ab97c68c838f3f314fab38dbd7e'
 MIN_SERIES=3
-MAX_FETCHES=84
+MAX_FETCHES=120
 
 def allowed(url):
     p=urlsplit(url)
@@ -65,15 +65,16 @@ def baseline_proof(path=BASELINE):
     if hashlib.sha256(data).hexdigest()!=BASELINE_SHA:
         raise ValueError('Runner baseline checksum mismatch')
     b=json.loads(data.decode('utf-8-sig'))
-    if b.get('resultScope')!='RUNNER_CONFIRMATION' or not b.get('readOnly') or not b.get('auditOnly'):
-        raise ValueError('Actual V2.7.7 runner artifact required')
+    if b.get('resultScope')!='RUNNER_CONFIRMATION' or b.get('readOnly') is not True or b.get('qualificationOnly') is not True:
+        raise ValueError('Actual V2.7.8.1 runner artifact required')
     urls={r['url'] for r in b['httpAccessMatrix'] if r.get('httpStatus')==200 and r.get('bodyExtractable')}
     if not set(ROOTS)<=urls:
         raise ValueError('Runner did not confirm regional discovery roots')
-    return {'sha256':BASELINE_SHA,'resultScope':b['resultScope'],'generatedAt':b['generatedAt'],
+    return {'artifactSha256':BASELINE_SHA,'sha256':BASELINE_SHA,'resultScope':b['resultScope'],'generatedAt':b['generatedAt'],
             'accessibleRegionalUrls':sorted(u for u in urls if urlsplit(u).hostname==HOST),
-            'historicalNetworks':b['routingAssessment']['observations'],
-            'wbd403Observed':any(r.get('httpStatus')==403 and r.get('domain')=='press.wbd.com' for r in b['httpAccessMatrix']),
+            'historicalNetworks':b['currentMetadataObservations'],
+            'wbd403Observed':b['wbd403']['observed'],
+            'previousQualification':{k:{f:v for f,v in b[k].items() if f!='cases'} for k in ('hbo','max')},
             'historicalOnlyNotCurrentQualificationEvidence':True}
 
 class Editorial(http._QualificationText):
@@ -226,7 +227,8 @@ def shared_safety():
 
 def qualification_state(rows,shared,runner,accessible):
     positive=[r for r in rows if r['kind']=='positive']
-    valid=[r for r in positive if r['contentPassed']]
+    content_valid=[r for r in positive if r['contentPassed']]
+    valid=[r for r in positive if r['passed'] and r.get('mismatchedFields',[])==[]]
     generic=[r for r in valid if r['discoveryMethod']=='DISCOVERED_FROM_FIRST_PARTY_INDEX']
     reconstructed=[r for r in valid if r['independentReconstruction']['result']=='passed']
     counts={'distinctPositiveSeries':len({r['tmdbId'] for r in valid}),
@@ -242,7 +244,7 @@ def qualification_state(rows,shared,runner,accessible):
         state='INSUFFICIENT_DISTINCT_FIRST_PARTY_CASES'
     elif counts['genericDiscoveryPassingSeries']<MIN_SERIES:
         state='DISCOVERY_NEEDS_WORK'
-    elif any(not r['passed'] for r in positive if r.get('requiredPositive')) or any(r['independentReconstruction']['result'] in ('mismatch','failed') for r in valid) or counts['independentReconstructionPassingSeries']<MIN_SERIES:
+    elif any(not r['passed'] for r in positive if r.get('requiredPositive')) or any(r['independentReconstruction']['result'] in ('mismatch','failed') for r in content_valid) or counts['independentReconstructionPassingSeries']<MIN_SERIES:
         state='PARSER_COMPATIBILITY_NEEDS_WORK'
     else:
         state='QUALIFIED_ON_GITHUB_RUNNER' if runner else 'LOCAL_DIAGNOSTIC_PASS_PENDING_RUNNER'
@@ -280,7 +282,7 @@ def run(*,root=update.ROOT,config=None,fetcher=fetch,token='',metadata_loader=di
             if c['tmdbId'] not in metadata_cache:
                 metadata_cache[c['tmdbId']]=audit.metadata_observations([{'series':c['title'],'aliases':c['aliases'],'tmdbId':c['tmdbId']}],token,metadata_loader)[c['tmdbId']]
             observations[c['caseId']]=metadata_cache[c['tmdbId']]
-    cache={};matrix=[];paths={};calls=0
+    cache={};matrix=[];calls=0
     def get(url,fresh=False):
         nonlocal calls
         if not (allowed(url) or audit.allowed(url,['press.wbd.com'])):
@@ -299,47 +301,28 @@ def run(*,root=update.ROOT,config=None,fetcher=fetch,token='',metadata_loader=di
             result,raw={**result,'status':'rejected','failureCategory':'BOT_BLOCKED'},None
         if raw and '\ufffd' in raw:
             result,raw={**result,'status':'failed','failureCategory':'INVALID_CONTENT_ENCODING'},None
-        matrix.append({'url':audit.public_url(url),'httpStatus':result.get('httpStatus'),'finalUrl':audit.public_url(final),
+        matrix.append({'url':generic.canonical(url) or audit.public_url(url),'httpStatus':result.get('httpStatus'),'finalUrl':generic.canonical(final) or audit.public_url(final),
                        'redirectChain':result.get('redirectChain'),'accessClassification':access,
                        'failureCategory':result.get('failureCategory'),'bodyExtractable':bool(raw)})
         cache[url]=result,raw
         return result,raw
-    # Crawl actual root/index links once; title matching has no known-URL input.
-    queue=deque((u,[u]) for u in ROOTS);seen=set();indexes=[]
-    while queue and len(seen)<6:
-        url,path=queue.popleft()
-        if url in seen:
-            continue
-        seen.add(url);result,raw=get(url)
-        if not raw:
-            continue
-        links=http._QualificationLinks();links.feed(raw)
-        for href,anchor in links.links[:2000]:
-            link=urljoin(result.get('finalUrl') or url,href)
-            if not allowed(link):
-                continue
-            if urlsplit(link).path.startswith('/post/'):
-                indexes.append((link,anchor,path+[link]))
-            elif urlsplit(link).path.rstrip('/') in ('/post','/sitemap') and len(path)<3:
-                queue.append((link,path+[link]))
+    # The generic crawler has no access to corpus oracles/known article URLs.
+    indexes,discovery_diagnostic=generic.crawl(get,[a for c in cases for a in c['aliases']])
     rows=[]
     for c in cases:
         entry={'tmdbId':c['tmdbId'],'title':c['title'],'aliases':c['aliases'],'allowedDomains':[HOST]}
         metadata=observations[c['caseId']];route_proposal=metadata.get('routeProposal') or {}
         route=route_proposal.get('route')
-        candidates=[]
-        for link,anchor,path in indexes:
-            text=spanish.normalize(anchor+' '+urlsplit(link).path.replace('-',' ')).casefold()
-            if any(re.search(r'(?<!\w)'+re.escape(spanish.normalize(a).casefold())+r'(?!\w)',text) for a in c['aliases']):
-                if link not in candidates:
-                    candidates.append(link);paths[link]=path
-        # Safety cases target their fixed real document, regardless of other links.
+        selected,filtered_count=generic.candidates(indexes,c['aliases'],route)
+        paths={a['url']:a['path'] for a in selected}
+        candidates=[a['url'] for a in selected]
+        oracles=c.get('knownUrlOracle',c.get('knownUrls',[]))
+        # Fixed real negative/regional regression documents remain separate from
+        # positive discovery. An oracle is never a positive fetch fallback.
         if c['kind']!='positive':
-            candidates=[u for u in c.get('knownUrls',[]) if evidence_url(u)]
-        else:
-            candidates=candidates[:5]+[u for u in c.get('knownUrls',[]) if evidence_url(u) and u not in candidates[:5]]
+            candidates=[u for u in oracles if evidence_url(u)]
         attempts=[];chosen=None
-        for url in candidates[:7]:
+        for url in candidates[:generic.MAX_CANDIDATES]:
             result,raw=get(url);final=result.get('finalUrl') or url
             ident={'acceptedForAudit':False,'failure':'FETCH_UNAVAILABLE'};facts=[];regional=[];a=None;brands=[]
             if raw:
@@ -369,7 +352,7 @@ def run(*,root=update.ROOT,config=None,fetcher=fetch,token='',metadata_loader=di
             discovered=url in paths
             negative_ok=bool(raw and ident['acceptedForAudit'] and matched and not facts)
             ambiguity_ok=bool(raw and not facts)
-            passed=(content_ok and discovered and replay['result']=='passed') if c['kind']=='positive' else negative_ok if c['kind']=='negative' else ambiguity_ok if c['kind']=='ambiguity' else bool(raw and ident['acceptedForAudit'] and matched and regional and all(x['productionReleaseDate'] is None for x in regional))
+            passed=(content_ok and discovered and replay['result']=='passed' and replay.get('mismatchedFields',[])==[]) if c['kind']=='positive' else negative_ok if c['kind']=='negative' else ambiguity_ok if c['kind']=='ambiguity' else bool(raw and ident['acceptedForAudit'] and matched and regional and all(x['productionReleaseDate'] is None for x in regional))
             stage='fetch' if not raw else 'identity' if not ident['acceptedForAudit'] else 'routing' if not matched else 'parser' if c['kind']=='positive' and not facts else 'discovery' if c['kind']=='positive' and not discovered else 'independent_reconstruction' if content_ok and replay['result']!='passed' else None
             row={'caseId':c['caseId'],'tmdbId':c['tmdbId'],'requestedTitle':c['title'],'kind':c['kind'],
                  'route':route,'candidateRouteNotIdentity':c['candidateRoute'],'rawNetworkLabels':route_proposal.get('rawNetworkLabels'),
@@ -405,6 +388,14 @@ def run(*,root=update.ROOT,config=None,fetcher=fetch,token='',metadata_loader=di
                     **{k:None for k in promotion.monitored.FACT_FIELDS},'regionalReleaseDateDiagnosticOnly':[],
                     'independentReconstruction':{'result':'not_applicable','mismatchedFields':[]},'mismatchedFields':[],
                     'contentPassed':False,'passed':False,'failureStage':'discovery','failureReason':'NO_FIRST_PARTY_CANDIDATE'}
+        selected_path=paths.get(chosen.get('discoveredUrl'),[])
+        chosen.update({'metadataResult':metadata['result'],'discoveryEntryPoint':selected_path[0] if selected_path else None,
+                       'candidateCountBeforeFilter':len(indexes),'candidateCountAfterFilter':filtered_count,
+                       'candidateCountSelected':len(selected),'knownUrlOracle':oracles,'knownUrlUsedAsSeed':False,
+                       'oracleMatched':any(audit.canonical(u)==audit.canonical(chosen.get('evidenceSource') or '') for u in oracles),
+                       'sourceName':SOURCE,'sourceUrl':chosen.get('sourceUrl'),'announcementDate':chosen.get('announcementDate'),
+                       'providerIdentityMatched':chosen.get('providerIdentityMatched',False),
+                       'failureReason':chosen.get('failureReason') if route else route_proposal.get('result') or metadata['result']})
         chosen['requiredPositive']=c.get('requiredPositive',True)
         chosen['attempts']=attempts;rows.append(chosen)
     # Historical WBD URL is a diagnostic probe only, never regional evidence.
@@ -423,6 +414,7 @@ def run(*,root=update.ROOT,config=None,fetcher=fetch,token='',metadata_loader=di
         raise RuntimeError('Protected files changed during qualification')
     return {'schemaVersion':1,'generatedAt':dt.datetime.now(dt.timezone.utc).isoformat(),'qualificationOnly':True,'readOnly':True,
             'resultScope':'RUNNER_CONFIRMATION' if runner else 'LOCAL_DIAGNOSTIC_ONLY','baseline':baseline,
+            'discovery':discovery_diagnostic,
             'sourcePolicy':{'newQualificationHost':HOST,'language':'es','territory':'ES','productionActivated':False,'wildcardTrust':False,'sourceName':SOURCE},
             'routing':{route:[o for o in observations.values() if (o.get('routeProposal') or {}).get('route')==route] for route in ('HBO','MAX')},
             'currentMetadataObservations':list(observations.values()),'httpAccessMatrix':matrix,
@@ -431,7 +423,7 @@ def run(*,root=update.ROOT,config=None,fetcher=fetch,token='',metadata_loader=di
             'sharedSafety':safety,'wbd403':{'historicalRunnerObserved':baseline['wbd403Observed'],'observed':wbd_result.get('httpStatus')==403,
                 'currentClassification':'WBD_HTTP_403' if wbd_result.get('httpStatus')==403 else wbd_result.get('failureCategory'),'bypassAttempted':False},
             'cancellationCoverage':'CANCELLATION_FIRST_PARTY_COVERAGE_INSUFFICIENT',
-            'budget':{'maximumFetches':MAX_FETCHES,'actualFetches':calls,'indexPages':len(seen)},
+            'budget':{'maximumFetches':MAX_FETCHES,'actualFetches':calls,'indexPages':discovery_diagnostic['indexPages']},
             'productionActivation':{'HBO':False,'MAX':False},'protectedFileIntegrity':integrity.protected_integrity(before,after)}
 
 def main():

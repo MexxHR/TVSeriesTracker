@@ -194,7 +194,8 @@ class QualificationTests(unittest.TestCase):
     def test_baseline_is_actual_runner_and_checksum(self):
         baseline=q.baseline_proof()
         self.assertEqual(baseline['resultScope'],'RUNNER_CONFIRMATION')
-        self.assertEqual(len(baseline['accessibleRegionalUrls']),9)
+        self.assertTrue(set(q.ROOTS)<=set(baseline['accessibleRegionalUrls']))
+        self.assertEqual(baseline['artifactSha256'],q.BASELINE_SHA)
         p=self.root/'local.json';p.write_text('{"resultScope":"LOCAL_DIAGNOSTIC_ONLY"}')
         with self.assertRaisesRegex(ValueError,'checksum'):
             q.baseline_proof(p)
@@ -251,24 +252,24 @@ class QualificationTests(unittest.TestCase):
     def test_live_body_and_index_are_required(self):
         pages={URL:html('HBO renueva SERIES A por una tercera temporada')}
         result=self.run_q([case()],pages);row=result['hbo']['cases'][0]
-        self.assertTrue(row['contentPassed']);self.assertFalse(row['passed'])
-        self.assertEqual(row['discoveryMethod'],'DIRECT_KNOWN_URL_ONLY')
-        self.assertEqual(row['independentReconstruction']['result'],'passed')
+        self.assertFalse(row['contentPassed']);self.assertFalse(row['passed'])
+        self.assertEqual(row['discoveryMethod'],'NO_CANDIDATE')
+        self.assertEqual(row['independentReconstruction']['result'],'not_applicable')
         pages[q.ROOTS[1]]='<a href="'+URL+'">SERIES A</a>'
         row=self.run_q([case()],pages)['hbo']['cases'][0]
         self.assertTrue(row['passed']);self.assertEqual(row['discoveryMethod'],'DISCOVERED_FROM_FIRST_PARTY_INDEX')
 
     def test_wrong_show_200_rejected(self):
-        result=self.run_q([case()],{URL:html('Other Show','HBO renueva SERIES A por una tercera temporada')})
+        result=self.run_q([case()],{q.ROOTS[1]:'<a href="'+URL+'">SERIES A</a>',URL:html('Other Show','HBO renueva SERIES A por una tercera temporada')})
         self.assertFalse(result['hbo']['cases'][0]['passed'])
         self.assertEqual(result['hbo']['cases'][0]['failureStage'],'identity')
 
     def test_source_brand_not_inferred_from_domain(self):
-        result=self.run_q([case()],{URL:html('Max renueva SERIES A por una tercera temporada')})
+        result=self.run_q([case()],{q.ROOTS[1]:'<a href="'+URL+'">SERIES A</a>',URL:html('Max renueva SERIES A por una tercera temporada')})
         self.assertFalse(result['hbo']['cases'][0]['providerIdentityMatched'])
 
     def test_current_networks_required_not_historical_baseline(self):
-        pages={URL:html('HBO renueva SERIES A por una tercera temporada')}
+        pages={q.ROOTS[1]:'<a href="'+URL+'">SERIES A</a>',URL:html('HBO renueva SERIES A por una tercera temporada')}
         result=self.run_q([case()],pages,metadata={'title':'SERIES A','networks':[],'productionCompanies':['HBO'],'homepage':'https://hbo.com'})
         self.assertIsNone(result['hbo']['cases'][0]['route'])
         self.assertFalse(result['hbo']['cases'][0]['contentPassed'])

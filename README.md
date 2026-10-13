@@ -1,4 +1,8 @@
-# TV Series Tracker V2.7.8.1
+# TV Series Tracker V2.7.9
+
+## V2.7.9 HBO/MAX Generic Discovery & First-Party Corpus Expansion
+
+Qualification only: bounded first-party HTML/XML sitemap, post-index pagination and observed public GET search discovery. Positive article URLs are oracles only and never fetch fallbacks. Counts require generic discovery, strict fresh network/article identity and independent seven-field replay. Minimum stays three distinct series per route. Regional ES dates remain diagnostic only. Upload `TVSeriesTracker-V2.7.9.zip`, then manually run **HBO MAX Provider Qualification** and send **hbo-max-provider-qualification** (`hbo-max-provider-qualification.json`). Production activation remains false. See `V2.7.9_REPORT.md`.
 
 ## V2.7.8.1 HBO/MAX Qualification Runner-State Hotfix
 

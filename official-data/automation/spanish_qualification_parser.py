@@ -52,7 +52,7 @@ def lifecycle_claims(sentence,entry):
       ('RENEWED',rf'\b(?:hbo\s+max|max|hbo)\s+(?:renueva|ha\s+renovado)\s+{OBJECT}["\']?{title}["\']?{APPOSITION}{CONNECT}(?P<season>{SEASON})'),
       ('RENEWED',rf'{title}\s*,?\s+(?:(?:ha|han)\s+sido\s+|fue\s+)?renovad[ao]{CONNECT}(?P<season>{SEASON})'),
       ('RENEWED',rf'{title}\s+se\s+renueva{CONNECT}(?P<season>{SEASON})'),
-      ('FINAL_SEASON',rf'{title}\s+(?:{RETURN}\s+con\s+su\s+|(?:tendrá|anuncia)\s+su\s+)(?P<season>{NUMBER}\s+y\s+última\s+temporada)'),
+      ('FINAL_SEASON',rf'{title}\s+(?:{RETURN}\s+con\s+(?:su|una)\s+|(?:tendrá|anuncia)\s+su\s+)(?P<season>{NUMBER}\s+y\s+última\s+temporada)'),
       ('FINAL_SEASON',rf'(?P<season>{NUMBER}\s+y\s+última\s+temporada)\s+de\s+{PREFIX}{title}'),
       ('FINAL_SEASON',rf'{title}\s+(?:{RETURN}\s+con\s+su\s+|tendrá\s+su\s+)(?P<season>{NUMBER}\s+temporada),?\s+que\s+será\s+la\s+última'),
       ('FINAL_SEASON',rf'{title}\s+(?:{RETURN}\s+con\s+su\s+|tendrá\s+su\s+)(?P<season>temporada\s+[1-9][0-9]?)\s+(?:y\s+)?final'),

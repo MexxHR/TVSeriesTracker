@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "scope": "DEVELOPMENT_FIRST_PARTY_RESEARCH_NOT_RUNNER_QUALIFICATION",
+  "observedOn": "2026-10-13",
+  "baselineArtifactSha256": "3c63bba62acb5e24342a93443831a123a8dd9ab97c68c838f3f314fab38dbd7e",
+  "entryPoints": [
+    "https://press-spain.max.com/",
+    "https://press-spain.max.com/sitemap",
+    "https://press-spain.max.com/post"
+  ],
+  "sitemap": {
+    "format": "HTML monthly archive with direct article anchors",
+    "displayedArchiveStarts": "2024-10-11",
+    "lastmod": "No XML lastmod observed; displayed dates are index diagnostics, never evidence",
+    "childSitemapsObserved": false,
+    "paginationObserved": false,
+    "stability": "One development observation, not a stability guarantee"
+  },
+  "postIndex": {
+    "format": "HTML article listing",
+    "observedMoreLinks": [
+      "https://press-spain.max.com/post?limit=30&offset=0&searchKey=&tab=all",
+      "https://press-spain.max.com/post?limit=45&offset=0&searchKey=&tab=all"
+    ],
+    "behavior": "Follow only observed bounded pagination links; do not synthesize arbitrary offsets or limits",
+    "embeddedData": "No private API or script execution used"
+  },
+  "search": {
+    "observedPublicParameter": "searchKey in first-party listing href",
+    "runtimePolicy": "Construct bounded title-only GET queries only after observing that template in a currently fetched first-party index",
+    "developmentFetch": "Nonempty searchKey URLs returned web-tool Internal Error; endpoint filtering not confirmed locally. Only actual runtime article discovery can count.",
+    "authOrBypass": false
+  },
+  "corpus": [
+    {
+      "caseId": "industry-lifecycle",
+      "title": "Industry",
+      "observedArticleUrl": "https://press-spain.max.com/post/hbo-renueva-industry-por-una-quinta-y-ultima-temporada",
+      "discoverySurface": "HTML sitemap",
+      "qualificationProof": false,
+      "networkPolicy": "Fresh exact TMDB identity/networks required; candidate route never proof"
+    },
+    {
+      "caseId": "rooster-lifecycle",
+      "title": "Rooster",
+      "observedArticleUrl": "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
+      "discoverySurface": "HTML sitemap",
+      "qualificationProof": false,
+      "networkPolicy": "Fresh exact TMDB identity/networks required; candidate route never proof"
+    },
+    {
+      "caseId": "conan-lifecycle",
+      "title": "Conan O'Brien Must Go",
+      "observedArticleUrl": "https://press-spain.max.com/post/max-renueva-siguiendo-a-conan-obrien-por-una-tercera-temporada-y",
+      "discoverySurface": "HTML sitemap",
+      "qualificationProof": false,
+      "networkPolicy": "Fresh exact TMDB identity/networks required; candidate route never proof"
+    },
+    {
+      "caseId": "it-welcome-derry-lifecycle",
+      "title": "IT: Welcome to Derry",
+      "observedArticleUrl": "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+      "discoverySurface": "HTML sitemap",
+      "qualificationProof": false,
+      "networkPolicy": "Fresh exact TMDB identity/networks required; candidate route never proof"
+    },
+    {
+      "caseId": "gilded-age-lifecycle",
+      "title": "The Gilded Age",
+      "observedArticleUrl": "https://press-spain.max.com/post/hbo-renueva-la-serie-dramatica-original-la-edad-dorada-por-una-c",
+      "discoverySurface": "HTML sitemap",
+      "qualificationProof": false,
+      "networkPolicy": "Fresh exact TMDB identity/networks required; candidate route never proof"
+    },
+    {
+      "caseId": "comeback-lifecycle",
+      "title": "The Comeback",
+      "observedArticleUrl": "https://press-spain.max.com/post/la-comedia-original-de-hbo-the-comeback-vuelve-con-una-tercera-y",
+      "discoverySurface": "HTML sitemap",
+      "qualificationProof": false,
+      "networkPolicy": "Fresh exact TMDB identity/networks required; candidate route never proof"
+    },
+    {
+      "caseId": "and-just-like-that-lifecycle",
+      "title": "And Just Like That...",
+      "observedArticleUrl": "https://press-spain.max.com/post/hbo-max-renueva-su-serie-and-just-like-that-por-una-segunda-temp",
+      "discoverySurface": "External development search located first-party article; runtime must independently discover it",
+      "qualificationProof": false,
+      "networkPolicy": "Fresh exact TMDB identity/networks required; candidate route never proof"
+    }
+  ],
+  "cancellationCoverage": "CANCELLATION_FIRST_PARTY_COVERAGE_INSUFFICIENT",
+  "productionActivation": {
+    "HBO": false,
+    "MAX": false
+  }
+}
