@@ -25,7 +25,7 @@ jobs:
           set -euo pipefail
           sha256sum official-data/official_series_data.json official-data/history/changes.jsonl official-data/sources.json official-data/monitored_series.json official-data/history/monitored_changes.jsonl > "$RUNNER_TEMP/hbo-max-before.sha256"
       - name: Spanish and qualification safety tests
-        run: python -m unittest discover -s official-data/automation -p 'test_hbo_max_qualification.py' -q
+        run: python -m unittest discover -s official-data/automation -p 'test_hbo_max*.py' -q
       - name: Real runner qualification
         env:
           TMDB_API_TOKEN: ${{ secrets.TMDB_API_TOKEN }}
