@@ -1,4 +1,8 @@
-# TV Series Tracker V2.7.9
+# TV Series Tracker V2.7.10
+
+## V2.7.10 HBO Production Activation
+
+HBO is enabled in the existing monitored/promotion pipeline after actual V2.7.9 runner qualification (5/5/5). Routing requires the sole exact TMDB network HBO. Max/HBO Max and mixed HBO+Max routes remain inactive/rejected; FX stays frozen. HBO reuses qualified bounded generic Max Press Spain discovery, Spanish lifecycle parsing, strict article/provider identity and independent seven-field replay. ES dates remain diagnostic and cannot become global production dates. The existing automatic promotion gate remains mandatory. Upload `TVSeriesTracker-V2.7.10.zip` over existing main, preserving live data, and review CI before a separately authorized live E2E. No live request or workflow was dispatched here. See `V2.7.10_REPORT.md`.
 
 ## V2.7.9 HBO/MAX Generic Discovery & First-Party Corpus Expansion
 

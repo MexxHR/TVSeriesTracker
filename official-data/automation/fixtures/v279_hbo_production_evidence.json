@@ -1,0 +1,499 @@
+{
+  "schemaVersion": 1,
+  "baselineArtifactSha256": "a406dc080422a4fabcd483ca664e830beaec271bb9f71dbc0464208188c3dc9a",
+  "notice": "Exact bounded evidence/heading/expected fields from actual V2.7.9 runner, not full HTTP bodies. Tests construct offline HTML/index containers around these excerpts. Not fresh live E2E proof. No corpus is a runtime discovery seed.",
+  "positives": [
+    {
+      "caseId": "the-last-of-us-lifecycle",
+      "tmdbId": 100088,
+      "requestedTitle": "The Last of Us",
+      "route": "HBO",
+      "rawNetworkLabels": [
+        "HBO"
+      ],
+      "discoverySource": [
+        "https://press-spain.max.com/sitemap",
+        "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada"
+      ],
+      "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+      "status": "RENEWED",
+      "nextSeasonNumber": 3,
+      "releaseDate": null,
+      "releaseYear": null,
+      "sourceName": "Max Press Spain",
+      "announcementDate": "2025-04-09",
+      "relevantEvidenceSnippet": [
+        "HBO renueva THE LAST OF US por una tercera temporada",
+        "THE LAST OF US , ha sido renovada por una tercera temporada"
+      ],
+      "parserFacts": [
+        {
+          "tmdbId": 100088,
+          "title": "The Last of Us",
+          "factType": "LIFECYCLE",
+          "status": "RENEWED",
+          "nextSeasonNumber": 3,
+          "releaseDate": null,
+          "releaseYear": null,
+          "sourceName": "Max Press Spain",
+          "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+          "announcementDate": "2025-04-09",
+          "rule": "explicit-renewal",
+          "evidenceText": "HBO renueva THE LAST OF US por una tercera temporada"
+        },
+        {
+          "tmdbId": 100088,
+          "title": "The Last of Us",
+          "factType": "LIFECYCLE",
+          "status": "RENEWED",
+          "nextSeasonNumber": 3,
+          "releaseDate": null,
+          "releaseYear": null,
+          "sourceName": "Max Press Spain",
+          "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+          "announcementDate": "2025-04-09",
+          "rule": "explicit-renewal",
+          "evidenceText": "THE LAST OF US , ha sido renovada por una tercera temporada"
+        }
+      ],
+      "identityResult": {
+        "acceptedForAudit": true,
+        "pageTitle": "HBO renueva THE LAST OF US por una tercera temporada | Max | Notas de prensa",
+        "articleHeading": "HBO renueva THE LAST OF US por una tercera temporada",
+        "canonicalUrl": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+        "canonicalDeclared": true,
+        "structuredDataAvailable": true,
+        "failure": null
+      },
+      "regionalReleaseDateDiagnosticOnly": [],
+      "mismatchedFields": [],
+      "aliases": [
+        "The Last of Us"
+      ],
+      "runnerPassed": true
+    },
+    {
+      "caseId": "rooster-lifecycle",
+      "tmdbId": 254953,
+      "requestedTitle": "Rooster",
+      "route": "HBO",
+      "rawNetworkLabels": [
+        "HBO"
+      ],
+      "discoverySource": [
+        "https://press-spain.max.com/sitemap",
+        "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr"
+      ],
+      "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
+      "status": "RENEWED",
+      "nextSeasonNumber": 2,
+      "releaseDate": null,
+      "releaseYear": null,
+      "sourceName": "Max Press Spain",
+      "announcementDate": "2026-04-09",
+      "relevantEvidenceSnippet": [
+        "HBO ha renovado su nueva serie de comedia ROOSTER para una segunda temporada"
+      ],
+      "parserFacts": [
+        {
+          "tmdbId": 254953,
+          "title": "Rooster",
+          "factType": "LIFECYCLE",
+          "status": "RENEWED",
+          "nextSeasonNumber": 2,
+          "releaseDate": null,
+          "releaseYear": null,
+          "sourceName": "Max Press Spain",
+          "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
+          "announcementDate": "2026-04-09",
+          "rule": "explicit-renewal",
+          "evidenceText": "HBO ha renovado su nueva serie de comedia ROOSTER para una segunda temporada"
+        }
+      ],
+      "identityResult": {
+        "acceptedForAudit": true,
+        "pageTitle": "HBO renueva ROOSTER, la comedia más vista en más de una década, protagonizada por Steve Carell | Max | Notas de prensa",
+        "articleHeading": "HBO renueva ROOSTER, la comedia más vista en más de una década, protagonizada por Steve Carell",
+        "canonicalUrl": "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
+        "canonicalDeclared": true,
+        "structuredDataAvailable": true,
+        "failure": null
+      },
+      "regionalReleaseDateDiagnosticOnly": [],
+      "mismatchedFields": [],
+      "aliases": [
+        "Rooster"
+      ],
+      "runnerPassed": true
+    },
+    {
+      "caseId": "it-welcome-derry-lifecycle",
+      "tmdbId": 200875,
+      "requestedTitle": "IT: Welcome to Derry",
+      "route": "HBO",
+      "rawNetworkLabels": [
+        "HBO"
+      ],
+      "discoverySource": [
+        "https://press-spain.max.com/sitemap",
+        "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada"
+      ],
+      "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+      "status": "RENEWED",
+      "nextSeasonNumber": 2,
+      "releaseDate": null,
+      "releaseYear": null,
+      "sourceName": "Max Press Spain",
+      "announcementDate": "2026-08-17",
+      "relevantEvidenceSnippet": [
+        "HBO renueva IT: BIENVENIDOS A DERRY para una segunda temporada"
+      ],
+      "parserFacts": [
+        {
+          "tmdbId": 200875,
+          "title": "IT: Welcome to Derry",
+          "factType": "LIFECYCLE",
+          "status": "RENEWED",
+          "nextSeasonNumber": 2,
+          "releaseDate": null,
+          "releaseYear": null,
+          "sourceName": "Max Press Spain",
+          "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+          "announcementDate": "2026-08-17",
+          "rule": "explicit-renewal",
+          "evidenceText": "HBO renueva IT: BIENVENIDOS A DERRY para una segunda temporada"
+        }
+      ],
+      "identityResult": {
+        "acceptedForAudit": true,
+        "pageTitle": "HBO renueva IT: BIENVENIDOS A DERRY para una segunda temporada | Max | Notas de prensa",
+        "articleHeading": "HBO renueva IT: BIENVENIDOS A DERRY para una segunda temporada",
+        "canonicalUrl": "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+        "canonicalDeclared": true,
+        "structuredDataAvailable": true,
+        "failure": null
+      },
+      "regionalReleaseDateDiagnosticOnly": [],
+      "mismatchedFields": [],
+      "aliases": [
+        "IT: Welcome to Derry",
+        "IT: Bienvenidos a Derry"
+      ],
+      "runnerPassed": true
+    },
+    {
+      "caseId": "gilded-age-lifecycle",
+      "tmdbId": 81723,
+      "requestedTitle": "The Gilded Age",
+      "route": "HBO",
+      "rawNetworkLabels": [
+        "HBO"
+      ],
+      "discoverySource": [
+        "https://press-spain.max.com/sitemap",
+        "https://press-spain.max.com/post/hbo-renueva-la-serie-dramatica-original-la-edad-dorada-por-una-c"
+      ],
+      "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-la-serie-dramatica-original-la-edad-dorada-por-una-c",
+      "status": "RENEWED",
+      "nextSeasonNumber": 4,
+      "releaseDate": null,
+      "releaseYear": null,
+      "sourceName": "Max Press Spain",
+      "announcementDate": "2025-07-29",
+      "relevantEvidenceSnippet": [
+        "HBO renueva la serie dramática original LA EDAD DORADA por una cuarta temporada",
+        "LA EDAD DORADA ha sido renovada para una cuarta temporada"
+      ],
+      "parserFacts": [
+        {
+          "tmdbId": 81723,
+          "title": "The Gilded Age",
+          "factType": "LIFECYCLE",
+          "status": "RENEWED",
+          "nextSeasonNumber": 4,
+          "releaseDate": null,
+          "releaseYear": null,
+          "sourceName": "Max Press Spain",
+          "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-la-serie-dramatica-original-la-edad-dorada-por-una-c",
+          "announcementDate": "2025-07-29",
+          "rule": "explicit-renewal",
+          "evidenceText": "HBO renueva la serie dramática original LA EDAD DORADA por una cuarta temporada"
+        },
+        {
+          "tmdbId": 81723,
+          "title": "The Gilded Age",
+          "factType": "LIFECYCLE",
+          "status": "RENEWED",
+          "nextSeasonNumber": 4,
+          "releaseDate": null,
+          "releaseYear": null,
+          "sourceName": "Max Press Spain",
+          "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-la-serie-dramatica-original-la-edad-dorada-por-una-c",
+          "announcementDate": "2025-07-29",
+          "rule": "explicit-renewal",
+          "evidenceText": "LA EDAD DORADA ha sido renovada para una cuarta temporada"
+        }
+      ],
+      "identityResult": {
+        "acceptedForAudit": true,
+        "pageTitle": "HBO renueva la serie dramática original LA EDAD DORADA por una cuarta temporada | Max | Notas de prensa",
+        "articleHeading": "HBO renueva la serie dramática original LA EDAD DORADA por una cuarta temporada",
+        "canonicalUrl": "https://press-spain.max.com/post/hbo-renueva-la-serie-dramatica-original-la-edad-dorada-por-una-c",
+        "canonicalDeclared": true,
+        "structuredDataAvailable": true,
+        "failure": null
+      },
+      "regionalReleaseDateDiagnosticOnly": [],
+      "mismatchedFields": [],
+      "aliases": [
+        "The Gilded Age",
+        "La Edad Dorada"
+      ],
+      "runnerPassed": true
+    },
+    {
+      "caseId": "comeback-lifecycle",
+      "tmdbId": 1999,
+      "requestedTitle": "The Comeback",
+      "route": "HBO",
+      "rawNetworkLabels": [
+        "HBO"
+      ],
+      "discoverySource": [
+        "https://press-spain.max.com/sitemap",
+        "https://press-spain.max.com/post/la-comedia-original-de-hbo-the-comeback-vuelve-con-una-tercera-y"
+      ],
+      "sourceUrl": "https://press-spain.max.com/post/la-comedia-original-de-hbo-the-comeback-vuelve-con-una-tercera-y",
+      "status": "FINAL_SEASON",
+      "nextSeasonNumber": 3,
+      "releaseDate": null,
+      "releaseYear": null,
+      "sourceName": "Max Press Spain",
+      "announcementDate": "2025-06-27",
+      "relevantEvidenceSnippet": [
+        "THE COMEBACK vuelve con una tercera y última temporada"
+      ],
+      "parserFacts": [
+        {
+          "tmdbId": 1999,
+          "title": "The Comeback",
+          "factType": "LIFECYCLE",
+          "status": "FINAL_SEASON",
+          "nextSeasonNumber": 3,
+          "releaseDate": null,
+          "releaseYear": null,
+          "sourceName": "Max Press Spain",
+          "sourceUrl": "https://press-spain.max.com/post/la-comedia-original-de-hbo-the-comeback-vuelve-con-una-tercera-y",
+          "announcementDate": "2025-06-27",
+          "rule": "explicit-final-season",
+          "evidenceText": "THE COMEBACK vuelve con una tercera y última temporada"
+        }
+      ],
+      "identityResult": {
+        "acceptedForAudit": true,
+        "pageTitle": "La comedia original de HBO THE COMEBACK vuelve con una tercera y última temporada | Max | Notas de prensa",
+        "articleHeading": "La comedia original de HBO THE COMEBACK vuelve con una tercera y última temporada",
+        "canonicalUrl": "https://press-spain.max.com/post/la-comedia-original-de-hbo-the-comeback-vuelve-con-una-tercera-y",
+        "canonicalDeclared": true,
+        "structuredDataAvailable": true,
+        "failure": null
+      },
+      "regionalReleaseDateDiagnosticOnly": [],
+      "mismatchedFields": [],
+      "aliases": [
+        "The Comeback"
+      ],
+      "runnerPassed": true
+    }
+  ],
+  "negatives": [
+    {
+      "caseId": "white-lotus-spanish-filming",
+      "tmdbId": 111803,
+      "requestedTitle": "The White Lotus",
+      "route": "HBO",
+      "rawNetworkLabels": [
+        "HBO"
+      ],
+      "discoverySource": [
+        "https://press-spain.max.com/sitemap",
+        "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-"
+      ],
+      "sourceUrl": "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-",
+      "status": null,
+      "nextSeasonNumber": null,
+      "releaseDate": null,
+      "releaseYear": null,
+      "sourceName": "Max Press Spain",
+      "announcementDate": "2026-04-15",
+      "relevantEvidenceSnippet": [
+        "La cuarta temporada de la serie original de HBO THE WHITE LOTUS comienza a rodarse en Francia"
+      ],
+      "parserFacts": [],
+      "identityResult": {
+        "acceptedForAudit": true,
+        "pageTitle": "La cuarta temporada de la serie original de HBO THE WHITE LOTUS comienza a rodarse en Francia | Max | Notas de prensa",
+        "articleHeading": "La cuarta temporada de la serie original de HBO THE WHITE LOTUS comienza a rodarse en Francia",
+        "canonicalUrl": "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-",
+        "canonicalDeclared": true,
+        "structuredDataAvailable": true,
+        "failure": null
+      },
+      "regionalReleaseDateDiagnosticOnly": [],
+      "mismatchedFields": [],
+      "aliases": [
+        "The White Lotus"
+      ],
+      "runnerPassed": true
+    },
+    {
+      "caseId": "pitt-spanish-teaser",
+      "tmdbId": 250307,
+      "requestedTitle": "The Pitt",
+      "route": "MAX",
+      "rawNetworkLabels": [
+        "Max",
+        "HBO Max"
+      ],
+      "discoverySource": [
+        "https://press-spain.max.com/sitemap",
+        "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te"
+      ],
+      "sourceUrl": "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te",
+      "status": null,
+      "nextSeasonNumber": null,
+      "releaseDate": null,
+      "releaseYear": null,
+      "sourceName": "Max Press Spain",
+      "announcementDate": "2026-08-21",
+      "relevantEvidenceSnippet": [
+        "HBO Max lanza el teaser oficial y las primeras imágenes de la tercera temporada de la serie dramática original de Max THE PITT"
+      ],
+      "parserFacts": [],
+      "identityResult": {
+        "acceptedForAudit": true,
+        "pageTitle": "HBO Max lanza el teaser oficial y las primeras imágenes de la tercera temporada de la serie dramática original de Max THE PITT | Max | Notas de prensa",
+        "articleHeading": "HBO Max lanza el teaser oficial y las primeras imágenes de la tercera temporada de la serie dramática original de Max THE PITT",
+        "canonicalUrl": "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te",
+        "canonicalDeclared": true,
+        "structuredDataAvailable": true,
+        "failure": null
+      },
+      "regionalReleaseDateDiagnosticOnly": [],
+      "mismatchedFields": [],
+      "aliases": [
+        "The Pitt"
+      ],
+      "runnerPassed": true
+    }
+  ],
+  "monthly": [
+    {
+      "caseId": "somebody-spanish-slate",
+      "tmdbId": 106308,
+      "requestedTitle": "Somebody Somewhere",
+      "route": "HBO",
+      "rawNetworkLabels": [
+        "HBO"
+      ],
+      "discoverySource": [],
+      "sourceUrl": "https://press-spain.max.com/post/avance-de-estrenos-de-octubre-3",
+      "status": null,
+      "nextSeasonNumber": null,
+      "releaseDate": null,
+      "releaseYear": null,
+      "sourceName": "Max Press Spain",
+      "announcementDate": "2024-09-30",
+      "relevantEvidenceSnippet": [
+        "Avance de estrenos de OCTUBRE"
+      ],
+      "parserFacts": [],
+      "identityResult": {
+        "acceptedForAudit": false,
+        "pageTitle": "Avance de estrenos de OCTUBRE | Max | Notas de prensa",
+        "articleHeading": "Avance de estrenos de OCTUBRE",
+        "canonicalUrl": "https://press-spain.max.com/post/avance-de-estrenos-de-octubre-3",
+        "canonicalDeclared": true,
+        "structuredDataAvailable": true,
+        "failure": "ARTICLE_IDENTITY_MISMATCH"
+      },
+      "regionalReleaseDateDiagnosticOnly": [],
+      "mismatchedFields": [],
+      "aliases": [
+        "Somebody Somewhere"
+      ],
+      "runnerPassed": true
+    }
+  ],
+  "maxRegional": [
+    {
+      "caseId": "hacks-spanish-final",
+      "tmdbId": 124101,
+      "requestedTitle": "Hacks",
+      "route": "MAX",
+      "rawNetworkLabels": [
+        "HBO Max",
+        "Max",
+        "HBO Max"
+      ],
+      "discoverySource": [
+        "https://press-spain.max.com/sitemap",
+        "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h"
+      ],
+      "sourceUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+      "status": "FINAL_SEASON",
+      "nextSeasonNumber": 5,
+      "releaseDate": null,
+      "releaseYear": null,
+      "sourceName": "Max Press Spain",
+      "announcementDate": "2026-03-23",
+      "relevantEvidenceSnippet": [
+        "HACKS vuelve con su quinta y última temporada",
+        "HACKS vuelve con su quinta y última temporada el 10 de abril"
+      ],
+      "parserFacts": [
+        {
+          "tmdbId": 124101,
+          "title": "Hacks",
+          "factType": "LIFECYCLE",
+          "status": "FINAL_SEASON",
+          "nextSeasonNumber": 5,
+          "releaseDate": null,
+          "releaseYear": null,
+          "sourceName": "Max Press Spain",
+          "sourceUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+          "announcementDate": "2026-03-23",
+          "rule": "explicit-final-season",
+          "evidenceText": "HACKS vuelve con su quinta y última temporada"
+        }
+      ],
+      "identityResult": {
+        "acceptedForAudit": true,
+        "pageTitle": "HACKS vuelve con su quinta y última temporada el 10 de abril a HBO Max | Max | Notas de prensa",
+        "articleHeading": "HACKS vuelve con su quinta y última temporada el 10 de abril a HBO Max",
+        "canonicalUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+        "canonicalDeclared": true,
+        "structuredDataAvailable": true,
+        "failure": null
+      },
+      "regionalReleaseDateDiagnosticOnly": [
+        {
+          "scope": "REGIONAL_RELEASE_DATE",
+          "language": "es",
+          "territory": "ES",
+          "nextSeasonNumber": 5,
+          "regionalReleaseDate": "2026-04-10",
+          "releaseYear": 2026,
+          "productionReleaseDate": null,
+          "productionReleaseYear": null,
+          "evidenceText": "HACKS vuelve con su quinta y última temporada el 10 de abril"
+        }
+      ],
+      "mismatchedFields": [],
+      "aliases": [
+        "Hacks"
+      ],
+      "runnerPassed": true
+    }
+  ]
+}

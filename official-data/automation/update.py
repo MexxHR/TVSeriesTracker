@@ -263,8 +263,16 @@ class HuluAdapter(EditorialArticleAdapter):
     name, source_name = "HULU", "Hulu Press"
 
 
-ADAPTERS = {a.name: a for a in (ParamountAdapter(), NetflixAdapter(), AppleAdapter(), WbdAdapter(), AmazonAdapter(), AmcAdapter(), DisneyPlusAdapter(), HuluAdapter())}
-PROVIDER_DOMAINS = {"PARAMOUNT": "paramountpressexpress.com", "NETFLIX": "netflix.com", "APPLE": "apple.com", "WBD": "press.wbd.com", "AMAZON": "aboutamazon.com", "AMC": "amcglobalmedia.com", "DISNEY_PLUS": "press.disneyplus.com", "HULU": "press.hulu.com"}
+class HboAdapter(Adapter):
+    name, source_name = "HBO", "Max Press Spain"
+
+    def parse(self, raw, url):
+        import hbo_production
+        return hbo_production.parse(raw, url)
+
+
+ADAPTERS = {a.name: a for a in (ParamountAdapter(), NetflixAdapter(), AppleAdapter(), WbdAdapter(), AmazonAdapter(), AmcAdapter(), DisneyPlusAdapter(), HuluAdapter(), HboAdapter())}
+PROVIDER_DOMAINS = {"PARAMOUNT": "paramountpressexpress.com", "NETFLIX": "netflix.com", "APPLE": "apple.com", "WBD": "press.wbd.com", "AMAZON": "aboutamazon.com", "AMC": "amcglobalmedia.com", "DISNEY_PLUS": "press.disneyplus.com", "HULU": "press.hulu.com", "HBO": "press-spain.max.com"}
 EXTRA_DOMAINS = {225891: ["paramountplus.com"]}
 
 
@@ -439,6 +447,9 @@ def explicit_production_start(text: str, aliases: list[str]) -> tuple[re.Match |
 
 def detect(article: dict, entry: dict, today: dt.date, extended_final: bool = False,
            strict_binding: bool = False) -> list[dict]:
+    if entry.get("provider") == "HBO":
+        import hbo_production
+        return hbo_production.detect(article, entry, today)
     # A sentence/title must itself identify the series and the season statement.
     heading = article["title"]
     body = article["body"][:25000]

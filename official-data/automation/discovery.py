@@ -53,9 +53,15 @@ def metadata_names(metadata: dict) -> list[str]:
 
 
 def route_provider(metadata: dict, specs: dict) -> tuple[str | None, list[str], str | None]:
+    labels = {" ".join(n.casefold().split()) for item in metadata.get("networks") or []
+              if isinstance(n := item.get("name") if isinstance(item, dict) else item, str)}
+    if "HBO" in specs and labels & {"hbo", "max", "hbo max"}:
+        if labels == {"hbo"} and specs["HBO"].get("productionActivated") is True:
+            return "HBO", ["networks:HBO"], None
+        return None, [], "ambiguous_provider" if "hbo" in labels else "unknown_provider"
     signals: dict[str, list[str]] = {}
     for provider, spec in specs.items():
-        strict_network = provider in ("AMC", "DISNEY_PLUS", "HULU")
+        strict_network = provider in ("AMC", "DISNEY_PLUS", "HULU", "HBO")
         # Preserve '+': Disney is not Disney+, and AMC+ is not AMC.
         normalize_route = (lambda value: " ".join(unicodedata.normalize("NFKC", value).casefold().split())) if strict_network else normalize
         names = {normalize_route(n) for n in spec["routingNames"]}
@@ -82,9 +88,21 @@ def tmdb_metadata(tmdb_id: int, token: str, fetcher=update.fetch) -> dict:
     data = json.loads(raw)
     if data.get("id") != tmdb_id or not isinstance(data.get("name"), str):
         raise ValueError("TMDB response identity mismatch")
-    return {"tmdbId": data["id"], "title": data["name"], "originalName": data.get("original_name"),
+    result = {"tmdbId": data["id"], "title": data["name"], "originalName": data.get("original_name"),
             "networks": data.get("networks") or [], "productionCompanies": data.get("production_companies") or [],
             "homepage": data.get("homepage"), "originCountry": data.get("origin_country") or []}
+    # Localization supplies identity aliases only, never lifecycle facts. Only
+    # the strict HBO route needs the qualified Spanish source's official title.
+    if route_provider(result, provider_specs())[0] == "HBO":
+        try:
+            localized, _ = fetcher(f"https://api.themoviedb.org/3/tv/{tmdb_id}?language=es-ES",
+                                   ["api.themoviedb.org"], {"Authorization": f"Bearer {token}", "Accept": "application/json"})
+            spanish = json.loads(localized)
+            if spanish.get("id") == tmdb_id and isinstance(spanish.get("name"), str) and spanish["name"].strip():
+                result["hboSpanishTitle"] = spanish["name"].strip()
+        except (update.AutomationError, OSError, ValueError):
+            pass  # Missing localized identity preserves a safe false negative.
+    return result
 
 
 def local_tmdb_token() -> str:
@@ -319,6 +337,9 @@ def discover(metadata: dict, registry: dict, fetcher=update.fetch, specs: dict |
         return report
     report["provider"] = provider
     spec = specs[provider]
+    if provider == "HBO":
+        import hbo_production
+        return hbo_production.discover(metadata, spec, report, fetcher)
     if provider == "HULU":
         import hulu_discovery
         return hulu_discovery.discover(metadata, spec, report, fetcher)

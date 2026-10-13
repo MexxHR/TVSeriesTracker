@@ -1,8 +1,19 @@
 {
   "PARAMOUNT": {
-    "routingNames": ["Paramount+", "Paramount Plus", "Paramount Network", "CBS", "Showtime"],
-    "officialDomains": ["paramountpressexpress.com", "paramountplus.com"],
-    "candidateDomains": ["paramountpressexpress.com"],
+    "routingNames": [
+      "Paramount+",
+      "Paramount Plus",
+      "Paramount Network",
+      "CBS",
+      "Showtime"
+    ],
+    "officialDomains": [
+      "paramountpressexpress.com",
+      "paramountplus.com"
+    ],
+    "candidateDomains": [
+      "paramountpressexpress.com"
+    ],
     "seeds": [
       "https://www.paramountpressexpress.com/paramount-plus/shows/{slug}/releases/",
       "https://www.paramountpressexpress.com/paramount-television-studios/shows/{slug}/releases/"
@@ -10,30 +21,73 @@
     "mechanism": "official show release listing"
   },
   "NETFLIX": {
-    "routingNames": ["Netflix"],
-    "officialDomains": ["netflix.com"],
-    "candidateDomains": ["netflix.com"],
-    "seeds": ["https://www.netflix.com/tudum/{slug}"],
+    "routingNames": [
+      "Netflix"
+    ],
+    "officialDomains": [
+      "netflix.com"
+    ],
+    "candidateDomains": [
+      "netflix.com"
+    ],
+    "seeds": [
+      "https://www.netflix.com/tudum/{slug}"
+    ],
     "mechanism": "official Tudum show news index"
   },
   "APPLE": {
-    "routingNames": ["Apple TV", "Apple TV+", "Apple TV Plus", "Apple Studios"],
-    "officialDomains": ["apple.com"],
-    "candidateDomains": ["apple.com"],
-    "seeds": ["https://www.apple.com/tv-pr/originals/{slug}/news/", "https://www.apple.com/tv-pr/originals/{slug}/"],
+    "routingNames": [
+      "Apple TV",
+      "Apple TV+",
+      "Apple TV Plus",
+      "Apple Studios"
+    ],
+    "officialDomains": [
+      "apple.com"
+    ],
+    "candidateDomains": [
+      "apple.com"
+    ],
+    "seeds": [
+      "https://www.apple.com/tv-pr/originals/{slug}/news/",
+      "https://www.apple.com/tv-pr/originals/{slug}/"
+    ],
     "mechanism": "official Apple TV Press show news index"
   },
   "AMAZON": {
-    "routingNames": ["Prime Video", "Amazon Prime Video", "Amazon Studios", "Amazon MGM Studios"],
-    "officialDomains": ["aboutamazon.com", "amazon.com"],
-    "candidateDomains": ["aboutamazon.com"],
-    "seeds": ["https://www.aboutamazon.com/entertainment-news"],
+    "routingNames": [
+      "Prime Video",
+      "Amazon Prime Video",
+      "Amazon Studios",
+      "Amazon MGM Studios"
+    ],
+    "officialDomains": [
+      "aboutamazon.com",
+      "amazon.com"
+    ],
+    "candidateDomains": [
+      "aboutamazon.com"
+    ],
+    "seeds": [
+      "https://www.aboutamazon.com/entertainment-news"
+    ],
     "mechanism": "official About Amazon entertainment index links"
   },
   "WBD": {
-    "routingNames": ["HBO", "HBO Max", "Max", "Warner Bros. Discovery"],
-    "officialDomains": ["press.wbd.com", "hbo.com", "max.com"],
-    "candidateDomains": ["press.wbd.com"],
+    "routingNames": [
+      "HBO",
+      "HBO Max",
+      "Max",
+      "Warner Bros. Discovery"
+    ],
+    "officialDomains": [
+      "press.wbd.com",
+      "hbo.com",
+      "max.com"
+    ],
+    "candidateDomains": [
+      "press.wbd.com"
+    ],
     "seeds": [
       "https://press.wbd.com/us/property/{slug}/media-releases",
       "https://press.wbd.com/na/property/{slug}/media-releases"
@@ -41,24 +95,71 @@
     "mechanism": "official WBD property media-release listing"
   },
   "AMC": {
-    "routingNames": ["AMC"],
-    "officialDomains": ["amcglobalmedia.com"],
-    "candidateDomains": ["amcglobalmedia.com"],
-    "seeds": ["https://www.amcglobalmedia.com/"],
+    "routingNames": [
+      "AMC"
+    ],
+    "officialDomains": [
+      "amcglobalmedia.com"
+    ],
+    "candidateDomains": [
+      "amcglobalmedia.com"
+    ],
+    "seeds": [
+      "https://www.amcglobalmedia.com/"
+    ],
     "mechanism": "official AMC search form"
   },
   "HULU": {
-    "routingNames": ["Hulu"],
-    "officialDomains": ["press.hulu.com"],
-    "candidateDomains": ["press.hulu.com"],
-    "seeds": ["https://press.hulu.com/shows/{slug}/press-releases/", "https://press.hulu.com/news/"],
+    "routingNames": [
+      "Hulu"
+    ],
+    "officialDomains": [
+      "press.hulu.com"
+    ],
+    "candidateDomains": [
+      "press.hulu.com"
+    ],
+    "seeds": [
+      "https://press.hulu.com/shows/{slug}/press-releases/",
+      "https://press.hulu.com/news/"
+    ],
     "mechanism": "official Hulu press links and bounded site search"
   },
   "DISNEY_PLUS": {
-    "routingNames": ["Disney+", "Disney Plus"],
-    "officialDomains": ["press.disneyplus.com"],
-    "candidateDomains": ["press.disneyplus.com"],
-    "seeds": ["https://press.disneyplus.com/sitemap.xml"],
+    "routingNames": [
+      "Disney+",
+      "Disney Plus"
+    ],
+    "officialDomains": [
+      "press.disneyplus.com"
+    ],
+    "candidateDomains": [
+      "press.disneyplus.com"
+    ],
+    "seeds": [
+      "https://press.disneyplus.com/sitemap.xml"
+    ],
     "mechanism": "official Disney+ sitemap"
+  },
+  "HBO": {
+    "routingNames": [
+      "HBO"
+    ],
+    "officialDomains": [
+      "press-spain.max.com"
+    ],
+    "candidateDomains": [
+      "press-spain.max.com"
+    ],
+    "seeds": [
+      "https://press-spain.max.com/",
+      "https://press-spain.max.com/sitemap",
+      "https://press-spain.max.com/post"
+    ],
+    "mechanism": "qualified generic Max Press Spain discovery; strict HBO network only",
+    "productionActivated": true,
+    "language": "es",
+    "territory": "ES",
+    "wildcardTrust": false
   }
 }

@@ -264,6 +264,12 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
         entry = {"tmdbId": tmdb_id, "title": meta["title"], "provider": provider,
                  "aliases": discovery.metadata_names(meta), "allowedDomains": domains}
         try:
+            if provider == "HBO":
+                import hbo_production
+                if discovery.route_provider(meta, discovery.provider_specs())[0] != "HBO":
+                    raise update.AutomationError("HBO requires unambiguous TMDB network routing")
+                entry["aliases"] = hbo_production.aliases(meta)
+                hbo_context = hbo_production.identity_context(meta)
             if provider == "HULU" and discovery.route_provider(meta, discovery.provider_specs())[0] != "HULU":
                 raise update.AutomationError("Hulu requires unambiguous TMDB network routing")
             for candidate in eligible:
@@ -274,11 +280,14 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
                 source_checks.append(check)
                 if not candidate_allowed:
                     raise update.AutomationError("Eligible candidate outside allowlist")
-                raw, final = fetcher(url, domains)
+                transport = hbo_production.fetch if provider == "HBO" and fetcher is update.fetch else fetcher
+                raw, final = transport(url, domains)
                 final_allowed = update.allowed(final, domains)
                 check.update(finalUrl=final, redirectDomainAllowed=final_allowed)
                 if not final_allowed:
                     raise update.AutomationError("Eligible candidate redirect outside allowlist")
+                if provider == "HBO":
+                    hbo_production.validate_article(raw, candidate.get("requestedUrl", url), final, entry)
                 eligible_source_urls.update((url, final))
                 if provider in ("NETFLIX", "APPLE", "AMC", "DISNEY_PLUS", "HULU"):
                     # The page may have changed since discovery. Recheck the
@@ -299,9 +308,10 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
                     if not identity_matches:
                         raise update.AutomationError("Discovered page identity changed")
                 article = update.ADAPTERS[provider].parse(raw, final)
-                article["publicationDate"] = publication_date_from_html(raw)
+                if provider != "HBO":
+                    article["publicationDate"] = publication_date_from_html(raw)
                 parsed += 1
-                facts.extend(update.detect(scoped_article(article, entry["aliases"]), entry, today,
+                facts.extend(update.detect(article if provider == "HBO" else scoped_article(article, entry["aliases"]), entry, today,
                                          extended_final=True, strict_binding=True))
             update.validate_facts(facts, entry)
             facts = update.canonical_fact_order(facts)
@@ -325,6 +335,15 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
                                     "publicationDateSource": "structured_metadata" if fact.get("announcementDate") else "none"}
                                    for fact in facts]
                 source_evidence.sort(key=lambda f: (f["nextSeasonNumber"], f["status"], f["sourceUrl"], f["rule"]))
+                if provider == "HBO":
+                    import promotion
+                    replay_row = {"tmdbId":tmdb_id,"title":meta["title"],"provider":provider,
+                        "providerIdentity":hbo_context,"lastChecked":today.isoformat(),
+                        "parserResult":"facts","validationResult":"passed",
+                        "eligibleSourceUrls":sorted(eligible_source_urls),"sourceEvidence":source_evidence,
+                        "verifiedFacts":{key:merged.get(key) for key in FACT_FIELDS}}
+                    rebuilt = promotion._validate_evidence(replay_row, domains)
+                    promotion._facts_summary(rebuilt, replay_row, today)
                 state = "VERIFIED_FACTS"
             else:
                 state = "NO_VERIFIED_FACTS"
@@ -344,7 +363,7 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
                 "verifiedFacts": {}, "sourceEvidence": [], "candidateUrls": report.get("candidateUrls") or [],
                 "dryRun": dry_run, "registryChange": "none", "routeSignals": report.get("routeSignals", []),
                 "candidateDiagnostics": [{key: candidate.get(key) for key in (
-                    "candidateUrl", "factualParserEligible", "evidenceLevel", "discoveryMethod", "discoveryProvenance", "discoveryRoot", "sourceAuthority", "identityMatchedName", "requestedUrl", "finalUrl", "redirectWithinOfficialBoundary")
+                    "candidateUrl", "factualParserEligible", "evidenceLevel", "discoveryMethod", "discoveryProvenance", "discoveryRoot", "sourceAuthority", "identityMatchedName", "requestedUrl", "finalUrl", "redirectWithinOfficialBoundary", "discoverySource", "knownUrlUsedAsSeed")
                     if key in candidate} for candidate in candidates],
                 "sourceChecks": source_checks,
                 "selectedOfficialUrl": source_checks[0].get("finalUrl") if source_checks else None}
@@ -359,6 +378,9 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
            "parserResult": parser_result, "validationResult": validation_result,
            "eligibleSourceUrls": eligible_urls,
            "lastChecked": today.isoformat()}
+    if provider == "HBO":
+        import hbo_production
+        row["providerIdentity"] = hbo_production.identity_context(meta)
     current = next((item for item in registry["series"] if item["tmdbId"] == tmdb_id), None)
     comparable = lambda item: {key: value for key, value in item.items() if key != "lastChecked"}
     changed = current is None or comparable(current) != comparable(row)
@@ -377,7 +399,7 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
               "dryRun": dry_run, "registryChange": action,
               "routeSignals": report.get("routeSignals", []),
               "candidateDiagnostics": [{key: candidate.get(key) for key in (
-                  "candidateUrl", "factualParserEligible", "evidenceLevel", "discoveryMethod", "discoveryProvenance", "discoveryRoot", "sourceAuthority", "identityMatchedName", "requestedUrl", "finalUrl", "redirectWithinOfficialBoundary")
+                  "candidateUrl", "factualParserEligible", "evidenceLevel", "discoveryMethod", "discoveryProvenance", "discoveryRoot", "sourceAuthority", "identityMatchedName", "requestedUrl", "finalUrl", "redirectWithinOfficialBoundary", "discoverySource", "knownUrlUsedAsSeed")
                   if key in candidate} for candidate in candidates],
               "sourceChecks": source_checks,
               "selectedOfficialUrl": source_checks[0].get("finalUrl") if source_checks else None,

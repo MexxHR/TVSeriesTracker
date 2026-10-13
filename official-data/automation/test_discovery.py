@@ -34,7 +34,7 @@ class DiscoveryTests(unittest.TestCase):
 
     def test_central_registry_has_qualified_new_providers_only(self):
         self.assertEqual(set(self.specs), {"PARAMOUNT", "NETFLIX", "APPLE", "AMAZON", "WBD",
-                                           "AMC", "DISNEY_PLUS", "HULU"})
+                                           "AMC", "DISNEY_PLUS", "HULU", "HBO"})
 
     def test_provider_registry_rejects_unofficial_seed(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -54,7 +54,7 @@ class DiscoveryTests(unittest.TestCase):
 
     def test_routes_each_existing_provider(self):
         for label, provider in (("Netflix", "NETFLIX"), ("Apple TV", "APPLE"), ("Paramount+", "PARAMOUNT"),
-                                ("Prime Video", "AMAZON"), ("HBO", "WBD")):
+                                ("Prime Video", "AMAZON"), ("HBO", "HBO")):
             with self.subTest(label=label):
                 meta = {**self.meta, "homepage": None, "networks": [{"name": label}]}
                 self.assertEqual(d.route_provider(meta, self.specs)[0], provider)
@@ -127,7 +127,7 @@ class DiscoveryTests(unittest.TestCase):
         self.assertEqual(report["attemptedOfficialUrls"], [self.index])
 
     def test_wbd_blocked_urls_are_attempts_not_validated_candidates(self):
-        meta = {"tmdbId": 100088, "title": "The Last of Us", "networks": [{"name": "HBO"}]}
+        meta = {"tmdbId": 100088, "title": "The Last of Us", "networks": [{"name": "Warner Bros. Discovery"}]}
         report = self.discover({}, meta)
         self.assertEqual(report["provider"], "WBD")
         self.assertEqual(report["candidateUrls"], [])
@@ -325,7 +325,7 @@ class DiscoveryTests(unittest.TestCase):
         self.assertNotIn(article, report["candidateUrls"])
 
     def test_wbd_403_has_status_and_url(self):
-        meta = {"tmdbId": 100088, "title": "The Last of Us", "networks": [{"name": "HBO"}]}
+        meta = {"tmdbId": 100088, "title": "The Last of Us", "networks": [{"name": "Warner Bros. Discovery"}]}
         url = "https://press.wbd.com/us/property/the-last-of-us/media-releases"
         report = self.discover({url: u.ProviderUnavailable("HTTP 403")}, meta)
         self.assertEqual(report["result"], "provider_unavailable")
