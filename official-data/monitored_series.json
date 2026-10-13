@@ -246,6 +246,63 @@
       "lastChecked": "2026-10-11"
     },
     {
+      "tmdbId": 254953,
+      "title": "Rooster",
+      "provider": "HBO",
+      "discoveryState": "VERIFIED_FACTS",
+      "candidateUrls": [
+        "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
+        "https://press-spain.max.com/post/la-comedia-original-de-hbo-rooster-protagonizada-por-steve-carel",
+        "https://press-spain.max.com/post/la-serie-comica-original-de-hbo-rooster-protagonizada-por-steve-"
+      ],
+      "verifiedFacts": {
+        "status": "RENEWED",
+        "nextSeasonNumber": 2,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
+        "announcementDate": "2026-04-09"
+      },
+      "sourceEvidence": [
+        {
+          "status": "RENEWED",
+          "nextSeasonNumber": 2,
+          "releaseDate": null,
+          "releaseYear": null,
+          "sourceName": "Max Press Spain",
+          "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
+          "announcementDate": "2026-04-09",
+          "rule": "explicit-renewal",
+          "factType": "LIFECYCLE",
+          "evidenceText": "HBO ha renovado su nueva serie de comedia ROOSTER para una segunda temporada",
+          "publicationDateSource": "structured_metadata"
+        }
+      ],
+      "parserResult": "facts",
+      "validationResult": "passed",
+      "eligibleSourceUrls": [
+        "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
+        "https://press-spain.max.com/post/la-comedia-original-de-hbo-rooster-protagonizada-por-steve-carel",
+        "https://press-spain.max.com/post/la-serie-comica-original-de-hbo-rooster-protagonizada-por-steve-"
+      ],
+      "lastChecked": "2026-10-13",
+      "providerIdentity": {
+        "tmdbId": 254953,
+        "title": "Rooster",
+        "originalName": "Rooster",
+        "hboSpanishTitle": "Rooster",
+        "networks": [
+          {
+            "id": 49,
+            "logo_path": "/tuomPhY2UtuPTqqFnKMVHvSb724.png",
+            "name": "HBO",
+            "origin_country": "US"
+          }
+        ]
+      }
+    },
+    {
       "tmdbId": 258036,
       "title": "The Audacity",
       "provider": "AMC",
