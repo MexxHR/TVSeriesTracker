@@ -125,6 +125,65 @@
       "lastChecked": "2026-10-09"
     },
     {
+      "tmdbId": 200875,
+      "title": "IT: Welcome to Derry",
+      "provider": "HBO",
+      "discoveryState": "VERIFIED_FACTS",
+      "candidateUrls": [
+        "https://press-spain.max.com/post/hbo-max-llega-al-comic-con-de-san-diego-con-experiencias-para-lo",
+        "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+        "https://press-spain.max.com/post/la-serie-original-de-hbo-it-bienvenidos-a-derry-toma-el-festival",
+        "https://press-spain.max.com/post/los-globos-rojos-de-la-serie-original-de-hbo-it-bienvenidos-a-de"
+      ],
+      "verifiedFacts": {
+        "status": "RENEWED",
+        "nextSeasonNumber": 2,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+        "announcementDate": "2026-08-17"
+      },
+      "sourceEvidence": [
+        {
+          "status": "RENEWED",
+          "nextSeasonNumber": 2,
+          "releaseDate": null,
+          "releaseYear": null,
+          "sourceName": "Max Press Spain",
+          "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+          "announcementDate": "2026-08-17",
+          "rule": "explicit-renewal",
+          "factType": "LIFECYCLE",
+          "evidenceText": "HBO renueva IT: BIENVENIDOS A DERRY para una segunda temporada",
+          "publicationDateSource": "structured_metadata"
+        }
+      ],
+      "parserResult": "facts",
+      "validationResult": "passed",
+      "eligibleSourceUrls": [
+        "https://press-spain.max.com/post/hbo-max-llega-al-comic-con-de-san-diego-con-experiencias-para-lo",
+        "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+        "https://press-spain.max.com/post/la-serie-original-de-hbo-it-bienvenidos-a-derry-toma-el-festival",
+        "https://press-spain.max.com/post/los-globos-rojos-de-la-serie-original-de-hbo-it-bienvenidos-a-de"
+      ],
+      "lastChecked": "2026-10-14",
+      "providerIdentity": {
+        "tmdbId": 200875,
+        "title": "IT: Welcome to Derry",
+        "originalName": "IT: Welcome to Derry",
+        "hboSpanishTitle": "It: Bienvenidos a Derry",
+        "networks": [
+          {
+            "id": 49,
+            "logo_path": "/tuomPhY2UtuPTqqFnKMVHvSb724.png",
+            "name": "HBO",
+            "origin_country": "US"
+          }
+        ]
+      }
+    },
+    {
       "tmdbId": 226346,
       "title": "Deli Boys",
       "provider": "HULU",
