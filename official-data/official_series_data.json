@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-14T14:04:43Z",
+  "generatedAt": "2026-10-14T16:05:11Z",
   "series": [
     {
       "tmdbId": 90296,
@@ -121,6 +121,18 @@
       "sourceUrl": "https://www.paramountpressexpress.com/paramount-plus/shows/landman/releases/?view=112175-landman-booms-into-a-third-season-renewal-and-breaks-viewing-records-on-paramount",
       "announcementDate": "2025-12-05",
       "lastChecked": "2026-09-26"
+    },
+    {
+      "tmdbId": 200875,
+      "title": "IT: Welcome to Derry",
+      "nextSeasonNumber": 2,
+      "sourceName": "Max Press Spain",
+      "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+      "announcementDate": "2026-08-17",
+      "status": "RENEWED",
+      "releaseDate": null,
+      "releaseYear": null,
+      "lastChecked": "2026-10-14"
     },
     {
       "tmdbId": 225891,
