@@ -1,4 +1,12 @@
-# TV Series Tracker V2.7.11
+# TV Series Tracker V2.7.12
+
+## V2.7.12 MAX Production Activation
+
+MAX joins the shared monitored and independent seven-field promotion pipeline after actual V2.7.11 runner qualification (3/3/3): Tokyo Vice, And Just Like That... and Hacks. Exact TMDB networks Max/HBO Max route to MAX; HBO remains HBO and mixed HBO+Max fails safely. Evidence remains bounded generic discovery on press-spain.max.com with frozen qualified Spanish parsing, no known URL seeds and no regional ES date promoted as global. HBO production/Rooster behavior is preserved; FX stays inactive.
+
+Upload `TVSeriesTracker-V2.7.12.zip` over existing main while preserving the five live files. In GitHub Actions manually run **Android debug APK** (`.github/workflows/android-debug.yml`) on main, then download **TV-Series-Tracker-V2.7.12-debug** / **TV-Series-Tracker-V2.7.12-debug.apk**. The workflow is manual-only, uses JDK 17, runs Android unit tests and assembles debug, rejects missing/stale output metadata and scans packaged credentials before upload. Android needs no TMDB token: its existing backend proxy keeps credentials server-side. Preserve the existing debug signing certificate for an in-place upgrade; the optional existing keystore secret remains supported.
+
+Local build remains environment-blocked and no fresh local APK is offered. After CI succeeds, install over the existing app and verify watchlist, HR/EN and theme. A future manual Android Tokyo Vice request (90296) can verify the MAX live path; this release does not submit it, dispatch workflows or promote live data. See `V2.7.12_REPORT.md`.
 
 ## V2.7.11 MAX Qualification Completion
 

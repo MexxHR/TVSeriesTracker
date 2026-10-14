@@ -55,13 +55,17 @@ def metadata_names(metadata: dict) -> list[str]:
 def route_provider(metadata: dict, specs: dict) -> tuple[str | None, list[str], str | None]:
     labels = {" ".join(n.casefold().split()) for item in metadata.get("networks") or []
               if isinstance(n := item.get("name") if isinstance(item, dict) else item, str)}
-    if "HBO" in specs and labels & {"hbo", "max", "hbo max"}:
-        if labels == {"hbo"} and specs["HBO"].get("productionActivated") is True:
+    if labels & {"hbo", "max", "hbo max"}:
+        if labels == {"hbo"} and "HBO" in specs and specs["HBO"].get("productionActivated") is True:
             return "HBO", ["networks:HBO"], None
-        return None, [], "ambiguous_provider" if "hbo" in labels else "unknown_provider"
+        max_labels = {"max", "hbo max"}
+        if ("HBO" in specs and "MAX" in specs and specs["MAX"].get("productionActivated") is True
+                and labels and labels.issubset(max_labels)):
+            return "MAX", [f"networks:{label}" for label in sorted(labels)], None
+        return None, [], "ambiguous_provider" if labels & {"hbo", "max", "hbo max"} else "unknown_provider"
     signals: dict[str, list[str]] = {}
     for provider, spec in specs.items():
-        strict_network = provider in ("AMC", "DISNEY_PLUS", "HULU", "HBO")
+        strict_network = provider in ("AMC", "DISNEY_PLUS", "HULU", "HBO", "MAX")
         # Preserve '+': Disney is not Disney+, and AMC+ is not AMC.
         normalize_route = (lambda value: " ".join(unicodedata.normalize("NFKC", value).casefold().split())) if strict_network else normalize
         names = {normalize_route(n) for n in spec["routingNames"]}
@@ -340,6 +344,9 @@ def discover(metadata: dict, registry: dict, fetcher=update.fetch, specs: dict |
     if provider == "HBO":
         import hbo_production
         return hbo_production.discover(metadata, spec, report, fetcher)
+    if provider == "MAX":
+        import max_production
+        return max_production.discover(metadata, spec, report, fetcher)
     if provider == "HULU":
         import hulu_discovery
         return hulu_discovery.discover(metadata, spec, report, fetcher)

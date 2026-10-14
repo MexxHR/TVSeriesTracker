@@ -1,0 +1,40 @@
+{
+  "sourceArtifactSha256": "e27622edebe4926ea26a70b9622a6befd871d8376a2b8342373a14666d94a4c6",
+  "scope": "bounded positive regression fixture extracted from read-only V2.7.11 runner confirmation",
+  "cases": [
+    {
+      "tmdbId": 90296,
+      "title": "Tokyo Vice",
+      "networks": ["HBO Max", "Max"],
+      "url": "https://press-spain.max.com/post/hbo-max-renueva-la-serie-tokyo-vice-por-una-segunda-temporada",
+      "heading": "HBO Max renueva la serie TOKYO VICE por una segunda temporada",
+      "evidenceText": "HBO Max renueva la serie TOKYO VICE por una segunda temporada",
+      "announcementDate": "2022-06-07",
+      "status": "RENEWED",
+      "nextSeasonNumber": 2
+    },
+    {
+      "tmdbId": 116450,
+      "title": "And Just Like That...",
+      "networks": ["HBO Max", "Max", "HBO Max"],
+      "url": "https://press-spain.max.com/post/hbo-max-renueva-su-serie-and-just-like-that-por-una-segunda-temp",
+      "heading": "HBO Max renueva su serie AND JUST LIKE THAT..., por una segunda temporada",
+      "evidenceText": "AND JUST LIKE THAT ha sido renovada por una segunda temporada",
+      "announcementDate": "2022-03-22",
+      "status": "RENEWED",
+      "nextSeasonNumber": 2
+    },
+    {
+      "tmdbId": 124101,
+      "title": "Hacks",
+      "networks": ["HBO Max", "Max", "HBO Max"],
+      "url": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+      "heading": "HACKS vuelve con su quinta y última temporada el 10 de abril a HBO Max",
+      "evidenceText": "HACKS vuelve con su quinta y última temporada",
+      "announcementDate": "2026-03-23",
+      "status": "FINAL_SEASON",
+      "nextSeasonNumber": 5,
+      "regionalDate": "2026-04-10"
+    }
+  ]
+}

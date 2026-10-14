@@ -161,5 +161,27 @@
     "language": "es",
     "territory": "ES",
     "wildcardTrust": false
+  },
+  "MAX": {
+    "routingNames": [
+      "Max",
+      "HBO Max"
+    ],
+    "officialDomains": [
+      "press-spain.max.com"
+    ],
+    "candidateDomains": [
+      "press-spain.max.com"
+    ],
+    "seeds": [
+      "https://press-spain.max.com/",
+      "https://press-spain.max.com/sitemap",
+      "https://press-spain.max.com/post"
+    ],
+    "mechanism": "qualified generic Max Press Spain discovery; strict MAX network only",
+    "productionActivated": true,
+    "language": "es",
+    "territory": "ES",
+    "wildcardTrust": false
   }
 }

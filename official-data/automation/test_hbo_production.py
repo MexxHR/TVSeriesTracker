@@ -70,14 +70,14 @@ class HboProductionTests(unittest.TestCase):
         self.assertEqual(before,(self.data.read_bytes(),self.history.read_bytes()))
         return result
 
-    def test_hbo_enabled_max_fx_no_production_adapter(self):
+    def test_hbo_and_max_enabled_fx_inactive(self):
         self.assertTrue(self.specs['HBO']['productionActivated']);self.assertIn('HBO',update.ADAPTERS)
-        for name in ('MAX','FX','Max','HBO Max'):
-            self.assertNotIn(name,self.specs);self.assertNotIn(name,update.ADAPTERS)
+        self.assertTrue(self.specs['MAX']['productionActivated']);self.assertIn('MAX',update.ADAPTERS)
+        self.assertNotIn('FX',self.specs);self.assertNotIn('FX',update.ADAPTERS)
         self.assertEqual(self.specs['HBO']['officialDomains'],[hbo.HOST]);self.assertFalse(self.specs['HBO']['wildcardTrust'])
 
     def test_strict_hbo_route_only_and_ambiguity(self):
-        for labels,expected in [(['HBO'],'HBO'),([' hBo '],'HBO'),(['Max'],None),(['HBO Max'],None),(['HBO','Max'],None),(['HBO','BBC One'],None)]:
+        for labels,expected in [(['HBO'],'HBO'),([' hBo '],'HBO'),(['Max'],'MAX'),(['HBO Max'],'MAX'),(['HBO','Max'],None),(['HBO','BBC One'],None)]:
             with self.subTest(labels=labels):
                 route,_,reason=discovery.route_provider(self.metadata(networks=[{'name':n} for n in labels]),self.specs)
                 self.assertEqual(route,expected)
@@ -121,8 +121,13 @@ class HboProductionTests(unittest.TestCase):
         c=CORPUS['positives'][1];result,calls=self.process(c,pages={c['sourceUrl']:self.pages(c)[c['sourceUrl']]},dry=True)
         self.assertNotIn(c['sourceUrl'],calls);self.assertNotEqual(result['pipelineState'],'VERIFIED_FACTS')
 
-    def test_max_and_mixed_network_requests_never_reach_hbo_fetch(self):
-        for labels in (['Max'],['HBO Max'],['HBO','Max'],['HBO','Netflix']):
+    def test_max_route_stays_separate_and_mixed_routes_do_not_fetch(self):
+        for labels in (['Max'],['HBO Max']):
+            result,calls=self.process(meta=self.metadata(networks=[{'name':n} for n in labels]),dry=True)
+            self.assertEqual(result['provider'],'MAX')
+            self.assertNotEqual(result['pipelineState'],'VERIFIED_FACTS')
+            self.assertTrue(all('press-spain.max.com' in url for url in calls))
+        for labels in (['HBO','Max'],['HBO','Netflix']):
             result,calls=self.process(meta=self.metadata(networks=[{'name':n} for n in labels]),dry=True)
             self.assertNotEqual(result['pipelineState'],'VERIFIED_FACTS');self.assertEqual(calls,[])
 

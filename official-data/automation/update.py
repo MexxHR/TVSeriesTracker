@@ -271,8 +271,16 @@ class HboAdapter(Adapter):
         return hbo_production.parse(raw, url)
 
 
-ADAPTERS = {a.name: a for a in (ParamountAdapter(), NetflixAdapter(), AppleAdapter(), WbdAdapter(), AmazonAdapter(), AmcAdapter(), DisneyPlusAdapter(), HuluAdapter(), HboAdapter())}
-PROVIDER_DOMAINS = {"PARAMOUNT": "paramountpressexpress.com", "NETFLIX": "netflix.com", "APPLE": "apple.com", "WBD": "press.wbd.com", "AMAZON": "aboutamazon.com", "AMC": "amcglobalmedia.com", "DISNEY_PLUS": "press.disneyplus.com", "HULU": "press.hulu.com", "HBO": "press-spain.max.com"}
+class MaxAdapter(Adapter):
+    name, source_name = "MAX", "Max Press Spain"
+
+    def parse(self, raw, url):
+        import max_production
+        return max_production.parse(raw, url)
+
+
+ADAPTERS = {a.name: a for a in (ParamountAdapter(), NetflixAdapter(), AppleAdapter(), WbdAdapter(), AmazonAdapter(), AmcAdapter(), DisneyPlusAdapter(), HuluAdapter(), HboAdapter(), MaxAdapter())}
+PROVIDER_DOMAINS = {"PARAMOUNT": "paramountpressexpress.com", "NETFLIX": "netflix.com", "APPLE": "apple.com", "WBD": "press.wbd.com", "AMAZON": "aboutamazon.com", "AMC": "amcglobalmedia.com", "DISNEY_PLUS": "press.disneyplus.com", "HULU": "press.hulu.com", "HBO": "press-spain.max.com", "MAX": "press-spain.max.com"}
 EXTRA_DOMAINS = {225891: ["paramountplus.com"]}
 
 
@@ -450,6 +458,9 @@ def detect(article: dict, entry: dict, today: dt.date, extended_final: bool = Fa
     if entry.get("provider") == "HBO":
         import hbo_production
         return hbo_production.detect(article, entry, today)
+    if entry.get("provider") == "MAX":
+        import max_production
+        return max_production.detect(article, entry, today)
     # A sentence/title must itself identify the series and the season statement.
     heading = article["title"]
     body = article["body"][:25000]

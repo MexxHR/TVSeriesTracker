@@ -50,6 +50,12 @@ def _validate_evidence(row: dict, domains: list[str], *, detector=None, aliases=
             raise update.AutomationError("Invalid HBO evidence domain policy")
         aliases = hbo_production.validate_context(row)
         detector = hbo_production.detect
+    if row.get("provider") == "MAX":
+        import max_production
+        if domains != [max_production.HOST]:
+            raise update.AutomationError("Invalid MAX evidence domain policy")
+        aliases = max_production.validate_context(row)
+        detector = detector or max_production.detect
     if (row.get("parserResult") != "facts" or row.get("validationResult") != "passed" or
             not isinstance(row.get("eligibleSourceUrls"), list) or not row["eligibleSourceUrls"]):
         raise update.AutomationError("Persisted parser eligibility or validation proof is missing")
@@ -77,8 +83,8 @@ def _validate_evidence(row: dict, domains: list[str], *, detector=None, aliases=
         article = {"title": "", "body": text, "url": url,
                    "sourceName": item.get("sourceName"),
                    "publicationDate": item.get("announcementDate")}
-        # HBO selects the qualified Spanish parser above; qualification may
-        # inject its isolated detector. Other providers retain strict English.
+        # HBO/MAX select their provider-specific Spanish parser after strict
+        # provider context validation. Other providers retain strict English.
         parsed = (detector or update.detect)(article, entry, dt.date.fromisoformat(row["lastChecked"]),
                                extended_final=True, strict_binding=True)
         match = next((fact for fact in parsed if fact.get("factType") == item.get("factType") and

@@ -34,7 +34,7 @@ class DiscoveryTests(unittest.TestCase):
 
     def test_central_registry_has_qualified_new_providers_only(self):
         self.assertEqual(set(self.specs), {"PARAMOUNT", "NETFLIX", "APPLE", "AMAZON", "WBD",
-                                           "AMC", "DISNEY_PLUS", "HULU", "HBO"})
+                                           "AMC", "DISNEY_PLUS", "HULU", "HBO", "MAX"})
 
     def test_provider_registry_rejects_unofficial_seed(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -54,7 +54,8 @@ class DiscoveryTests(unittest.TestCase):
 
     def test_routes_each_existing_provider(self):
         for label, provider in (("Netflix", "NETFLIX"), ("Apple TV", "APPLE"), ("Paramount+", "PARAMOUNT"),
-                                ("Prime Video", "AMAZON"), ("HBO", "HBO")):
+                                ("Prime Video", "AMAZON"), ("HBO", "HBO"), ("Max", "MAX"),
+                                ("HBO Max", "MAX")):
             with self.subTest(label=label):
                 meta = {**self.meta, "homepage": None, "networks": [{"name": label}]}
                 self.assertEqual(d.route_provider(meta, self.specs)[0], provider)

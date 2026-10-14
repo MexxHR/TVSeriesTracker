@@ -241,6 +241,23 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
     report = (discoverer or discovery.discover)(meta, trusted)
     provider = report.get("provider")
     candidates = report.get("candidates") or []
+    def preserved_verified_max():
+        if provider != "MAX":
+            return None
+        current = next((item for item in registry["series"] if item["tmdbId"] == tmdb_id), None)
+        if current and current.get("discoveryState") == "VERIFIED_FACTS":
+            return {"tmdbId": tmdb_id, "title": current["title"], "provider": "MAX",
+                    "discoveryResult": "provider_unavailable", "pipelineState": "PROVIDER_UNAVAILABLE",
+                    "parserResult": current.get("parserResult", "facts"),
+                    "validationResult": current.get("validationResult", "passed"),
+                    "verifiedFacts": current["verifiedFacts"], "sourceEvidence": current["sourceEvidence"],
+                    "candidateUrls": current["candidateUrls"], "dryRun": dry_run,
+                    "registryChange": "none", "eligibleCandidateCount": 0, "parsedSourceCount": 0}
+        return None
+    if report.get("result") == "provider_unavailable":
+        preserved = preserved_verified_max()
+        if preserved is not None:
+            return preserved
     eligible = [c for c in candidates if report.get("result") == "candidate_found" and c.get("factualParserEligible") is True]
     # This is the only entrance to the factual parser. SUPPORTED, identity and
     # official-domain signals cannot substitute for this explicit gate.
@@ -270,6 +287,12 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
                     raise update.AutomationError("HBO requires unambiguous TMDB network routing")
                 entry["aliases"] = hbo_production.aliases(meta)
                 hbo_context = hbo_production.identity_context(meta)
+            if provider == "MAX":
+                import max_production
+                if discovery.route_provider(meta, discovery.provider_specs())[0] != "MAX":
+                    raise update.AutomationError("MAX requires unambiguous TMDB network routing")
+                entry["aliases"] = max_production.aliases(meta)
+                max_context = max_production.identity_context(meta)
             if provider == "HULU" and discovery.route_provider(meta, discovery.provider_specs())[0] != "HULU":
                 raise update.AutomationError("Hulu requires unambiguous TMDB network routing")
             for candidate in eligible:
@@ -280,7 +303,8 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
                 source_checks.append(check)
                 if not candidate_allowed:
                     raise update.AutomationError("Eligible candidate outside allowlist")
-                transport = hbo_production.fetch if provider == "HBO" and fetcher is update.fetch else fetcher
+                transport = (hbo_production.fetch if provider == "HBO" and fetcher is update.fetch else
+                             max_production.fetch if provider == "MAX" and fetcher is update.fetch else fetcher)
                 raw, final = transport(url, domains)
                 final_allowed = update.allowed(final, domains)
                 check.update(finalUrl=final, redirectDomainAllowed=final_allowed)
@@ -288,6 +312,8 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
                     raise update.AutomationError("Eligible candidate redirect outside allowlist")
                 if provider == "HBO":
                     hbo_production.validate_article(raw, candidate.get("requestedUrl", url), final, entry)
+                if provider == "MAX":
+                    max_production.validate_article(raw, candidate.get("requestedUrl", url), final, entry)
                 eligible_source_urls.update((url, final))
                 if provider in ("NETFLIX", "APPLE", "AMC", "DISNEY_PLUS", "HULU"):
                     # The page may have changed since discovery. Recheck the
@@ -308,11 +334,14 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
                     if not identity_matches:
                         raise update.AutomationError("Discovered page identity changed")
                 article = update.ADAPTERS[provider].parse(raw, final)
-                if provider != "HBO":
+                if provider not in ("HBO", "MAX"):
                     article["publicationDate"] = publication_date_from_html(raw)
                 parsed += 1
-                facts.extend(update.detect(article if provider == "HBO" else scoped_article(article, entry["aliases"]), entry, today,
-                                         extended_final=True, strict_binding=True))
+                if provider == "MAX":
+                    facts.extend(max_production.detect(article, entry, today))
+                else:
+                    facts.extend(update.detect(article if provider == "HBO" else scoped_article(article, entry["aliases"]), entry, today,
+                                               extended_final=True, strict_binding=True))
             update.validate_facts(facts, entry)
             facts = update.canonical_fact_order(facts)
             if facts:
@@ -335,19 +364,26 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
                                     "publicationDateSource": "structured_metadata" if fact.get("announcementDate") else "none"}
                                    for fact in facts]
                 source_evidence.sort(key=lambda f: (f["nextSeasonNumber"], f["status"], f["sourceUrl"], f["rule"]))
-                if provider == "HBO":
+                if provider in ("HBO", "MAX"):
                     import promotion
+                    provider_context = hbo_context if provider == "HBO" else max_context
                     replay_row = {"tmdbId":tmdb_id,"title":meta["title"],"provider":provider,
-                        "providerIdentity":hbo_context,"lastChecked":today.isoformat(),
+                        "providerIdentity":provider_context,"lastChecked":today.isoformat(),
                         "parserResult":"facts","validationResult":"passed",
                         "eligibleSourceUrls":sorted(eligible_source_urls),"sourceEvidence":source_evidence,
                         "verifiedFacts":{key:merged.get(key) for key in FACT_FIELDS}}
-                    rebuilt = promotion._validate_evidence(replay_row, domains)
+                    replay_detector = max_production.detect if provider == "MAX" else None
+                    replay_aliases = entry["aliases"] if provider == "MAX" else None
+                    rebuilt = promotion._validate_evidence(replay_row, domains,
+                                                           detector=replay_detector, aliases=replay_aliases)
                     promotion._facts_summary(rebuilt, replay_row, today)
                 state = "VERIFIED_FACTS"
             else:
                 state = "NO_VERIFIED_FACTS"
         except update.ProviderUnavailable:
+            preserved = preserved_verified_max()
+            if preserved is not None:
+                return preserved
             state = "PROVIDER_UNAVAILABLE"
             facts = []
             parsed = 0
@@ -381,6 +417,9 @@ def process(tmdb_id: int, dry_run: bool = True, *, metadata: dict | None = None,
     if provider == "HBO":
         import hbo_production
         row["providerIdentity"] = hbo_production.identity_context(meta)
+    if provider == "MAX":
+        import max_production
+        row["providerIdentity"] = max_production.identity_context(meta)
     current = next((item for item in registry["series"] if item["tmdbId"] == tmdb_id), None)
     comparable = lambda item: {key: value for key, value in item.items() if key != "lastChecked"}
     changed = current is None or comparable(current) != comparable(row)
