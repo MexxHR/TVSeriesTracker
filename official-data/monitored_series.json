@@ -12,6 +12,64 @@
       "lastChecked": "2026-10-09"
     },
     {
+      "tmdbId": 90296,
+      "title": "Tokyo Vice",
+      "provider": "MAX",
+      "discoveryState": "VERIFIED_FACTS",
+      "candidateUrls": [
+        "https://press-spain.max.com/post/hbo-max-renueva-la-serie-tokyo-vice-por-una-segunda-temporada"
+      ],
+      "verifiedFacts": {
+        "status": "RENEWED",
+        "nextSeasonNumber": 2,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Max Press Spain",
+        "sourceUrl": "https://press-spain.max.com/post/hbo-max-renueva-la-serie-tokyo-vice-por-una-segunda-temporada",
+        "announcementDate": "2022-06-07"
+      },
+      "sourceEvidence": [
+        {
+          "status": "RENEWED",
+          "nextSeasonNumber": 2,
+          "releaseDate": null,
+          "releaseYear": null,
+          "sourceName": "Max Press Spain",
+          "sourceUrl": "https://press-spain.max.com/post/hbo-max-renueva-la-serie-tokyo-vice-por-una-segunda-temporada",
+          "announcementDate": "2022-06-07",
+          "rule": "explicit-renewal",
+          "factType": "LIFECYCLE",
+          "evidenceText": "HBO Max renueva la serie TOKYO VICE por una segunda temporada",
+          "publicationDateSource": "structured_metadata"
+        }
+      ],
+      "parserResult": "facts",
+      "validationResult": "passed",
+      "eligibleSourceUrls": [
+        "https://press-spain.max.com/post/hbo-max-renueva-la-serie-tokyo-vice-por-una-segunda-temporada"
+      ],
+      "lastChecked": "2026-10-14",
+      "providerIdentity": {
+        "tmdbId": 90296,
+        "title": "Tokyo Vice",
+        "originalName": "Tokyo Vice",
+        "networks": [
+          {
+            "id": 3186,
+            "logo_path": "/nmU0UMDJB3dRRQSTUqawzF2Od1a.png",
+            "name": "HBO Max",
+            "origin_country": ""
+          },
+          {
+            "id": 6783,
+            "logo_path": "/rAb4M1LjGpWASxpk6Va791A7Nkw.png",
+            "name": "Max",
+            "origin_country": ""
+          }
+        ]
+      }
+    },
+    {
       "tmdbId": 111110,
       "title": "ONE PIECE",
       "provider": "NETFLIX",
