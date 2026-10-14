@@ -1,16 +1,25 @@
 package com.example.tvseriestracker.data
 
 import android.content.Context
-import android.util.Log
 import com.example.tvseriestracker.BuildConfig
 import java.io.IOException
 import java.time.Instant
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import okhttp3.Call
+import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
 
 data class OfficialCache(val generatedAt: Instant?, val lastSyncedAt: Instant?, val series: List<OfficialSeriesData>)
 
@@ -27,39 +36,87 @@ class OfficialDataRepository(
     private val store: OfficialDataStore,
     private val remote: OfficialRemoteSource,
     private val bundled: suspend () -> String,
-    private val now: () -> Instant = Instant::now
+    private val now: () -> Instant = Instant::now,
+    private val refreshMutex: Mutex = Mutex(),
+    private val debugLog: (String) -> Unit = { message ->
+        try { android.util.Log.d("OfficialData", message) } catch (_: RuntimeException) { }
+    },
+    private val parsingDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) {
+    private var lastSuccessfulRefreshNanos = Long.MIN_VALUE
+    private var lastSuccessfulRefreshUpdated = false
     val cache: Flow<OfficialCache> = store.cache
 
+    suspend fun snapshot(): OfficialCache = store.snapshot()
+
     suspend fun bootstrap() {
-        val payload = OfficialDataParser.parse(bundled())
-        val cached = store.snapshot().generatedAt
-        // A new APK may carry newer verified data than the previous bundled cache.
-        // Never replace a still newer remote cache with an older APK asset.
-        if (cached == null || payload.generatedAt > cached) store.replace(payload, Instant.EPOCH)
+        val json = bundled()
+        val payload = withContext(parsingDispatcher) { OfficialDataParser.parse(json) }
+        refreshMutex.withLock {
+            val cached = store.snapshot().generatedAt
+            // A new APK may carry newer verified data than the previous bundled cache.
+            // Never replace a still newer remote cache with an older APK asset.
+            if (cached == null || payload.generatedAt > cached) store.replace(payload, Instant.EPOCH)
+        }
     }
 
-    suspend fun refresh(): Boolean {
-        val json = remote.fetch()
-        val payload = try { OfficialDataParser.parse(json) } catch (error: Exception) {
-            if (BuildConfig.DEBUG) Log.d("OfficialData", "Rejected remote payload: ${error.message}")
+    suspend fun refresh(reason: String = "unspecified"): Boolean {
+        val beganAt = System.nanoTime()
+        if (!refreshMutex.tryLock()) {
+            return refreshMutex.withLock {
+                // Simultaneous callers share a completed logical fetch instead of
+                // issuing a second request immediately after the first releases the lock.
+                if (lastSuccessfulRefreshNanos >= beganAt) {
+                    if (BuildConfig.DEBUG) debugLog("OfficialData refresh reason=$reason decision=COALESCED")
+                    lastSuccessfulRefreshUpdated
+                } else refreshLocked(reason)
+            }
+        }
+        return try { refreshLocked(reason) } finally { refreshMutex.unlock() }
+    }
+
+    private suspend fun refreshLocked(reason: String): Boolean {
+        val startedAt = System.nanoTime()
+        val json = try { remote.fetch() } catch (error: CancellationException) {
+            throw error
+        } catch (error: Exception) {
+            if (BuildConfig.DEBUG) debugLog("OfficialData refresh failed reason=$reason error=${error.javaClass.simpleName}")
+            throw error
+        }
+        val payload = try {
+            withContext(parsingDispatcher) { OfficialDataParser.parse(json) }
+        } catch (error: CancellationException) {
+            throw error
+        } catch (error: Exception) {
+            if (BuildConfig.DEBUG) debugLog("OfficialData payload rejected reason=$reason error=${error.javaClass.simpleName}")
             throw error
         }
         val current = store.snapshot()
-        return if (current.generatedAt == null || payload.generatedAt > current.generatedAt) {
+        val decision = when {
+            current.generatedAt == null || payload.generatedAt > current.generatedAt -> "NEWER"
+            payload.generatedAt == current.generatedAt -> "SAME"
+            else -> "OLDER"
+        }
+        val updated = if (current.generatedAt == null || payload.generatedAt > current.generatedAt) {
             store.replace(payload, now())
             true
         } else {
             store.touch(now())
             false
         }
+        lastSuccessfulRefreshNanos = System.nanoTime()
+        lastSuccessfulRefreshUpdated = updated
+        if (BuildConfig.DEBUG) debugLog("OfficialData refresh reason=$reason cached=${current.generatedAt} remote=${payload.generatedAt} decision=$decision elapsedMs=${(System.nanoTime() - startedAt) / 1_000_000}")
+        return updated
     }
 
     suspend fun refreshIfStale() {
         val last = store.snapshot().lastSyncedAt
         if (last == null || last.plusSeconds(24 * 60 * 60).isBefore(now())) {
-            try { refresh() } catch (error: Exception) {
-                if (BuildConfig.DEBUG) Log.d("OfficialData", "Automatic refresh failed: ${error.message}")
+            try { refresh("startup") } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                if (BuildConfig.DEBUG) debugLog("OfficialData refresh failed reason=startup error=${error.javaClass.simpleName}")
             }
         }
     }
@@ -86,15 +143,47 @@ class RoomOfficialDataStore(private val dao: TrackingDao) : OfficialDataStore {
 }
 
 class HttpOfficialRemoteSource(private val url: String = BuildConfig.OFFICIAL_DATA_URL) : OfficialRemoteSource {
-    private val client = OkHttpClient()
-    override suspend fun fetch(): String = withContext(Dispatchers.IO) {
+    private val client = OkHttpClient.Builder()
+        .callTimeout(java.time.Duration.ofSeconds(20))
+        .build()
+    override suspend fun fetch(): String {
         if (url.isBlank()) throw IOException("OFFICIAL_DATA_URL is not configured")
         require(OfficialDataParser.isSafeHttpsUrl(url)) { "OFFICIAL_DATA_URL must be HTTPS" }
-        client.newCall(Request.Builder().url(url).get().build()).execute().use { response ->
-            if (!response.isSuccessful) throw IOException("Official Data HTTP ${response.code}")
-            response.body?.string() ?: throw IOException("Empty Official Data response")
+        return suspendCancellableCoroutine { continuation ->
+            val call = client.newCall(Request.Builder().url(url).get().build())
+            continuation.invokeOnCancellation { call.cancel() }
+            call.enqueue(object : Callback {
+                override fun onFailure(call: Call, error: IOException) {
+                    if (continuation.isActive) continuation.resumeWithException(error)
+                }
+                override fun onResponse(call: Call, response: Response) {
+                    try {
+                        val text = response.use {
+                            if (!it.isSuccessful) throw IOException("Official Data HTTP ${it.code}")
+                            val body = it.body ?: throw IOException("Empty Official Data response")
+                            body.source().use { source -> readBoundedOfficialData(source, body.contentLength()) }
+                        }
+                        if (continuation.isActive) continuation.resume(text)
+                    } catch (error: Exception) {
+                        if (continuation.isActive) continuation.resumeWithException(error)
+                    }
+                }
+            })
         }
     }
+
+    companion object { const val MAX_OFFICIAL_DATA_BYTES = 2L * 1024 * 1024 }
+}
+
+internal fun readBoundedOfficialData(source: okio.BufferedSource, contentLength: Long): String {
+    if (contentLength > HttpOfficialRemoteSource.MAX_OFFICIAL_DATA_BYTES)
+        throw IOException("Official Data response exceeds size limit")
+    val buffer = okio.Buffer()
+    while (source.read(buffer, 8192) != -1L) {
+        if (buffer.size > HttpOfficialRemoteSource.MAX_OFFICIAL_DATA_BYTES)
+            throw IOException("Official Data response exceeds size limit")
+    }
+    return buffer.readUtf8()
 }
 
 fun bundledOfficialData(context: Context): suspend () -> String = {

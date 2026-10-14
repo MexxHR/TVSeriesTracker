@@ -1,4 +1,14 @@
-# TV Series Tracker V2.7.12
+# TV Series Tracker V2.7.13
+
+## V2.7.13 Official Data Refresh Latency
+
+Official Data now performs a foreground-only bounded follow-up after the backend actually accepts a monitoring submission. At most three shared refresh attempts wait 30, 60 and 120 seconds; requested IDs stop waiting when their verified fact is present. Concurrent accepted IDs share the current batch without resetting its budget. Leaving the active lifecycle cancels and drops that batch. No GitHub workflow polling, cache-busting query, persistent refresh worker or new UI is added.
+
+Startup retains its single 24-hour-staleness check and Settings retains one logical manual refresh. The repository serializes fetch/compare/write and coalesces overlapping successful refreshes; a stale/equal generatedAt never replaces newer cache. HTTP body reads and JSON validation stay off the main thread, with cancellation, a 20-second call timeout and a 2 MiB response cap. Failures preserve valid cached facts. Debug diagnostics expose refresh reason/attempt/timestamps/decision/elapsed time without payloads or credentials.
+
+The diagnosed missing post-submission refresh is strongly supported by source and deterministic tests; local DNS failures leave CDN timing inconclusive. Provider discovery/parser/promotion semantics remain frozen. HBO and MAX stay production-enabled, FX stays inactive. The user-confirmed Tokyo Vice MAX live E2E is the regression baseline.
+
+Upload `TVSeriesTracker-V2.7.13.zip`, then manually run **Android debug APK** on main and download **TV-Series-Tracker-V2.7.13-debug** / **TV-Series-Tracker-V2.7.13-debug.apk**. Preserve the existing signing key and app data. After installation verify watchlist, language and theme, then choose a new supported-provider title for a separately performed live latency measurement. No live request, promotion or workflow dispatch was executed here. See `V2.7.13_REPORT.md` for the source path, diagnostic evidence, test scope and limitations.
 
 ## V2.7.12 MAX Production Activation
 

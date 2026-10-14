@@ -17,6 +17,8 @@ import java.net.URL
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.withContext
 
 enum class MonitoringRequestResult { QUEUED, ALREADY_QUEUED, TEMPORARY_FAILURE, PERMANENT_FAILURE, UNAVAILABLE }
@@ -86,6 +88,11 @@ interface MonitoringRequestQueue {
     fun enqueue(tmdbId: Int)
 }
 
+/** Process-local signal emitted only after the backend confirms queue acceptance. */
+object MonitoringRequestAcceptedEvents {
+    val events = MutableSharedFlow<Int>(extraBufferCapacity = 16, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+}
+
 class WorkManagerMonitoringRequestQueue(private val context: Context) : MonitoringRequestQueue {
     override fun enqueue(tmdbId: Int) {
         if (tmdbId <= 0 || BuildConfig.SERIES_REQUEST_API_BASE_URL.isBlank()) return
@@ -99,7 +106,10 @@ class MonitoringRequestWorker(context: Context, params: WorkerParameters) : Coro
         val tmdbId = inputData.getInt("tmdbId", 0)
         if (tmdbId <= 0) return Result.failure()
         return when (HttpSeriesMonitoringRequestService().requestMonitoring(tmdbId)) {
-            MonitoringRequestResult.QUEUED, MonitoringRequestResult.ALREADY_QUEUED -> Result.success()
+            MonitoringRequestResult.QUEUED, MonitoringRequestResult.ALREADY_QUEUED -> {
+                MonitoringRequestAcceptedEvents.events.tryEmit(tmdbId)
+                Result.success()
+            }
             MonitoringRequestResult.TEMPORARY_FAILURE -> if (shouldRetry(MonitoringRequestResult.TEMPORARY_FAILURE, runAttemptCount)) Result.retry() else Result.failure()
             MonitoringRequestResult.PERMANENT_FAILURE, MonitoringRequestResult.UNAVAILABLE -> Result.failure()
         }

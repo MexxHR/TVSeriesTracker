@@ -27,8 +27,8 @@ class DisneyCoverageWorkflowTest(unittest.TestCase):
         root = Path(__file__).resolve().parents[1]
         gradle = (root / 'app/build.gradle.kts').read_text(encoding='utf-8')
         room = (root / 'app/src/main/java/com/example/tvseriestracker/data/TrackingDatabase.kt').read_text(encoding='utf-8')
-        self.assertIn('versionCode = 41', gradle)
-        self.assertIn('versionName = "2.7.12"', gradle)
+        self.assertIn('versionCode = 42', gradle)
+        self.assertIn('versionName = "2.7.13"', gradle)
         self.assertIn('version = 3', room)
 
 

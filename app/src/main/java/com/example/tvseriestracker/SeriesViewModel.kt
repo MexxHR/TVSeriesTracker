@@ -6,12 +6,14 @@ import androidx.lifecycle.viewModelScope
 import com.example.tvseriestracker.data.AppLanguage
 import com.example.tvseriestracker.data.AppTheme
 import com.example.tvseriestracker.data.OfficialDataRepository
+import com.example.tvseriestracker.data.RequestedOfficialRefresh
 import com.example.tvseriestracker.data.Series
 import com.example.tvseriestracker.data.SeriesRepository
 import com.example.tvseriestracker.data.SettingsRepository
 import com.example.tvseriestracker.data.trackAndQueueMonitoring
 import com.example.tvseriestracker.data.remote.MissingTmdbServiceException
 import com.example.tvseriestracker.data.remote.MonitoringRequestQueue
+import com.example.tvseriestracker.data.remote.MonitoringRequestAcceptedEvents
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -35,10 +37,21 @@ class SeriesViewModel(val series: SeriesRepository, val preferences: SettingsRep
     private val _officialRefresh = MutableStateFlow(OfficialRefreshPhase.IDLE)
     val officialRefresh = _officialRefresh.asStateFlow()
     val officialCache = official.cache
+    private val requestedRefresh = RequestedOfficialRefresh(viewModelScope, official,
+        onFailure = { exception ->
+            if (BuildConfig.DEBUG) android.util.Log.d("OfficialData", "Requested follow-up refresh failed: ${exception.javaClass.simpleName}")
+        },
+        onDiagnostic = { message ->
+            if (BuildConfig.DEBUG) android.util.Log.d("OfficialData", message)
+        })
+    fun setOfficialRefreshLifecycleActive(active: Boolean) = requestedRefresh.setActive(active)
     init { viewModelScope.launch {
         try { official.bootstrap(); official.refreshIfStale() }
         catch (exception: CancellationException) { throw exception }
         catch (_: Exception) { _officialRefresh.value = OfficialRefreshPhase.ERROR }
+    } }
+    init { viewModelScope.launch {
+        MonitoringRequestAcceptedEvents.events.collect { requestedRefresh.requested(it) }
     } }
     private val _searchState = MutableStateFlow(SearchUiState())
     val searchState = _searchState.asStateFlow()
@@ -110,7 +123,7 @@ class SeriesViewModel(val series: SeriesRepository, val preferences: SettingsRep
     fun setTheme(theme: AppTheme) { viewModelScope.launch { preferences.setTheme(theme) } }
     fun refreshOfficial() { viewModelScope.launch {
         _officialRefresh.value = OfficialRefreshPhase.LOADING
-        try { _officialRefresh.value = if (official.refresh()) OfficialRefreshPhase.SUCCESS else OfficialRefreshPhase.UP_TO_DATE }
+        try { _officialRefresh.value = if (official.refresh("manual")) OfficialRefreshPhase.SUCCESS else OfficialRefreshPhase.UP_TO_DATE }
         catch (exception: CancellationException) { throw exception }
         catch (_: Exception) { _officialRefresh.value = OfficialRefreshPhase.ERROR }
     } }

@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -95,6 +96,10 @@ private val tabs = listOf(
 
 @Composable
 private fun TrackerApp(model: SeriesViewModel, settings: AppSettings) {
+    LifecycleStartEffect(model) {
+        model.setOfficialRefreshLifecycleActive(true)
+        onStopOrDispose { model.setOfficialRefreshLifecycleActive(false) }
+    }
     val nav = rememberNavController()
     val entry by nav.currentBackStackEntryAsState()
     val route = entry?.destination?.route
