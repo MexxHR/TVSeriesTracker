@@ -9,8 +9,11 @@ permissions:
 jobs:
   audit:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     env:
       PYTHONDONTWRITEBYTECODE: '1'
+      TEMP: ${{ runner.temp }}/coverage-tmp
+      TMP: ${{ runner.temp }}/coverage-tmp
     steps:
       - uses: actions/checkout@v4
         with:
@@ -18,34 +21,71 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Snapshot protected live files before tests
+        run: |
+          mkdir -p "$TEMP" "$RUNNER_TEMP/provider-coverage-audit"
+          python - <<'PY'
+          import hashlib, json, os, sys
+          from pathlib import Path
+          sys.path.insert(0, 'official-data/automation')
+          import provider_coverage_audit as audit
+          snapshot = {p: hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in audit.PROTECTED}
+          Path(os.environ['RUNNER_TEMP'], 'coverage-before.json').write_text(json.dumps(snapshot))
+          PY
       - name: Official Data regression tests
         run: python -m unittest discover -s official-data/automation -p 'test_*.py' -q
-      - name: Audit official provider coverage on GitHub runner
+      - name: Validate independent audit corpus
+        run: python official-data/automation/provider_coverage_audit.py --validate-corpus
+      - name: Audit frozen provider coverage on GitHub runner
+        env:
+          TMDB_API_TOKEN: ${{ secrets.TMDB_API_TOKEN }}
+        run: python official-data/automation/provider_coverage_audit.py --output-dir "$RUNNER_TEMP/provider-coverage-audit"
+      - name: Verify protected live files and checkout
+        if: always()
         run: |
-          set -euo pipefail
-          python official-data/automation/provider_audit.py --all > "$RUNNER_TEMP/provider-coverage-audit.json"
-          python -m json.tool "$RUNNER_TEMP/provider-coverage-audit.json" > /dev/null
-      - name: Summarize provider recommendations
-        run: |
-          python - "$RUNNER_TEMP/provider-coverage-audit.json" <<'PY' | tee -a "$GITHUB_STEP_SUMMARY"
-          import json
-          import sys
-          report = json.load(open(sys.argv[1], encoding="utf-8"))
-          print("### Provider Coverage Audit")
-          print("")
-          print("| Provider | Recommendation |")
-          print("| --- | --- |")
-          for provider in report["providers"]:
-              print(f"| {provider['provider']} | {provider['recommendation']} |")
-          print("")
-          print("Full JSON is attached as a workflow artifact. A blocked provider is an audit result.")
+          python - <<'PY'
+          import hashlib, json, os, subprocess, sys
+          from pathlib import Path
+          before = json.loads(Path(os.environ['RUNNER_TEMP'], 'coverage-before.json').read_text())
+          changed = [p for p, digest in before.items() if hashlib.sha256(Path(p).read_bytes()).hexdigest() != digest]
+          dirty = subprocess.run(['git', 'diff', '--quiet', 'HEAD']).returncode != 0
+          untracked = subprocess.check_output(['git', 'ls-files', '--others', '--exclude-standard'], text=True).strip()
+          artifact = Path(os.environ['RUNNER_TEMP'], 'provider-coverage-audit/provider-coverage-audit.json')
+          if artifact.exists():
+              report = json.loads(artifact.read_text())
+              gate = report['qualityGate']
+              report['auditQuality'] = gate
+              gate['workflowProtectedFilesUnchanged'] = not changed
+              gate['workflowCheckoutClean'] = not dirty and not untracked
+              gate['valid'] = gate['valid'] and not changed and not dirty and not untracked
+              if not gate['valid']:
+                  report['status'] = report['finalCoverageStatus'] = 'AUDIT_INVALID'
+                  report['roiRanking'] = []
+                  report['productionMutation'] = bool(changed)
+                  report['protectedFilesUnchanged'] = not changed
+                  report['protectedChangedFiles'] = changed
+                  report['recommendations'] = []
+                  report['rankings'] = {}
+              sys.path.insert(0, 'official-data/automation')
+              import provider_coverage_audit as audit
+              audit.write_report(report, artifact.parent)
+          if changed or dirty or untracked:
+              raise SystemExit('AUDIT_INVALID: protected files or checkout changed')
+          print('Protected live files unchanged; changedFiles = []; git diff --exit-code HEAD equivalent PASS')
+          print('git ls-files --others --exclude-standard: empty')
           PY
-      - name: Verify audit left checkout clean
+      - name: Publish read-only audit summary
+        if: always()
         run: |
-          git diff --exit-code HEAD
-          test -z "$(git ls-files --others --exclude-standard)"
+          if test -f "$RUNNER_TEMP/provider-coverage-audit/provider-coverage-audit.md"; then
+            cat "$RUNNER_TEMP/provider-coverage-audit/provider-coverage-audit.md" >> "$GITHUB_STEP_SUMMARY"
+          fi
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: provider-coverage-audit
-          path: ${{ runner.temp }}/provider-coverage-audit.json
+          path: |
+            ${{ runner.temp }}/provider-coverage-audit/provider-coverage-audit.json
+            ${{ runner.temp }}/provider-coverage-audit/provider-coverage-audit.md
+            ${{ runner.temp }}/provider-coverage-audit/provider-coverage-cases.jsonl
           if-no-files-found: error
