@@ -36,11 +36,15 @@ class PromotionWorkflowBoundaryTests(unittest.TestCase):
         self.assertIn("persist-credentials: false", source)
         self.assertIn("PYTHONDONTWRITEBYTECODE: '1'", source)
         self.assertLess(source.index("Official Data regression tests"),
-                        source.index("Audit official provider coverage"))
-        self.assertIn("provider_audit.py --all", source)
+                        source.index("Audit frozen provider coverage"))
+        self.assertIn("provider_coverage_audit.py --output-dir", source)
         self.assertIn("git diff --exit-code HEAD", source)
         self.assertIn("git ls-files --others --exclude-standard", source)
-        self.assertNotIn("secrets.", source)
+        self.assertEqual(re.findall(r"secrets\.([A-Z_]+)", source), ["TMDB_API_TOKEN"])
+        self.assertLess(source.index("Snapshot protected live files before tests"), source.index("Official Data regression tests"))
+        self.assertIn("if: always()", source)
+        self.assertIn("provider-coverage-cases.jsonl", source)
+        self.assertIn("coverage-before.json", source)
         self.assertNotIn("git push", source)
         self.assertNotIn("contents: write", source)
 

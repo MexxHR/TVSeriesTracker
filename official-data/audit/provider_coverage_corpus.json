@@ -1,0 +1,1901 @@
+{
+  "schemaVersion": 1,
+  "corpusVersion": "2.7.14.1",
+  "curatedAt": "2026-10-14",
+  "curationMethod": "independent_first_party_manual_review",
+  "selectionMethodology": {
+    "method": "Bounded reference sample from prior public first-party references plus provider-domain lifecycle and non-lifecycle searches; inspect full primary pages independently before gold admission; deduplicate canonical URL and semantic kind; retain unreviewed references in MANUAL_REVIEW. No selection based on measured parser success.",
+    "representativeness": "Exploratory purposive sample, not random provider population sample. All manually curated references disclosed.",
+    "knownUrlPolicy": "Reference URLs are never passed as seeds to generic production discovery; direct-URL diagnostic uses a separate fetch/cache.",
+    "limitations": [
+      "CORPUS_INDEPENDENCE_LIMITATION for unreviewed historical references; they are excluded",
+      "CORPUS_TOO_SMALL when fewer than8 confirmed positives",
+      "No forced cancellation examples; unknown publication dates explicitly omitted from gold-known fields",
+      "All provider positive samples below8; no statistically representative provider rating. Negative samples below5; retain safety sample limitations rather than fabricate filler.",
+      "Apple repeated-series longitudinal sample intentionally exercises season and date binding; seven announcements across two series do not represent the whole provider population."
+    ]
+  },
+  "providers": [
+    {
+      "provider": "NETFLIX",
+      "productionEnabled": true,
+      "officialDomains": [
+        "netflix.com"
+      ],
+      "cases": [
+        {
+          "caseId": "netflix-running-point-3-1",
+          "kind": "positive",
+          "tmdbId": 244623,
+          "title": "Running Point",
+          "aliases": [
+            "Running Point"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.netflix.com/tudum/articles/running-point-season-2-news-release-date-photos",
+          "independentEvidenceUrl": "https://www.netflix.com/tudum/articles/running-point-season-2-news-release-date-photos",
+          "independentRationale": "Editorial text explicitly renews the third season while discussing an already available second season; no third-season premiere date stated.",
+          "expectedFacts": {
+            "status": "RENEWED",
+            "nextSeasonNumber": 3,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Netflix Tudum",
+            "sourceUrl": "https://www.netflix.com/tudum/articles/running-point-season-2-news-release-date-photos",
+            "announcementDate": "2026-05-13"
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://www.netflix.com/tudum/articles/running-point-season-2-news-release-date-photos",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "netflix-the-night-agent-4-2",
+          "kind": "positive",
+          "tmdbId": 129552,
+          "title": "The Night Agent",
+          "aliases": [
+            "The Night Agent"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.netflix.com/tudum/articles/the-night-agent-season-4-release-date",
+          "independentEvidenceUrl": "https://www.netflix.com/tudum/articles/the-night-agent-season-4-release-date",
+          "independentRationale": "Primary editorial identifies fourth season as the concluding chapter and explicitly fourth and final; production news is not the sole lifecycle evidence.",
+          "expectedFacts": {
+            "status": "FINAL_SEASON",
+            "nextSeasonNumber": 4,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Netflix Tudum",
+            "sourceUrl": "https://www.netflix.com/tudum/articles/the-night-agent-season-4-release-date",
+            "announcementDate": "2026-05-04"
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://www.netflix.com/tudum/articles/the-night-agent-season-4-release-date",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "netflix-the-gentlemen-3-3",
+          "kind": "positive",
+          "tmdbId": 236235,
+          "title": "The Gentlemen",
+          "aliases": [
+            "The Gentlemen"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.netflix.com/tudum/articles/the-gentlemen-season-3-release-date-cast-news",
+          "independentEvidenceUrl": "https://www.netflix.com/tudum/articles/the-gentlemen-season-3-release-date-cast-news",
+          "independentRationale": "The editorial explicitly confirms a third season, with no premiere date for that season.",
+          "expectedFacts": {
+            "status": "RENEWED",
+            "nextSeasonNumber": 3,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Netflix Tudum",
+            "sourceUrl": "https://www.netflix.com/tudum/articles/the-gentlemen-season-3-release-date-cast-news",
+            "announcementDate": "2026-09-10"
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://www.netflix.com/tudum/articles/the-gentlemen-season-3-release-date-cast-news",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "netflix-one-piece-negative-4",
+          "kind": "negative",
+          "tmdbId": 111110,
+          "title": "ONE PIECE",
+          "aliases": [
+            "ONE PIECE"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.netflix.com/tudum/videos/one-piece-season-2-inaki-godoy-eiichiro-oda-interview",
+          "independentEvidenceUrl": "https://www.netflix.com/tudum/videos/one-piece-season-2-inaki-godoy-eiichiro-oda-interview",
+          "independentRationale": "Interview about creator set visit and language learning; body does not announce renewal, cancellation, final season or a dated premiere. Related-card lifecycle headlines are unrelated navigation.",
+          "expectedFacts": null,
+          "expectedFactKnownFields": [],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://www.netflix.com/tudum/videos/one-piece-season-2-inaki-godoy-eiichiro-oda-interview",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        }
+      ],
+      "selectionMethodology": "Purposive first-party reference and domain-search sample; full-page review independent of parser results. Positive and negative counts below preferred sample sizes; no population-wide inference. Unreviewed references remain excluded.",
+      "negativeCorpusLimitation": "One reviewed negative target/article pair; below preferred five. False-positive evidence is exploratory and is not a claim of exhaustive safety."
+    },
+    {
+      "provider": "PARAMOUNT",
+      "productionEnabled": true,
+      "officialDomains": [
+        "paramountpressexpress.com",
+        "paramountplus.com"
+      ],
+      "cases": [
+        {
+          "caseId": "paramount-lioness-2-1",
+          "kind": "positive",
+          "tmdbId": 113962,
+          "title": "Lioness",
+          "aliases": [
+            "Lioness"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.paramountpressexpress.com/paramount-plus/shows/lioness/releases/?view=109799-paramount-renews-lioness-for-a-second-season",
+          "independentEvidenceUrl": "https://www.paramountpressexpress.com/paramount-plus/shows/lioness/releases/?view=109799-paramount-renews-lioness-for-a-second-season",
+          "independentRationale": "Dated first-party press release explicitly renews Lioness for its second season; other titles in studio boilerplate do not supply its fact.",
+          "expectedFacts": {
+            "status": "RENEWED",
+            "nextSeasonNumber": 2,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Paramount Press Express",
+            "sourceUrl": "https://www.paramountpressexpress.com/paramount-plus/shows/lioness/releases/?view=109799-paramount-renews-lioness-for-a-second-season",
+            "announcementDate": "2024-05-09"
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://www.paramountpressexpress.com/paramount-plus/shows/lioness/releases/?view=109799-paramount-renews-lioness-for-a-second-season",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "paramount-tulsa-king-negative-2",
+          "kind": "negative",
+          "tmdbId": 153312,
+          "title": "Tulsa King",
+          "aliases": [
+            "Tulsa King"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.paramountpressexpress.com/paramount-plus/shows/lioness/releases/?view=109799-paramount-renews-lioness-for-a-second-season",
+          "independentEvidenceUrl": "https://www.paramountpressexpress.com/paramount-plus/shows/lioness/releases/?view=109799-paramount-renews-lioness-for-a-second-season",
+          "independentRationale": "Reviewed release renews Lioness, not Tulsa King. Same-provider wrong-title safety control must not bind Lioness season two to Tulsa King.",
+          "expectedFacts": null,
+          "expectedFactKnownFields": [],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://www.paramountpressexpress.com/paramount-plus/shows/lioness/releases/?view=109799-paramount-renews-lioness-for-a-second-season",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        }
+      ],
+      "selectionMethodology": "Purposive first-party reference and domain-search sample; full-page review independent of parser results. Positive and negative counts below preferred sample sizes; no population-wide inference. Unreviewed references remain excluded.",
+      "negativeCorpusLimitation": "One reviewed negative target/article pair; below preferred five. False-positive evidence is exploratory and is not a claim of exhaustive safety."
+    },
+    {
+      "provider": "APPLE",
+      "productionEnabled": true,
+      "officialDomains": [
+        "apple.com"
+      ],
+      "cases": [
+        {
+          "caseId": "apple-slow-horses-5-1",
+          "kind": "positive",
+          "tmdbId": 95480,
+          "title": "Slow Horses",
+          "aliases": [
+            "Slow Horses"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.apple.com/tv-pr/news/2024/01/apple-tv-announces-fifth-season-for-acclaimed-five-time-bafta-award-nominated-espionage-drama-slow-horses-starring-academy-award-winner-gary-oldman/",
+          "independentEvidenceUrl": "https://www.apple.com/tv-pr/news/2024/01/apple-tv-announces-fifth-season-for-acclaimed-five-time-bafta-award-nominated-espionage-drama-slow-horses-starring-academy-award-winner-gary-oldman/",
+          "independentRationale": "Dated Apple press release explicitly orders season five; past third-season finale date does not belong to season five.",
+          "expectedFacts": {
+            "status": "RENEWED",
+            "nextSeasonNumber": 5,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Apple TV Press",
+            "sourceUrl": "https://www.apple.com/tv-pr/news/2024/01/apple-tv-announces-fifth-season-for-acclaimed-five-time-bafta-award-nominated-espionage-drama-slow-horses-starring-academy-award-winner-gary-oldman/",
+            "announcementDate": "2024-01-02"
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://www.apple.com/tv-pr/news/2024/01/apple-tv-announces-fifth-season-for-acclaimed-five-time-bafta-award-nominated-espionage-drama-slow-horses-starring-academy-award-winner-gary-oldman/",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "apple-silo-4-2",
+          "kind": "positive",
+          "tmdbId": 125988,
+          "title": "Silo",
+          "aliases": [
+            "Silo"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.apple.com/tv-pr/news/2024/12/apple-tv-renews-hit-world-building-drama-silo-for-seasons-three-and-four/",
+          "independentEvidenceUrl": "https://www.apple.com/tv-pr/news/2024/12/apple-tv-renews-hit-world-building-drama-silo-for-seasons-three-and-four/",
+          "independentRationale": "Apple explicitly renews through season four and labels the fourth the final chapter. Current season-two dates must not leak into season four.",
+          "expectedFacts": {
+            "status": "FINAL_SEASON",
+            "nextSeasonNumber": 4,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Apple TV Press",
+            "sourceUrl": "https://www.apple.com/tv-pr/news/2024/12/apple-tv-renews-hit-world-building-drama-silo-for-seasons-three-and-four/",
+            "announcementDate": "2024-12-16"
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://www.apple.com/tv-pr/news/2024/12/apple-tv-renews-hit-world-building-drama-silo-for-seasons-three-and-four/",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "apple-slow-horses-negative-3",
+          "kind": "negative",
+          "tmdbId": 95480,
+          "title": "Slow Horses",
+          "aliases": [
+            "Slow Horses"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.apple.com/tv-pr/originals/slow-horses/videos/",
+          "independentEvidenceUrl": "https://www.apple.com/tv-pr/originals/slow-horses/videos/",
+          "independentRationale": "Official video gallery lists trailers; season numbers in video labels are not a lifecycle announcement, and the gallery contains no publication date for renewal.",
+          "expectedFacts": null,
+          "expectedFactKnownFields": [],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://www.apple.com/tv-pr/originals/slow-horses/videos/",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "apple-slow-horses-6-4",
+          "kind": "positive",
+          "tmdbId": 95480,
+          "title": "Slow Horses",
+          "aliases": [
+            "Slow Horses"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.apple.com/tv-pr/news/2024/10/apple-tv-announces-sixth-season-for-slow-horses-starring-gary-oldman/",
+          "independentEvidenceUrl": "https://www.apple.com/tv-pr/news/2024/10/apple-tv-announces-sixth-season-for-slow-horses-starring-gary-oldman/",
+          "independentRationale": "Independent dated press release orders six-episode sixth season. Past fourth-season finale is not a season-six release date; novel ordinal numbers are not seasons.",
+          "expectedFacts": {
+            "status": "RENEWED",
+            "nextSeasonNumber": 6,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Apple TV Press",
+            "sourceUrl": "https://www.apple.com/tv-pr/news/2024/10/apple-tv-announces-sixth-season-for-slow-horses-starring-gary-oldman/",
+            "announcementDate": "2024-10-15"
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://www.apple.com/tv-pr/news/2024/10/apple-tv-announces-sixth-season-for-slow-horses-starring-gary-oldman/",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "apple-slow-horses-7-5",
+          "kind": "positive",
+          "tmdbId": 95480,
+          "title": "Slow Horses",
+          "aliases": [
+            "Slow Horses"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.apple.com/tv-pr/news/2025/07/apple-tv-announces-seventh-season-for-celebrated-emmy-and-bafta-award-winning-spy-drama-slow-horses-starring-academy-award-winner-sir-gary-oldman/",
+          "independentEvidenceUrl": "https://www.apple.com/tv-pr/news/2025/07/apple-tv-announces-seventh-season-for-celebrated-emmy-and-bafta-award-winning-spy-drama-slow-horses-starring-academy-award-winner-sir-gary-oldman/",
+          "independentRationale": "Dated primary release orders seventh season. September24 2025 belongs to fifth season, not seventh; seventh season has no premiere date.",
+          "expectedFacts": {
+            "status": "RENEWED",
+            "nextSeasonNumber": 7,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Apple TV Press",
+            "sourceUrl": "https://www.apple.com/tv-pr/news/2025/07/apple-tv-announces-seventh-season-for-celebrated-emmy-and-bafta-award-winning-spy-drama-slow-horses-starring-academy-award-winner-sir-gary-oldman/",
+            "announcementDate": "2025-07-08"
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://www.apple.com/tv-pr/news/2025/07/apple-tv-announces-seventh-season-for-celebrated-emmy-and-bafta-award-winning-spy-drama-slow-horses-starring-academy-award-winner-sir-gary-oldman/",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "apple-slow-horses-6-6",
+          "kind": "positive",
+          "tmdbId": 95480,
+          "title": "Slow Horses",
+          "aliases": [
+            "Slow Horses"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.apple.com/tv-pr/news/2026/06/apple-tv-unveils-first-look-at-season-six-of-emmy-and-bafta-award-winning-espionage-drama-slow-horses-starring-academy-award-winner-sir-gary-oldman/",
+          "independentEvidenceUrl": "https://www.apple.com/tv-pr/news/2026/06/apple-tv-unveils-first-look-at-season-six-of-emmy-and-bafta-award-winning-espionage-drama-slow-horses-starring-academy-award-winner-sir-gary-oldman/",
+          "independentRationale": "Dated first-look release explicitly gives global sixth-season premiere September16 2026; October21 is finale, and sixth/seventh novel numbers are not season announcements.",
+          "expectedFacts": {
+            "status": "RELEASE_DATE_CONFIRMED",
+            "nextSeasonNumber": 6,
+            "releaseDate": "2026-09-16",
+            "releaseYear": 2026,
+            "sourceName": "Apple TV Press",
+            "sourceUrl": "https://www.apple.com/tv-pr/news/2026/06/apple-tv-unveils-first-look-at-season-six-of-emmy-and-bafta-award-winning-espionage-drama-slow-horses-starring-academy-award-winner-sir-gary-oldman/",
+            "announcementDate": "2026-06-11"
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "releaseDateScope": "global",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://www.apple.com/tv-pr/news/2026/06/apple-tv-unveils-first-look-at-season-six-of-emmy-and-bafta-award-winning-espionage-drama-slow-horses-starring-academy-award-winner-sir-gary-oldman/",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "apple-silo-4-7",
+          "kind": "positive",
+          "tmdbId": 125988,
+          "title": "Silo",
+          "aliases": [
+            "Silo"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.apple.com/tv-pr/news/2026/09/apple-tvs-global-hit-drama-silo-to-return-for-fourth-and-final-season-on-july-9-2027/",
+          "independentEvidenceUrl": "https://www.apple.com/tv-pr/news/2026/09/apple-tvs-global-hit-drama-silo-to-return-for-fourth-and-final-season-on-july-9-2027/",
+          "independentRationale": "Publisher explicitly labels fourth season final and dates its premiere July9 2027; currently streaming third season does not override season four.",
+          "expectedFacts": {
+            "status": "FINAL_SEASON",
+            "nextSeasonNumber": 4,
+            "releaseDate": "2027-07-09",
+            "releaseYear": 2027,
+            "sourceName": "Apple TV Press",
+            "sourceUrl": "https://www.apple.com/tv-pr/news/2026/09/apple-tvs-global-hit-drama-silo-to-return-for-fourth-and-final-season-on-july-9-2027/",
+            "announcementDate": "2026-09-04"
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "releaseDateScope": "global",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://www.apple.com/tv-pr/news/2026/09/apple-tvs-global-hit-drama-silo-to-return-for-fourth-and-final-season-on-july-9-2027/",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "apple-silo-3-8",
+          "kind": "positive",
+          "tmdbId": 125988,
+          "title": "Silo",
+          "aliases": [
+            "Silo"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.apple.com/tv-pr/news/2026/04/apples-globally-acclaimed-drama-silo-starring-and-executive-produced-by-rebecca-ferguson-returns-for-season-three-on-july-3-2026/",
+          "independentEvidenceUrl": "https://www.apple.com/tv-pr/news/2026/04/apples-globally-acclaimed-drama-silo-starring-and-executive-produced-by-rebecca-ferguson-returns-for-season-three-on-july-3-2026/",
+          "independentRationale": "Publisher dates third-season premiere July3 2026; September4 is finale, not premiere. First-look/teaser format still contains an explicit date and must not be mislabeled pure negative.",
+          "expectedFacts": {
+            "status": "RELEASE_DATE_CONFIRMED",
+            "nextSeasonNumber": 3,
+            "releaseDate": "2026-07-03",
+            "releaseYear": 2026,
+            "sourceName": "Apple TV Press",
+            "sourceUrl": "https://www.apple.com/tv-pr/news/2026/04/apples-globally-acclaimed-drama-silo-starring-and-executive-produced-by-rebecca-ferguson-returns-for-season-three-on-july-3-2026/",
+            "announcementDate": "2026-04-21"
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "releaseDateScope": "global",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://www.apple.com/tv-pr/news/2026/04/apples-globally-acclaimed-drama-silo-starring-and-executive-produced-by-rebecca-ferguson-returns-for-season-three-on-july-3-2026/",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        }
+      ],
+      "selectionMethodology": "Purposive first-party reference and domain-search sample; full-page review independent of parser results. Positive and negative counts below preferred sample sizes; no population-wide inference. Unreviewed references remain excluded.",
+      "negativeCorpusLimitation": "One reviewed negative target/article pair; below preferred five. False-positive evidence is exploratory and is not a claim of exhaustive safety."
+    },
+    {
+      "provider": "AMAZON",
+      "productionEnabled": true,
+      "officialDomains": [
+        "aboutamazon.com",
+        "amazon.com"
+      ],
+      "cases": [
+        {
+          "caseId": "amazon-fallout-2-1",
+          "kind": "positive",
+          "tmdbId": 106379,
+          "title": "Fallout",
+          "aliases": [
+            "Fallout"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.aboutamazon.com/news/entertainment/amazon-mgm-studios-renews-fallout-season-two",
+          "independentEvidenceUrl": "https://www.aboutamazon.com/news/entertainment/amazon-mgm-studios-renews-fallout-season-two",
+          "independentRationale": "Amazon editorial explicitly renews Fallout for a second season. First-season debut date is historical and cannot become the second-season date.",
+          "expectedFacts": {
+            "status": "RENEWED",
+            "nextSeasonNumber": 2,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Amazon",
+            "sourceUrl": "https://www.aboutamazon.com/news/entertainment/amazon-mgm-studios-renews-fallout-season-two",
+            "announcementDate": null
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl"
+          ],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://www.aboutamazon.com/news/entertainment/amazon-mgm-studios-renews-fallout-season-two",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": [
+            "Announcement publication date unknown in inspected text; not asserted null; confidence LOW"
+          ]
+        },
+        {
+          "caseId": "amazon-fallout-negative-2",
+          "kind": "negative",
+          "tmdbId": 106379,
+          "title": "Fallout",
+          "aliases": [
+            "Fallout"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.aboutamazon.com/news/entertainment/fallout-tv-series-cast",
+          "independentEvidenceUrl": "https://www.aboutamazon.com/news/entertainment/fallout-tv-series-cast",
+          "independentRationale": "Cast and creator interview about first-season story and visual effects; retrospective first-season recap does not independently announce a new season or a premiere date.",
+          "expectedFacts": null,
+          "expectedFactKnownFields": [],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://www.aboutamazon.com/news/entertainment/fallout-tv-series-cast",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        }
+      ],
+      "selectionMethodology": "Purposive first-party reference and domain-search sample; full-page review independent of parser results. Positive and negative counts below preferred sample sizes; no population-wide inference. Unreviewed references remain excluded.",
+      "negativeCorpusLimitation": "One reviewed negative target/article pair; below preferred five. False-positive evidence is exploratory and is not a claim of exhaustive safety."
+    },
+    {
+      "provider": "AMC",
+      "productionEnabled": true,
+      "officialDomains": [
+        "amcglobalmedia.com"
+      ],
+      "cases": [
+        {
+          "caseId": "amc-dark-winds-5-1",
+          "kind": "positive",
+          "tmdbId": 128904,
+          "title": "Dark Winds",
+          "aliases": [
+            "Dark Winds"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.amcglobalmedia.com/2026/02/05/amcs-critically-acclaimed-drama-dark-winds-renewed-for-a-fifth-season-ahead-of-the-season-4-premiere/",
+          "independentEvidenceUrl": "https://www.amcglobalmedia.com/2026/02/05/amcs-critically-acclaimed-drama-dark-winds-renewed-for-a-fifth-season-ahead-of-the-season-4-premiere/",
+          "independentRationale": "Dated network release explicitly renews season five and states its eight episodes are set to debut in2027; February15 belongs to season four.",
+          "expectedFacts": {
+            "status": "RENEWED",
+            "nextSeasonNumber": 5,
+            "releaseDate": null,
+            "releaseYear": 2027,
+            "sourceName": "AMC Networks",
+            "sourceUrl": "https://www.amcglobalmedia.com/2026/02/05/amcs-critically-acclaimed-drama-dark-winds-renewed-for-a-fifth-season-ahead-of-the-season-4-premiere/",
+            "announcementDate": "2026-02-05"
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "releaseDateScope": "global",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://www.amcglobalmedia.com/2026/02/05/amcs-critically-acclaimed-drama-dark-winds-renewed-for-a-fifth-season-ahead-of-the-season-4-premiere/",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "amc-halt-and-catch-fire-4-2",
+          "kind": "positive",
+          "tmdbId": 59659,
+          "title": "Halt and Catch Fire",
+          "aliases": [
+            "Halt and Catch Fire"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.amcglobalmedia.com/2016/10/11/halt-and-catch-fire-fans-are-safe/",
+          "independentEvidenceUrl": "https://www.amcglobalmedia.com/2016/10/11/halt-and-catch-fire-fans-are-safe/",
+          "independentRationale": "Publisher page date October11; dateline October10 differs and is recorded for publication-date audit. Explicit fourth/final season independent of measured parser.",
+          "expectedFacts": {
+            "status": "FINAL_SEASON",
+            "nextSeasonNumber": 4,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "AMC Networks",
+            "sourceUrl": "https://www.amcglobalmedia.com/2016/10/11/halt-and-catch-fire-fans-are-safe/",
+            "announcementDate": "2016-10-11"
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://www.amcglobalmedia.com/2016/10/11/halt-and-catch-fire-fans-are-safe/",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "amc-the-walking-dead-daryl-dixon-manual_review-3",
+          "kind": "manual_review",
+          "tmdbId": null,
+          "title": "The Walking Dead: Daryl Dixon",
+          "aliases": [
+            "The Walking Dead: Daryl Dixon"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.amcglobalmedia.com/2025/07/28/the-walking-dead-daryl-dixon-renewed-for-a-fourth-and-final-season/",
+          "independentEvidenceUrl": "https://www.amcglobalmedia.com/2025/07/28/the-walking-dead-daryl-dixon-renewed-for-a-fourth-and-final-season/",
+          "independentRationale": "Historical first-party reference only; full article/identity/ground truth not independently verified for this audit; excluded from denominator.",
+          "expectedFacts": null,
+          "expectedFactKnownFields": [],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "MANUAL_REVIEW",
+          "curationProvenance": {
+            "method": "prior_first_party_reference_unreviewed",
+            "reviewedAt": null,
+            "sourceUrl": "https://www.amcglobalmedia.com/2025/07/28/the-walking-dead-daryl-dixon-renewed-for-a-fourth-and-final-season/",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "amc-anne-rice-s-interview-with-the-vampire-manual_review-4",
+          "kind": "manual_review",
+          "tmdbId": null,
+          "title": "Anne Rice's Interview with the Vampire",
+          "aliases": [
+            "Anne Rice's Interview with the Vampire"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.amcglobalmedia.com/2026/07/24/amc-global-media-renews-anne-rices-interview-with-the-vampire-for-a-fourth-season-titled-anne-rices-queen-of-the-damned/",
+          "independentEvidenceUrl": "https://www.amcglobalmedia.com/2026/07/24/amc-global-media-renews-anne-rices-interview-with-the-vampire-for-a-fourth-season-titled-anne-rices-queen-of-the-damned/",
+          "independentRationale": "Historical first-party reference only; full article/identity/ground truth not independently verified for this audit; excluded from denominator.",
+          "expectedFacts": null,
+          "expectedFactKnownFields": [],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "MANUAL_REVIEW",
+          "curationProvenance": {
+            "method": "prior_first_party_reference_unreviewed",
+            "reviewedAt": null,
+            "sourceUrl": "https://www.amcglobalmedia.com/2026/07/24/amc-global-media-renews-anne-rices-interview-with-the-vampire-for-a-fourth-season-titled-anne-rices-queen-of-the-damned/",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "amc-dark-winds-negative-5",
+          "kind": "negative",
+          "tmdbId": 128904,
+          "title": "Dark Winds",
+          "aliases": [
+            "Dark Winds"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.amcglobalmedia.com/2016/10/11/halt-and-catch-fire-fans-are-safe/",
+          "independentEvidenceUrl": "https://www.amcglobalmedia.com/2016/10/11/halt-and-catch-fire-fans-are-safe/",
+          "independentRationale": "The reviewed final-season article concerns Halt and Catch Fire, not Dark Winds. Wrong-title lifecycle language cannot become Dark Winds verified facts.",
+          "expectedFacts": null,
+          "expectedFactKnownFields": [],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://www.amcglobalmedia.com/2016/10/11/halt-and-catch-fire-fans-are-safe/",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        }
+      ],
+      "selectionMethodology": "Purposive first-party reference and domain-search sample; full-page review independent of parser results. Positive and negative counts below preferred sample sizes; no population-wide inference. Unreviewed references remain excluded.",
+      "negativeCorpusLimitation": "One reviewed negative target/article pair; below preferred five. False-positive evidence is exploratory and is not a claim of exhaustive safety."
+    },
+    {
+      "provider": "DISNEY_PLUS",
+      "productionEnabled": true,
+      "officialDomains": [
+        "press.disneyplus.com"
+      ],
+      "cases": [
+        {
+          "caseId": "disney_plus-percy-jackson-and-the-olympians-3-1",
+          "kind": "positive",
+          "tmdbId": 103540,
+          "title": "Percy Jackson and the Olympians",
+          "aliases": [
+            "Percy Jackson and the Olympians"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://press.disneyplus.com/news/disney-plus-percy-jackson-and-the-olympians-season-three-greenlight",
+          "independentEvidenceUrl": "https://press.disneyplus.com/news/disney-plus-percy-jackson-and-the-olympians-season-three-greenlight",
+          "independentRationale": "Dated official announcement explicitly renews season three. December premiere refers to season two, not season three.",
+          "expectedFacts": {
+            "status": "RENEWED",
+            "nextSeasonNumber": 3,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Disney+ Press",
+            "sourceUrl": "https://press.disneyplus.com/news/disney-plus-percy-jackson-and-the-olympians-season-three-greenlight",
+            "announcementDate": "2025-03-14"
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://press.disneyplus.com/news/disney-plus-percy-jackson-and-the-olympians-season-three-greenlight",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "disney_plus-the-proud-family-louder-and-prouder-4-2",
+          "kind": "positive",
+          "tmdbId": 125438,
+          "title": "The Proud Family: Louder and Prouder",
+          "aliases": [
+            "The Proud Family: Louder and Prouder"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://press.disneyplus.com/news/disney-plus-the-proud-family-louder-and-prouder",
+          "independentEvidenceUrl": "https://press.disneyplus.com/news/disney-plus-the-proud-family-louder-and-prouder",
+          "independentRationale": "Dated single-series press release identifies fourth/final season and July29 premiere in the publication year. This is not the separate monthly slate.",
+          "expectedFacts": {
+            "status": "FINAL_SEASON",
+            "nextSeasonNumber": 4,
+            "releaseDate": "2026-07-29",
+            "releaseYear": 2026,
+            "sourceName": "Disney+ Press",
+            "sourceUrl": "https://press.disneyplus.com/news/disney-plus-the-proud-family-louder-and-prouder",
+            "announcementDate": "2026-06-17"
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "releaseDateScope": "global",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://press.disneyplus.com/news/disney-plus-the-proud-family-louder-and-prouder",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "disney_plus-percy-jackson-and-the-olympians-manual_review-3",
+          "kind": "manual_review",
+          "tmdbId": null,
+          "title": "Percy Jackson and the Olympians",
+          "aliases": [
+            "Percy Jackson and the Olympians"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://press.disneyplus.com/news/disney-plus-percy-jackson-and-the-olympians-season-two-announcement",
+          "independentEvidenceUrl": "https://press.disneyplus.com/news/disney-plus-percy-jackson-and-the-olympians-season-two-announcement",
+          "independentRationale": "Historical first-party reference only; full article/identity/ground truth not independently verified for this audit; excluded from denominator.",
+          "expectedFacts": null,
+          "expectedFactKnownFields": [],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "MANUAL_REVIEW",
+          "curationProvenance": {
+            "method": "prior_first_party_reference_unreviewed",
+            "reviewedAt": null,
+            "sourceUrl": "https://press.disneyplus.com/news/disney-plus-percy-jackson-and-the-olympians-season-two-announcement",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "disney_plus-wizards-beyond-waverly-place-manual_review-4",
+          "kind": "manual_review",
+          "tmdbId": null,
+          "title": "Wizards Beyond Waverly Place",
+          "aliases": [
+            "Wizards Beyond Waverly Place"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://press.disneyplus.com/news/disney-branded-television-renews-wizards-beyond-waverly-place-for-season-two",
+          "independentEvidenceUrl": "https://press.disneyplus.com/news/disney-branded-television-renews-wizards-beyond-waverly-place-for-season-two",
+          "independentRationale": "Historical first-party reference only; full article/identity/ground truth not independently verified for this audit; excluded from denominator.",
+          "expectedFacts": null,
+          "expectedFactKnownFields": [],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "MANUAL_REVIEW",
+          "curationProvenance": {
+            "method": "prior_first_party_reference_unreviewed",
+            "reviewedAt": null,
+            "sourceUrl": "https://press.disneyplus.com/news/disney-branded-television-renews-wizards-beyond-waverly-place-for-season-two",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "disney_plus-the-proud-family-louder-and-prouder-negative-5",
+          "kind": "negative",
+          "tmdbId": 125438,
+          "title": "The Proud Family: Louder and Prouder",
+          "aliases": [
+            "The Proud Family: Louder and Prouder"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://press.disneyplus.com/news/next-on-disney-plus-july-2026",
+          "independentEvidenceUrl": "https://press.disneyplus.com/news/next-on-disney-plus-july-2026",
+          "independentRationale": "Monthly multi-title streaming listings are excluded by the frozen Disney single-series evidence contract; dated listings and related season references must not be reconstructed as single-series announcement facts.",
+          "expectedFacts": null,
+          "expectedFactKnownFields": [],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://press.disneyplus.com/news/next-on-disney-plus-july-2026",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        }
+      ],
+      "selectionMethodology": "Purposive first-party reference and domain-search sample; full-page review independent of parser results. Positive and negative counts below preferred sample sizes; no population-wide inference. Unreviewed references remain excluded.",
+      "negativeCorpusLimitation": "One reviewed negative target/article pair; below preferred five. False-positive evidence is exploratory and is not a claim of exhaustive safety."
+    },
+    {
+      "provider": "HULU",
+      "productionEnabled": true,
+      "officialDomains": [
+        "press.hulu.com"
+      ],
+      "cases": [
+        {
+          "caseId": "hulu-deli-boys-2-1",
+          "kind": "positive",
+          "tmdbId": 226346,
+          "title": "Deli Boys",
+          "aliases": [
+            "Deli Boys"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://press.hulu.com/pressrelease/hulus-critically-acclaimed-comedy-series-deli-boys-renewed-for-a-second-season/",
+          "independentEvidenceUrl": "https://press.hulu.com/pressrelease/hulus-critically-acclaimed-comedy-series-deli-boys-renewed-for-a-second-season/",
+          "independentRationale": "Dated Hulu release explicitly renews second season. A cast biography final-season reference belongs to Big Mouth, not Deli Boys.",
+          "expectedFacts": {
+            "status": "RENEWED",
+            "nextSeasonNumber": 2,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Hulu Press",
+            "sourceUrl": "https://press.hulu.com/pressrelease/hulus-critically-acclaimed-comedy-series-deli-boys-renewed-for-a-second-season/",
+            "announcementDate": "2025-08-26"
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://press.hulu.com/pressrelease/hulus-critically-acclaimed-comedy-series-deli-boys-renewed-for-a-second-season/",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "hulu-difficult-people-manual_review-2",
+          "kind": "manual_review",
+          "tmdbId": null,
+          "title": "Difficult People",
+          "aliases": [
+            "Difficult People"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://press.hulu.com/pressrelease/hulu-renews-difficult-people-for-season-two/",
+          "independentEvidenceUrl": "https://press.hulu.com/pressrelease/hulu-renews-difficult-people-for-season-two/",
+          "independentRationale": "Historical first-party reference only; full article/identity/ground truth not independently verified for this audit; excluded from denominator.",
+          "expectedFacts": null,
+          "expectedFactKnownFields": [],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "MANUAL_REVIEW",
+          "curationProvenance": {
+            "method": "prior_first_party_reference_unreviewed",
+            "reviewedAt": null,
+            "sourceUrl": "https://press.hulu.com/pressrelease/hulu-renews-difficult-people-for-season-two/",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "hulu-the-handmaid-s-tale-manual_review-3",
+          "kind": "manual_review",
+          "tmdbId": null,
+          "title": "The Handmaid's Tale",
+          "aliases": [
+            "The Handmaid's Tale"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://press.hulu.com/pressrelease/hulu-surges-past-20-million-u-s-subscribers-and-announces-plans-to-offer-advertising-in-live-tv-this-quarter/",
+          "independentEvidenceUrl": "https://press.hulu.com/pressrelease/hulu-surges-past-20-million-u-s-subscribers-and-announces-plans-to-offer-advertising-in-live-tv-this-quarter/",
+          "independentRationale": "Historical first-party reference only; full article/identity/ground truth not independently verified for this audit; excluded from denominator.",
+          "expectedFacts": null,
+          "expectedFactKnownFields": [],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "MANUAL_REVIEW",
+          "curationProvenance": {
+            "method": "prior_first_party_reference_unreviewed",
+            "reviewedAt": null,
+            "sourceUrl": "https://press.hulu.com/pressrelease/hulu-surges-past-20-million-u-s-subscribers-and-announces-plans-to-offer-advertising-in-live-tv-this-quarter/",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "hulu-shrill-manual_review-4",
+          "kind": "manual_review",
+          "tmdbId": null,
+          "title": "Shrill",
+          "aliases": [
+            "Shrill"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://press.hulu.com/pressrelease/hulu-presents-upcoming-original-series-the-handmaids-tale-season-four-the-final-season-of-shrill-and-marvels-m-o-d-o-k-at-2021-television-critics-association-winter-press-tour/",
+          "independentEvidenceUrl": "https://press.hulu.com/pressrelease/hulu-presents-upcoming-original-series-the-handmaids-tale-season-four-the-final-season-of-shrill-and-marvels-m-o-d-o-k-at-2021-television-critics-association-winter-press-tour/",
+          "independentRationale": "Historical first-party reference only; full article/identity/ground truth not independently verified for this audit; excluded from denominator.",
+          "expectedFacts": null,
+          "expectedFactKnownFields": [],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "MANUAL_REVIEW",
+          "curationProvenance": {
+            "method": "prior_first_party_reference_unreviewed",
+            "reviewedAt": null,
+            "sourceUrl": "https://press.hulu.com/pressrelease/hulu-presents-upcoming-original-series-the-handmaids-tale-season-four-the-final-season-of-shrill-and-marvels-m-o-d-o-k-at-2021-television-critics-association-winter-press-tour/",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "hulu-reasonable-doubt-manual_review-5",
+          "kind": "manual_review",
+          "tmdbId": null,
+          "title": "Reasonable Doubt",
+          "aliases": [
+            "Reasonable Doubt"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://press.hulu.com/pressrelease/la-la-anthony-rutina-wesley-taylor-polidore-williams-devaughn-nixon-and-alexxis-lemire-join-season-4-of-hulus-hit-legal-drama-reasonable-doubt-as-recurring-guest-stars/",
+          "independentEvidenceUrl": "https://press.hulu.com/pressrelease/la-la-anthony-rutina-wesley-taylor-polidore-williams-devaughn-nixon-and-alexxis-lemire-join-season-4-of-hulus-hit-legal-drama-reasonable-doubt-as-recurring-guest-stars/",
+          "independentRationale": "Historical first-party reference only; full article/identity/ground truth not independently verified for this audit; excluded from denominator.",
+          "expectedFacts": null,
+          "expectedFactKnownFields": [],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "MANUAL_REVIEW",
+          "curationProvenance": {
+            "method": "prior_first_party_reference_unreviewed",
+            "reviewedAt": null,
+            "sourceUrl": "https://press.hulu.com/pressrelease/la-la-anthony-rutina-wesley-taylor-polidore-williams-devaughn-nixon-and-alexxis-lemire-join-season-4-of-hulus-hit-legal-drama-reasonable-doubt-as-recurring-guest-stars/",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "hulu-deli-boys-negative-6",
+          "kind": "negative",
+          "tmdbId": 226346,
+          "title": "Deli Boys",
+          "aliases": [
+            "Deli Boys"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://press.hulu.com/shows/deli-boys/videos/",
+          "independentEvidenceUrl": "https://press.hulu.com/shows/deli-boys/videos/",
+          "independentRationale": "Official trailer gallery contains a video label and embed rather than a lifecycle renewal/final/cancellation or single-season premiere announcement.",
+          "expectedFacts": null,
+          "expectedFactKnownFields": [],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://press.hulu.com/shows/deli-boys/videos/",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        }
+      ],
+      "selectionMethodology": "Purposive first-party reference and domain-search sample; full-page review independent of parser results. Positive and negative counts below preferred sample sizes; no population-wide inference. Unreviewed references remain excluded.",
+      "negativeCorpusLimitation": "One reviewed negative target/article pair; below preferred five. False-positive evidence is exploratory and is not a claim of exhaustive safety."
+    },
+    {
+      "provider": "HBO",
+      "productionEnabled": true,
+      "officialDomains": [
+        "press-spain.max.com"
+      ],
+      "cases": [
+        {
+          "caseId": "hbo-the-last-of-us-3-1",
+          "kind": "positive",
+          "tmdbId": 100088,
+          "title": "The Last of Us",
+          "aliases": [
+            "The Last of Us"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+          "independentEvidenceUrl": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+          "independentRationale": "Dated Spanish primary release explicitly renews third season; April14 is the second-season ES premiere and must not leak.",
+          "expectedFacts": {
+            "status": "RENEWED",
+            "nextSeasonNumber": 3,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+            "announcementDate": "2025-04-09"
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "releaseDateScope": "regional",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-the-last-of-us-por-una-tercera-temporada",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": [],
+          "regionalDatePolicy": "Frozen ES source policy keeps global releaseDate/releaseYear null"
+        },
+        {
+          "caseId": "hbo-rooster-2-2",
+          "kind": "positive",
+          "tmdbId": 254953,
+          "title": "Rooster",
+          "aliases": [
+            "Rooster"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
+          "independentEvidenceUrl": "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
+          "independentRationale": "Dated release explicitly renews second season. Current first-season episode schedule is not a second-season date.",
+          "expectedFacts": {
+            "status": "RENEWED",
+            "nextSeasonNumber": 2,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
+            "announcementDate": "2026-04-09"
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "releaseDateScope": "regional",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-rooster-la-comedia-mas-vista-en-mas-de-una-decada-pr",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": [],
+          "regionalDatePolicy": "Frozen ES source policy keeps global releaseDate/releaseYear null"
+        },
+        {
+          "caseId": "hbo-it-welcome-to-derry-2-3",
+          "kind": "positive",
+          "tmdbId": 200875,
+          "title": "IT: Welcome to Derry",
+          "aliases": [
+            "IT: Welcome to Derry"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+          "independentEvidenceUrl": "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+          "independentRationale": "Original dated Spanish release explicitly renews second season; August25 is later update date, not original publication.",
+          "expectedFacts": {
+            "status": "RENEWED",
+            "nextSeasonNumber": 2,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+            "announcementDate": "2026-08-17"
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "releaseDateScope": "regional",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://press-spain.max.com/post/hbo-renueva-it-bienvenidos-a-derry-para-una-segunda-temporada",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": [],
+          "regionalDatePolicy": "Frozen ES source policy keeps global releaseDate/releaseYear null"
+        },
+        {
+          "caseId": "hbo-the-comeback-3-4",
+          "kind": "positive",
+          "tmdbId": 1999,
+          "title": "The Comeback",
+          "aliases": [
+            "The Comeback"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://press-spain.max.com/post/la-comedia-original-de-hbo-the-comeback-vuelve-con-una-tercera-y",
+          "independentEvidenceUrl": "https://press-spain.max.com/post/la-comedia-original-de-hbo-the-comeback-vuelve-con-una-tercera-y",
+          "independentRationale": "Dated release explicitly identifies third/final season. Spain source2026 premiere-year mention remains regional diagnostic, production date/year null.",
+          "expectedFacts": {
+            "status": "FINAL_SEASON",
+            "nextSeasonNumber": 3,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/la-comedia-original-de-hbo-the-comeback-vuelve-con-una-tercera-y",
+            "announcementDate": "2025-06-27"
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "releaseDateScope": "regional",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://press-spain.max.com/post/la-comedia-original-de-hbo-the-comeback-vuelve-con-una-tercera-y",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": [],
+          "regionalDatePolicy": "Frozen ES source policy keeps global releaseDate/releaseYear null"
+        },
+        {
+          "caseId": "hbo-the-white-lotus-negative-5",
+          "kind": "negative",
+          "tmdbId": 111803,
+          "title": "The White Lotus",
+          "aliases": [
+            "The White Lotus"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-",
+          "independentEvidenceUrl": "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-",
+          "independentRationale": "Spanish article announces filming locations, cast and production start for season four; no explicit renewal/final/cancellation or premiere statement under the frozen Spanish lifecycle policy.",
+          "expectedFacts": null,
+          "expectedFactKnownFields": [],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://press-spain.max.com/post/la-cuarta-temporada-de-la-serie-original-de-hbo-the-white-lotus-",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        }
+      ],
+      "selectionMethodology": "Purposive first-party reference and domain-search sample; full-page review independent of parser results. Positive and negative counts below preferred sample sizes; no population-wide inference. Unreviewed references remain excluded.",
+      "negativeCorpusLimitation": "One reviewed negative target/article pair; below preferred five. False-positive evidence is exploratory and is not a claim of exhaustive safety."
+    },
+    {
+      "provider": "MAX",
+      "productionEnabled": true,
+      "officialDomains": [
+        "press-spain.max.com"
+      ],
+      "cases": [
+        {
+          "caseId": "max-tokyo-vice-2-1",
+          "kind": "positive",
+          "tmdbId": 90296,
+          "title": "Tokyo Vice",
+          "aliases": [
+            "Tokyo Vice"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://press-spain.max.com/post/hbo-max-renueva-la-serie-tokyo-vice-por-una-segunda-temporada",
+          "independentEvidenceUrl": "https://press-spain.max.com/post/hbo-max-renueva-la-serie-tokyo-vice-por-una-segunda-temporada",
+          "independentRationale": "Dated Max Original first-party release explicitly renews second season; first-season debut information is historical.",
+          "expectedFacts": {
+            "status": "RENEWED",
+            "nextSeasonNumber": 2,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/hbo-max-renueva-la-serie-tokyo-vice-por-una-segunda-temporada",
+            "announcementDate": "2022-06-07"
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "releaseDateScope": "regional",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://press-spain.max.com/post/hbo-max-renueva-la-serie-tokyo-vice-por-una-segunda-temporada",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": [],
+          "regionalDatePolicy": "Frozen ES source policy keeps global releaseDate/releaseYear null"
+        },
+        {
+          "caseId": "max-and-just-like-that-2-2",
+          "kind": "positive",
+          "tmdbId": 116450,
+          "title": "And Just Like That...",
+          "aliases": [
+            "And Just Like That..."
+          ],
+          "networks": [],
+          "canonicalUrl": "https://press-spain.max.com/post/hbo-max-renueva-su-serie-and-just-like-that-por-una-segunda-temp",
+          "independentEvidenceUrl": "https://press-spain.max.com/post/hbo-max-renueva-su-serie-and-just-like-that-por-una-segunda-temp",
+          "independentRationale": "Dated original publisher text explicitly renews second season. Ellipsis is part of series title, not lifecycle groundtruth generated by parser.",
+          "expectedFacts": {
+            "status": "RENEWED",
+            "nextSeasonNumber": 2,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/hbo-max-renueva-su-serie-and-just-like-that-por-una-segunda-temp",
+            "announcementDate": "2022-03-22"
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "releaseDateScope": "regional",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://press-spain.max.com/post/hbo-max-renueva-su-serie-and-just-like-that-por-una-segunda-temp",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": [],
+          "regionalDatePolicy": "Frozen ES source policy keeps global releaseDate/releaseYear null"
+        },
+        {
+          "caseId": "max-hacks-5-3",
+          "kind": "positive",
+          "tmdbId": 124101,
+          "title": "Hacks",
+          "aliases": [
+            "Hacks"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+          "independentEvidenceUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+          "independentRationale": "Dated Max Original announcement explicitly identifies fifth/final season; April10 is ES regionaldate and is deliberately null globally.",
+          "expectedFacts": {
+            "status": "FINAL_SEASON",
+            "nextSeasonNumber": 5,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+            "announcementDate": "2026-03-23"
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "releaseDateScope": "regional",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": [],
+          "regionalDatePolicy": "Frozen ES source policy keeps global releaseDate/releaseYear null"
+        },
+        {
+          "caseId": "max-tokyo-vice-negative-4",
+          "kind": "negative",
+          "tmdbId": 90296,
+          "title": "Tokyo Vice",
+          "aliases": [
+            "Tokyo Vice"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+          "independentEvidenceUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+          "independentRationale": "The reviewed final-season article concerns Hacks, not Tokyo Vice. Same-provider wrong-title safety control cannot bind Hacks season five to Tokyo Vice.",
+          "expectedFacts": null,
+          "expectedFactKnownFields": [],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://press-spain.max.com/post/hacks-vuelve-con-su-quinta-y-ultima-temporada-el-10-de-abril-a-h",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "max-the-pitt-manual_review-5",
+          "kind": "manual_review",
+          "tmdbId": 250307,
+          "title": "The Pitt",
+          "aliases": [
+            "The Pitt"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te",
+          "independentEvidenceUrl": "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te",
+          "independentRationale": "Independently inspected teaser article also mentions third-season return in January2027; cannot safely call it a pure negative. Resolve regional year/status contract separately before denominator admission.",
+          "expectedFacts": null,
+          "expectedFactKnownFields": [],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "MANUAL_REVIEW",
+          "curationProvenance": {
+            "method": "prior_first_party_reference_unreviewed",
+            "reviewedAt": null,
+            "sourceUrl": "https://press-spain.max.com/post/hbo-max-lanza-el-teaser-oficial-y-las-primeras-imagenes-de-la-te",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "max-hacks-4-6",
+          "kind": "positive",
+          "tmdbId": 124101,
+          "title": "Hacks",
+          "aliases": [
+            "Hacks"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://press-spain.max.com/post/max-renueva-hacks-la-comedia-ganadora-de-un-emmy-por-una-cuarta-",
+          "independentEvidenceUrl": "https://press-spain.max.com/post/max-renueva-hacks-la-comedia-ganadora-de-un-emmy-por-una-cuarta-",
+          "independentRationale": "Full dated first-party release explicitly renews fourth season. May2 premiere and current finale refer to third season; fourth season has no stated premiere.",
+          "expectedFacts": {
+            "status": "RENEWED",
+            "nextSeasonNumber": 4,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "Max Press Spain",
+            "sourceUrl": "https://press-spain.max.com/post/max-renueva-hacks-la-comedia-ganadora-de-un-emmy-por-una-cuarta-",
+            "announcementDate": "2024-05-30"
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl",
+            "announcementDate"
+          ],
+          "releaseDateScope": "regional",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://press-spain.max.com/post/max-renueva-hacks-la-comedia-ganadora-de-un-emmy-por-una-cuarta-",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        }
+      ],
+      "selectionMethodology": "Purposive first-party reference and domain-search sample; full-page review independent of parser results. Positive and negative counts below preferred sample sizes; no population-wide inference. Unreviewed references remain excluded.",
+      "negativeCorpusLimitation": "One reviewed negative target/article pair; below preferred five. False-positive evidence is exploratory and is not a claim of exhaustive safety."
+    },
+    {
+      "provider": "FX",
+      "productionEnabled": false,
+      "officialDomains": [
+        "fxnetworks.com"
+      ],
+      "cases": [
+        {
+          "caseId": "fx-the-lowdown-manual_review-1",
+          "kind": "manual_review",
+          "tmdbId": null,
+          "title": "The Lowdown",
+          "aliases": [
+            "The Lowdown"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.fxnetworks.com/shows/the-lowdown/season-two-renewal",
+          "independentEvidenceUrl": "https://www.fxnetworks.com/shows/the-lowdown/season-two-renewal",
+          "independentRationale": "Historical first-party reference only; full article/identity/ground truth not independently verified for this audit; excluded from denominator.",
+          "expectedFacts": null,
+          "expectedFactKnownFields": [],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "MANUAL_REVIEW",
+          "curationProvenance": {
+            "method": "prior_first_party_reference_unreviewed",
+            "reviewedAt": null,
+            "sourceUrl": "https://www.fxnetworks.com/shows/the-lowdown/season-two-renewal",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "fx-mayans-m-c-manual_review-2",
+          "kind": "manual_review",
+          "tmdbId": null,
+          "title": "Mayans M.C.",
+          "aliases": [
+            "Mayans M.C."
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.fxnetworks.com/shows/mayans-mc",
+          "independentEvidenceUrl": "https://www.fxnetworks.com/shows/mayans-mc",
+          "independentRationale": "Historical first-party reference only; full article/identity/ground truth not independently verified for this audit; excluded from denominator.",
+          "expectedFacts": null,
+          "expectedFactKnownFields": [],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "MANUAL_REVIEW",
+          "curationProvenance": {
+            "method": "prior_first_party_reference_unreviewed",
+            "reviewedAt": null,
+            "sourceUrl": "https://www.fxnetworks.com/shows/mayans-mc",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "fx-far-cry-manual_review-4",
+          "kind": "manual_review",
+          "tmdbId": null,
+          "title": "Far Cry",
+          "aliases": [
+            "Far Cry"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.fxnetworks.com/news/new-cast-additions-to-far-cry",
+          "independentEvidenceUrl": "https://www.fxnetworks.com/news/new-cast-additions-to-far-cry",
+          "independentRationale": "Historical first-party reference only; full article/identity/ground truth not independently verified for this audit; excluded from denominator.",
+          "expectedFacts": null,
+          "expectedFactKnownFields": [],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "MANUAL_REVIEW",
+          "curationProvenance": {
+            "method": "prior_first_party_reference_unreviewed",
+            "reviewedAt": null,
+            "sourceUrl": "https://www.fxnetworks.com/news/new-cast-additions-to-far-cry",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        },
+        {
+          "caseId": "fx-snowfall-6-4",
+          "kind": "positive",
+          "tmdbId": 71694,
+          "title": "Snowfall",
+          "aliases": [
+            "Snowfall"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.fxnetworks.com/shows/snowfall",
+          "independentEvidenceUrl": "https://www.fxnetworks.com/shows/snowfall",
+          "independentRationale": "FX series page explicitly labels season six as final and describes it as sixth/final. No independently visible announcement publication date; control only, production remains inactive.",
+          "expectedFacts": {
+            "status": "FINAL_SEASON",
+            "nextSeasonNumber": 6,
+            "releaseDate": null,
+            "releaseYear": null,
+            "sourceName": "FX Networks",
+            "sourceUrl": "https://www.fxnetworks.com/shows/snowfall",
+            "announcementDate": null
+          },
+          "expectedFactKnownFields": [
+            "status",
+            "nextSeasonNumber",
+            "releaseDate",
+            "releaseYear",
+            "sourceName",
+            "sourceUrl"
+          ],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://www.fxnetworks.com/shows/snowfall",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": [
+            "Announcement publication date unknown in inspected text; not asserted null; confidence LOW"
+          ]
+        },
+        {
+          "caseId": "fx-snowfall-negative-5",
+          "kind": "negative",
+          "tmdbId": 71694,
+          "title": "Snowfall",
+          "aliases": [
+            "Snowfall"
+          ],
+          "networks": [],
+          "canonicalUrl": "https://www.fxnetworks.com/news/new-cast-additions-to-far-cry",
+          "independentEvidenceUrl": "https://www.fxnetworks.com/news/new-cast-additions-to-far-cry",
+          "independentRationale": "FX casting news concerns Far Cry, not Snowfall; no Snowfall lifecycle assertion. Inactive strategy control only.",
+          "expectedFacts": null,
+          "expectedFactKnownFields": [],
+          "releaseDateScope": "none",
+          "discoveryContext": {},
+          "seededMode": "none",
+          "manuallyCurated": true,
+          "manuallySeeded": false,
+          "goldReviewStatus": "VERIFIED",
+          "curationProvenance": {
+            "method": "primary_page_read",
+            "reviewedAt": "2026-10-14",
+            "sourceUrl": "https://www.fxnetworks.com/news/new-cast-additions-to-far-cry",
+            "parserOutputUsedAsGroundTruth": false
+          },
+          "notes": []
+        }
+      ],
+      "selectionMethodology": "Purposive first-party reference and domain-search sample; full-page review independent of parser results. Positive and negative counts below preferred sample sizes; no population-wide inference. Unreviewed references remain excluded.",
+      "negativeCorpusLimitation": "One reviewed negative target/article pair; below preferred five. False-positive evidence is exploratory and is not a claim of exhaustive safety."
+    }
+  ]
+}
