@@ -42,7 +42,7 @@ jobs:
       - name: Audit frozen provider coverage on GitHub runner
         env:
           TMDB_API_TOKEN: ${{ secrets.TMDB_API_TOKEN }}
-        run: python official-data/automation/provider_coverage_audit.py --output-dir "$RUNNER_TEMP/provider-coverage-audit"
+        run: python official-data/automation/provider_coverage_audit.py --output-dir "$RUNNER_TEMP/provider-coverage-audit" --execution-mode runner-confirmation
       - name: Verify protected live files and checkout
         if: always()
         run: |
