@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import copy
 import datetime as dt
 import hashlib
 import json
@@ -19,6 +20,7 @@ import re
 import socket
 import sys
 import tempfile
+import unicodedata
 from urllib.error import HTTPError, URLError
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
@@ -26,6 +28,7 @@ import discovery
 import monitored
 import promotion
 import update
+import provider_coverage_fidelity as fidelity
 
 ROOT = update.ROOT
 CORPUS = ROOT / "official-data" / "audit" / "provider_coverage_corpus.json"
@@ -41,6 +44,9 @@ FROZEN_MODULES = (
     "official-data/automation/monitored.py", "official-data/automation/promotion.py",
     "official-data/automation/hbo_production.py", "official-data/automation/max_production.py",
     "official-data/automation/hulu_discovery.py", "official-data/discovery_providers.json",
+    "official-data/automation/hbo_max_discovery.py", "official-data/automation/hbo_max_qualification.py",
+    "official-data/automation/spanish_qualification_parser.py", "official-data/automation/max_qualification_parser.py",
+    "official-data/automation/automatic_promotion.py",
 )
 PROVIDERS = ("NETFLIX", "PARAMOUNT", "APPLE", "AMAZON", "AMC", "DISNEY_PLUS", "HULU", "HBO", "MAX", "FX")
 PRODUCTION_PROVIDERS = frozenset(PROVIDERS[:-1])
@@ -396,12 +402,21 @@ def _run_pipeline(provider_id: str, case: dict, metadata: dict, *, fetcher: Boun
         return result
     result["reconstructionPassed"] = True
     result["reconstructedFacts"] = {key: summary.get(key) for key in FACT_FIELDS}
+    result["reconstructionProof"] = {
+        "provider": provider_id, "tmdbId": case["tmdbId"], "identityAccepted": True,
+        "routeValidated": discovery.route_provider(metadata, specs)[0] == provider_id,
+        "verifiedFacts": result["verifiedFacts"], "reconstructedFacts": result["reconstructedFacts"],
+        "replayedFacts": facts, "sourceEvidence": row.get("sourceEvidence", []),
+        "providerIdentity": {**metadata, "provider": provider_id},
+        "factsCompared": list(FACT_FIELDS), "passed": True,
+    }
     return result
 
 
 def _case_result_internal(provider: dict, case: dict, *, token: str, specs: dict, transport=None,
                  provider_fetcher: BoundedFetcher | None = None,
-                 diagnostic_fetcher: BoundedFetcher | None = None, today: dt.date | None = None) -> dict:
+                 diagnostic_fetcher: BoundedFetcher | None = None, today: dt.date | None = None,
+                 metadata_loader=None) -> dict:
     provider_id, domains = provider["provider"], provider["officialDomains"]
     result = {"caseId": case["caseId"], "provider": provider_id, "title": case.get("title"),
               "goldReviewStatus": case.get("goldReviewStatus"),
@@ -425,12 +440,13 @@ def _case_result_internal(provider: dict, case: dict, *, token: str, specs: dict
         result.update(primaryFailure="LOCAL_INCONCLUSIVE", denominatorEligible=False)
         return result
     try:
-        metadata = _fresh_metadata(case["tmdbId"], token, fetcher)
+        metadata = (metadata_loader or _fresh_metadata)(case["tmdbId"], token, fetcher)
     except (update.AutomationError, ValueError, OSError, json.JSONDecodeError, URLError, TimeoutError) as exc:
         result.update(primaryFailure="LOCAL_INCONCLUSIVE", denominatorEligible=False,
                       metadataFailure=classify_exception(exc))
         return result
     result["freshMetadataFetched"] = True
+    result["identityContext"] = {key: metadata.get(key) for key in ("tmdbId", "title", "originalName", "hboSpanishTitle", "networks")}
     route, signals, _ = discovery.route_provider(metadata, specs)
     result["routeProvider"] = route
     result["rawNetworkLabels"] = [item.get("name") if isinstance(item, dict) else item
@@ -482,6 +498,8 @@ def _case_result_internal(provider: dict, case: dict, *, token: str, specs: dict
     direct["parserProducedFacts"] = direct_result["pipelineState"] == "VERIFIED_FACTS"
     direct["reconstructionPassed"] = direct_result["reconstructionPassed"]
     direct["reconstructedFacts"] = direct_result["reconstructedFacts"]
+    direct["actualFacts"] = direct_result.get("verifiedFacts")
+    direct["reconstructionProof"] = direct_result.get("reconstructionProof")
     known = result["expectedFactKnownFields"] or []
     expected = case.get("expectedFacts") or {}
     if direct_result["pipelineState"] == "VERIFIED_FACTS" and direct_result["reconstructionPassed"]:
@@ -516,7 +534,12 @@ def _case_result_internal(provider: dict, case: dict, *, token: str, specs: dict
     canonical_targets = {_canonical(case["canonicalUrl"]), _canonical(direct.get("finalUrl") or case["canonicalUrl"])}
     matched = [candidate for candidate in candidates if isinstance(candidate.get("candidateUrl"), str)
                and _canonical(candidate["candidateUrl"]) in canonical_targets]
-    candidate = next((item for item in matched if update.allowed(item["candidateUrl"], specs[provider_id]["candidateDomains"])), None)
+    # Legacy A retains historical-URL matching. B measures the candidates the
+    # frozen production discovery actually found, without requiring old gold
+    # to remain indexed; its selected facts still need full independent replay.
+    candidate_pool = candidates if metadata_loader is discovery.tmdb_metadata else matched
+    candidate = next((item for item in candidate_pool if isinstance(item.get("candidateUrl"), str)
+                      and update.allowed(item["candidateUrl"], specs[provider_id]["candidateDomains"])), None)
     result["genericDiscovery"] = bool(candidate and generic.get("result") == "candidate_found" and not case["manuallySeeded"])
     result["discoveredCandidateUrl"] = _public_url(candidate.get("candidateUrl")) if candidate else None
     result["discoveryMethod"] = candidate.get("discoveryMethod") if candidate else None
@@ -563,6 +586,7 @@ def _case_result_internal(provider: dict, case: dict, *, token: str, specs: dict
         return result
     result["reconstructionPassed"] = True
     result["reconstructedFacts"] = outcome["reconstructedFacts"]
+    result["reconstructionProof"] = outcome.get("reconstructionProof")
     result["announcementDateGroundTruth"] = "known" if "announcementDate" in known else "unknown; inspected at runner"
     mismatches = [field for field in known if result["reconstructedFacts"].get(field) != expected.get(field)]
     result["goldMismatchFields"] = mismatches
@@ -788,8 +812,100 @@ def _fx_control_audit() -> dict:
                 "errorType": type(exc).__name__}
 
 
+def _identity_context_comparison(legacy: dict, current: dict) -> dict:
+    """Compare recorded identity inputs, never infer an alias from an article."""
+    before, after = legacy.get("identityContext"), current.get("identityContext")
+    def aliases(context):
+        values = discovery.metadata_names(context)
+        if isinstance(context.get("hboSpanishTitle"), str):
+            values.append(context["hboSpanishTitle"])
+        return sorted({" ".join(unicodedata.normalize("NFKC", value).casefold().split()) for value in values})
+    available = isinstance(before, dict) and isinstance(after, dict)
+    return {"available": available,
+            "different": bool(available and aliases(before) != aliases(after)),
+            "legacy": {**copy.deepcopy(before or {}), **{key: legacy.get(key) for key in
+                ("identityAccepted", "genericDiscovery", "routeValid", "lifecycleParsed", "reconstructionPassed")}},
+            "productionEquivalent": {**copy.deepcopy(after or {}), **{key: current.get(key) for key in
+                ("identityAccepted", "genericDiscovery", "routeValid", "lifecycleParsed", "reconstructionPassed")}}}
+
+
+def _fidelity_case_result(provider: dict, case: dict, legacy: dict, *, token: str,
+                          specs: dict, provider_fetcher=None, diagnostic_fetcher=None,
+                          transport=None, identity_context_mode="RUNNER_LIVE_METADATA",
+                          today=None) -> dict:
+    """A/B uses identical frozen discovery/parser/replay with different loaders."""
+    current = copy.deepcopy(legacy)
+    mode = "CORPUS_ONLY"
+    if token and provider["productionEnabled"] and case["kind"] != "manual_review":
+        current = _case_result(provider, case, token=token, specs=specs, transport=transport,
+                              provider_fetcher=provider_fetcher, diagnostic_fetcher=diagnostic_fetcher,
+                              today=today, metadata_loader=discovery.tmdb_metadata)
+        if current.get("freshMetadataFetched"):
+            mode = identity_context_mode
+    comparison = _identity_context_comparison(legacy, current)
+    current["identityContextComparison"] = comparison
+    result = fidelity.evaluate(case, legacy, current, provider=provider["provider"],
+                               identity_context_mode=mode,
+                               today=today or dt.datetime.now(dt.timezone.utc).date())
+    result["identityContextComparison"] = comparison
+    result["productionEquivalentResult"] = current
+    result["productionEquivalentFalsePositive"] = current.get("falsePositive", False)
+    result["identityContextProvenance"] = {
+        "mode": mode, "loader": "discovery.tmdb_metadata" if mode != "CORPUS_ONLY" else "legacy audit metadata",
+        "localizedIdentityPolicy": "unchanged production loader, matching TMDB ID",
+        "liveMetadataCanChange": mode == "RUNNER_LIVE_METADATA",
+        "captureProvenance": getattr(transport, "capture_provenance", None),
+    }
+    return result
+
+
+def _fidelity_rollup(rows: list[dict]) -> dict:
+    eligible = [row for row in rows if row.get("kind") == "positive" and row.get("denominatorEligible")]
+    historical = sum(row.get("historicalExactMatch") is True for row in eligible)
+    current = sum(row.get("currentCoverage") == "COVERED" for row in eligible)
+    return {"eligibleCases": len(eligible), "historicalExactCovered": historical,
+            "currentAuthoritativeCovered": current,
+            "productionEquivalentAccessible": sum(row.get("productionEquivalentResult", {}).get("sourceAccessible") is True for row in eligible),
+            "productionEquivalentDiscovered": sum(row.get("productionEquivalentResult", {}).get("genericDiscovery") is True for row in eligible),
+            "historicalExactCoveragePercent": _pct(historical, len(eligible)),
+            "currentAuthoritativeCoveragePercent": _pct(current, len(eligible)),
+            "supersededCases": sum(row.get("auditFidelityFinding") == "HISTORICAL_GOLD_SUPERSEDED" for row in eligible),
+            "equivalentEvidenceCases": sum(row.get("auditFidelityFinding") == "EQUIVALENT_EVIDENCE" for row in eligible),
+            "auditContextMismatchCases": sum(row.get("auditFidelityFinding") == "IDENTITY_CONTEXT_MISMATCH" for row in eligible),
+            "remainingRealFailures": sum(str(row.get("auditFidelityFinding", "")).startswith("REAL_") for row in eligible),
+            "inconclusiveCases": sum(row.get("currentCoverage") == "INCONCLUSIVE" for row in eligible),
+            "productionEquivalentFalsePositives": sum(row.get("kind") == "negative" and row.get("productionEquivalentFalsePositive") is True for row in rows)}
+
+
+def _real_failure_rows(providers: list[dict]) -> list[dict]:
+    """Keep old failure fields visible, but feed only real failures into ROI."""
+    result = []
+    for provider in providers:
+        row = copy.deepcopy(provider)
+        row["cases"] = [case for case in row["cases"] if
+                        str(case.get("auditFidelityFinding", "")).startswith("REAL_") or
+                        case.get("falsePositive") is True or case.get("productionEquivalentFalsePositive") is True]
+        failures = {}
+        for case in row["cases"]:
+            if case.get("productionEquivalentFalsePositive") is True:
+                case["falsePositive"] = True
+                case["primaryFailure"] = "FALSE_POSITIVE"
+            elif str(case.get("auditFidelityFinding", "")).startswith("REAL_"):
+                case["primaryFailure"] = case.get("productionEquivalentResult", {}).get("primaryFailure") or case.get("primaryFailure")
+            if case.get("kind") == "positive" and case.get("primaryFailure"):
+                failures[case["primaryFailure"]] = failures.get(case["primaryFailure"], 0) + 1
+        row["positiveFailureBreakdown"] = row["failureBreakdown"] = failures
+        row["counts"]["covered"] = provider["fidelity"]["currentAuthoritativeCovered"]
+        row["counts"]["sourceAccessible"] = row["counts"]["covered"] + sum(
+            c.get("kind") == "positive" and c.get("sourceAccessible") is True for c in row["cases"])
+        row["falsePositives"] = max(row["falsePositives"], provider["fidelity"]["productionEquivalentFalsePositives"])
+        result.append(row)
+    return result
+
+
 def build_report(corpus: dict, *, token: str | None = None, transport=None,
-                 now: dt.datetime | None = None, execution_mode: str = "local") -> dict:
+                 now: dt.datetime | None = None, execution_mode: str = "local",
+                 identity_context_mode: str | None = None) -> dict:
     # Unit-test host environment is not evidence that a coverage audit was run.
     if execution_mode not in ("local", "runner-confirmation"):
         raise ValueError("unsupported audit execution mode")
@@ -802,6 +918,9 @@ def build_report(corpus: dict, *, token: str | None = None, transport=None,
     protected_before = protected_hashes()
     frozen_before = frozen_hashes()
     specs = discovery.provider_specs()
+    context_mode = identity_context_mode or ("PRODUCTION_EQUIVALENT_CAPTURE" if transport is not None else "RUNNER_LIVE_METADATA")
+    if context_mode not in ("RUNNER_LIVE_METADATA", "PRODUCTION_EQUIVALENT_CAPTURE"):
+        raise ValueError("unsupported production identity context provenance")
     wbd_probe = _wbd_access_probe()
     fx_control = _fx_control_audit()
     provider_reports = []
@@ -827,6 +946,14 @@ def build_report(corpus: dict, *, token: str | None = None, transport=None,
                        "reconstructionPassed": False, "covered": False, "primaryFailure": "UNEXPECTED_EXCEPTION",
                        "unexpectedExceptionType": type(exc).__name__}
                 row = _case_aliases(row, case)
+            try:
+                row = _fidelity_case_result(provider, case, row, token=token or "", specs=specs,
+                    provider_fetcher=provider_fetcher, diagnostic_fetcher=diagnostic_fetcher,
+                    transport=transport, identity_context_mode=context_mode, today=start.date())
+            except Exception as exc:
+                row = fidelity.evaluate(case, row, {}, provider=provider["provider"],
+                    identity_context_mode="CORPUS_ONLY", today=start.date())
+                row["fidelityExceptionType"] = type(exc).__name__
             case_rows.append(row)
         total_count = generic_budget["count"] + diagnostic_budget["count"]
         total_truncated = generic_budget["truncated"] or diagnostic_budget["truncated"]
@@ -840,13 +967,18 @@ def build_report(corpus: dict, *, token: str | None = None, transport=None,
                                  "timeoutCount": provider_fetcher.timeouts + diagnostic_fetcher.timeouts,
                                  "requests": provider_fetcher.requests + diagnostic_fetcher.requests})
         provider_reports[-1]["measuredPositiveCases"] = sum(c["kind"] == "positive" and c.get("denominatorEligible") for c in case_rows)
+        provider_reports[-1]["fidelity"] = _fidelity_rollup(case_rows)
     protected_after = protected_hashes()
     frozen_after = frozen_hashes()
     mutation = [p for p in PROTECTED if protected_before[p] != protected_after[p]]
     frozen_changed = [p for p in FROZEN_MODULES if frozen_before[p] != frozen_after[p]]
     credential_paths = [ROOT / "official-data/automation/provider_coverage_audit.py",
                                           ROOT / "official-data/automation/test_provider_coverage_audit.py",
-                                          ROOT / ".github/workflows/provider-coverage-audit.yml", CORPUS]
+                                          ROOT / ".github/workflows/provider-coverage-audit.yml", CORPUS,
+        ROOT / "official-data/automation/provider_coverage_fidelity.py",
+        ROOT / "official-data/automation/test_provider_coverage_fidelity.py",
+        ROOT / "official-data/automation/test_v2716_audit_fidelity.py",
+        ROOT / "official-data/automation/fixtures/v2716_identity_context.json"]
     credential_matches = credential_scan([path for path in credential_paths if path.is_file()])
     eligible = [r for r in provider_reports if r["productionEnabled"]]
     all_cases = [c for r in provider_reports for c in r["cases"]]
@@ -856,11 +988,15 @@ def build_report(corpus: dict, *, token: str | None = None, transport=None,
     corpus_negatives = [c for c in all_cases if c["kind"] == "negative" and c.get("goldReviewStatus") == "VERIFIED"]
     false_positives = sum(bool(c.get("falsePositive")) for c in negatives)
     corpus_invalid_count = sum(c.get("primaryFailure") == "CORPUS_INVALID" for c in all_cases)
-    unexpected_count = sum(c.get("primaryFailure") == "UNEXPECTED_EXCEPTION" or bool(c.get("directUnexpectedException")) for c in all_cases)
+    unexpected_count = sum(c.get("primaryFailure") == "UNEXPECTED_EXCEPTION" or bool(c.get("directUnexpectedException"))
+        or bool(c.get("fidelityExceptionType"))
+        or c.get("productionEquivalentResult", {}).get("primaryFailure") == "UNEXPECTED_EXCEPTION"
+        or bool(c.get("productionEquivalentResult", {}).get("directUnexpectedException")) for c in all_cases)
     quality_valid = (not mutation and not frozen_changed and credential_matches == 0 and
                      not corpus_invalid_count and not unexpected_count and bool(corpus_negatives))
     runner_metadata_measured = any(c.get("freshMetadataFetched") for c in all_cases)
-    ranking = _roi(provider_reports) if quality_valid else []
+    real_failure_rows = _real_failure_rows(provider_reports)
+    ranking = _roi(real_failure_rows) if quality_valid else []
     measured_providers = [r for r in eligible if r["rawE2EPercent"] is not None]
     losses = {
         "sourceAccess": [(r["provider"], sum(c.get("primaryFailure") == "SOURCE_INACCESSIBLE" for c in r["cases"])) for r in eligible],
@@ -889,7 +1025,8 @@ def build_report(corpus: dict, *, token: str | None = None, transport=None,
                                 "Review bounded source availability evidence" if failure == "SOURCE_INACCESSIBLE" else "Investigate the measured failing stage before changing production behavior"})
     diagnostic_status = "INCONCLUSIVE" if not token or not runner_metadata_measured else "MEASURED"
     authority_confirmed = bool(runner_execution and is_actions and quality_valid
-                               and token and runner_metadata_measured)
+                               and token and runner_metadata_measured and transport is None
+                               and context_mode == "RUNNER_LIVE_METADATA")
     if not quality_valid:
         final_status = "AUDIT_INVALID"
     elif authority_confirmed:
@@ -902,7 +1039,19 @@ def build_report(corpus: dict, *, token: str | None = None, transport=None,
                     "falsePositiveCorpusPresent": bool(corpus_negatives),
                     "credentialMatches": credential_matches, "corpusInvalidCases": corpus_invalid_count,
                     "unexpectedExceptionCases": unexpected_count, "valid": quality_valid}
-    return {"schemaVersion": 1, "auditVersion": "2.7.14", "reportType": "provider_coverage_audit", "readOnly": True,
+    return {"schemaVersion": 1, "auditVersion": "2.7.16", "fidelitySchemaVersion": 1,
+            "compatibility": "additive; covered/primaryFailure and legacy metrics retained; historical/current metrics separated",
+            "historicalBaseline": {"auditVersion": "2.7.14.2", "provenance": "V2.7.15 documented forensic snapshot",
+                "originalArtifactStatus": "ORIGINAL_RUNNER_ARTIFACT_NOT_LOCALLY_AVAILABLE",
+                "expectedOriginalSha256": {
+                    "json": "64f0bf901020b8bcda12790b0ab4b154b24149d981d2c412c3b530ddb8a34fc1",
+                    "md": "76e526b1eae380eebf947f08c2dc652d83685bafed99104a35618343cfd1787d",
+                    "jsonl": "5783ec1da74032f539bf05637ffee25ddcc121f376adc38d9b5f70a2ffbeb30f"},
+                "HBO": {"discovered": 3, "covered": 2, "corpus": 4}, "MAX": {"discovered": 3, "covered": 2, "corpus": 4}},
+            "fidelityMetrics": {"PRODUCTION_ONLY": _fidelity_rollup([case for p in eligible for case in p["cases"]]),
+                                "ALL_AUDITED": _fidelity_rollup(all_cases)},
+            "roiInputDimension": "REMAINING_REAL_FAILURES",
+            "reportType": "provider_coverage_audit", "readOnly": True,
             "productionMutation": bool(mutation), "protectedFilesUnchanged": not mutation,
             "protectedChangedFiles": mutation, "frozenModulesUnchanged": not frozen_changed,
             "frozenChangedModules": frozen_changed, "localResultScope": "LOCAL_DIAGNOSTIC_ONLY",
@@ -943,8 +1092,10 @@ def build_report(corpus: dict, *, token: str | None = None, transport=None,
                                                 "highestSourceAccessLoss": None, "highestFalsePositiveRisk": None,
                                                 "bestV2715QuickWin": None}),
             "providers": provider_reports, "roiRanking": ranking, "recommendations": recommendations,
-            "failureRoiAnalysis": {"PRODUCTION_ONLY": _failure_roi_analysis(eligible),
-                                   "ALL_AUDITED": _failure_roi_analysis(provider_reports)},
+            "legacyFailureRoiAnalysis": {"PRODUCTION_ONLY": _failure_roi_analysis(eligible),
+                                         "ALL_AUDITED": _failure_roi_analysis(provider_reports)},
+            "failureRoiAnalysis": {"PRODUCTION_ONLY": _failure_roi_analysis([p for p in real_failure_rows if p["productionEnabled"]]),
+                                   "ALL_AUDITED": _failure_roi_analysis(real_failure_rows)},
             "sourceDiagnostics": {"wbdKnownArticleProbe": wbd_probe, "fxSourceStrategyControl": fx_control},
             "auditQuality": quality_gate, "qualityGate": quality_gate}
 
@@ -955,13 +1106,33 @@ def render_markdown(report: dict) -> str:
     name = lambda row: row.get("provider") if isinstance(row, dict) else "N/A"
     lines = ["# Provider Coverage Audit", "", f"**Final coverage status:** `{report['finalCoverageStatus']}`",
              "", f"Diagnostic status: `{report.get('diagnosticStatus', 'N/A')}`; execution mode: `{report.get('executionMode', 'local')}`; result scope: `{report.get('resultScope', 'LOCAL_DIAGNOSTIC_ONLY')}`.",
-             "", "## Provider overview", "", "| Provider | Corpus | Accessible | Discovered | Covered | Discovery % | Raw E2E % | Accessible E2E % | Direct URL % | False positives | Confidence | Rating |",
+             "", "## Legacy provider overview", "", "| Provider | Corpus | Accessible | Discovered | Covered | Discovery % | Raw E2E % | Accessible E2E % | Direct URL % | False positives | Confidence | Rating |",
              "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|"]
     fmt = lambda x: "N/A" if x is None else f"{x:.2f}%"
     for r in rows:
         c = r["counts"]
         rating = "CORPUS_TOO_SMALL" if r["corpusTooSmall"] else "MEASURED"
         lines.append(f"| {r['provider']} | {r['corpusCount']} | {c['sourceAccessible']} | {c['discovered']} | {c['covered']} | {fmt(r['discoveryPercent'])} | {fmt(r['rawE2EPercent'])} | {fmt(r['accessibleE2EPercent'])} | {fmt(r['directUrlPercent'])} | {r['falsePositives']} | {r['confidence']} | {rating} |")
+    lines += ["", "## Historical baseline", "", "V2.7.14.2 documented runner baseline: HBO discovered 3/4, covered 2/4; MAX discovered 3/4, covered 2/4.",
+              "Original artifact status at implementation: ORIGINAL_RUNNER_ARTIFACT_NOT_LOCALLY_AVAILABLE; provenance: V2.7.15 forensic snapshot.",
+              "", "## Audit fidelity coverage", "", "Historical exact and current authoritative coverage are separate dimensions. Local model percentages are diagnostic only; final coverage requires GitHub runner confirmation.",
+              "", "| Provider | Corpus | Accessible | Discovered | Historical Exact Covered | Current Authoritative Covered | Historical Exact % | Current Authoritative % | Superseded | Equivalent Evidence | Audit Context Mismatch | Real Failures | False Positives | Confidence |",
+              "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|"]
+    for r in rows:
+        f, c = r.get("fidelity", {}), r["counts"]
+        lines.append(f"| {r['provider']} | {r['corpusCount']} | {f.get('productionEquivalentAccessible', 0)} | {f.get('productionEquivalentDiscovered', 0)} | {f.get('historicalExactCovered', 0)} | {f.get('currentAuthoritativeCovered', 0)} | {fmt(f.get('historicalExactCoveragePercent'))} | {fmt(f.get('currentAuthoritativeCoveragePercent'))} | {f.get('supersededCases', 0)} | {f.get('equivalentEvidenceCases', 0)} | {f.get('auditContextMismatchCases', 0)} | {f.get('remainingRealFailures', 0)} | {max(r['falsePositives'], f.get('productionEquivalentFalsePositives', 0))} | {r['confidence']} |")
+    lines += ["", "## HBO/MAX forensic diagnostics", "", "All positive HBO/MAX cases remain visible, including the four historical failures.",
+              "", "| Case | Historical result | Production-equivalent result | Temporal relation | Evidence relation | Identity context | Final audit-fidelity classification | Current coverage |",
+              "|---|---|---|---|---|---|---|---|"]
+    for r in rows:
+        if r["provider"] not in ("HBO", "MAX"):
+            continue
+        for c in r["cases"]:
+            if c["kind"] != "positive":
+                continue
+            b = c.get("productionEquivalentResult", {})
+            result = "PASS" if b.get("reconstructionPassed") else b.get("primaryFailure", "INCONCLUSIVE")
+            lines.append(f"| {c['caseId']} | {'COVERED' if c.get('covered') else c.get('primaryFailure')} | {result} | {c.get('temporalRelation')} | {c.get('evidenceRelation')} | {c.get('identityContextMode')} | {c.get('auditFidelityFinding')} | {c.get('currentCoverage')} |")
     lines += ["", "## Cross-provider rankings", "",
               f"BEST COVERAGE: {name(ranking.get('bestCoverage'))}",
               f"LOWEST COVERAGE: {name(ranking.get('lowestCoverage'))}",
@@ -974,13 +1145,13 @@ def render_markdown(report: dict) -> str:
     for r in rows:
         lines.append(f"**{r['provider']}**: " + " â†’ ".join(str(n) for n in r["funnel"]) + f"  ")
         lines.append("Failures: " + (", ".join(f"{k}={v}" for k, v in sorted(r["failureBreakdown"].items())) or "none measured") + ".")
-    lines += ["", "## ROI ranking", "", "Safety priority: any observed false positive ranks first for high-severity safety review. Other providers rank by accessible uncovered cases Ã— dominant positive-failure share among measured positive failures.", ""]
+    lines += ["", "## ROI ranking", "", "Safety priority: any observed false positive ranks first for high-severity safety review. Only remaining REAL failures enter this ranking; context mismatch, valid equivalence and supersession are excluded. Other providers rank by accessible uncovered cases Ã— dominant positive-failure share among measured positive failures.", ""]
     ranking = report["roiRanking"]
     if ranking:
         lines.extend(f"{i}. {r['provider']}: score {r['score']} ({r['dominantFailure']}, {r['accessibleUncovered']} accessible uncovered)" for i, r in enumerate(ranking[:3], 1))
     else:
         lines.append("No measured production quick win can be ranked from these data.")
-    lines += ["", "## Recommended V2.7.15 investigation targets", ""]
+    lines += ["", "## Potential V2.7.17 investigation targets (runner confirmation required)", ""]
     if report.get("recommendations"):
         for i, rec in enumerate(report["recommendations"], 1):
             lines += [f"{i}. **{rec['provider']} â€” {rec['targetType']}**",

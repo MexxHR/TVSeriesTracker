@@ -460,7 +460,7 @@ class ReportContractTests(unittest.TestCase):
              mock.patch.object(audit, "_fx_control_audit", return_value={"status": "TEST_FIXTURE"}):
             report = audit.build_report(data, token=None, now=dt.datetime(2026, 10, 14, tzinfo=dt.timezone.utc))
         self.assertTrue(report["readOnly"])
-        self.assertEqual(report["auditVersion"], "2.7.14")
+        self.assertEqual(report["auditVersion"], "2.7.16")
         self.assertEqual(report["finalCoverageStatus"], "AWAITING_GITHUB_RUNNER_CONFIRMATION")
         self.assertEqual(report["resultScope"], "LOCAL_DIAGNOSTIC_ONLY")
         self.assertTrue(report["qualityGate"]["valid"])

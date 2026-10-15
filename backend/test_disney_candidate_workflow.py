@@ -39,8 +39,8 @@ class DisneyCandidateWorkflowTest(unittest.TestCase):
     def test_android_version_is_unchanged(self):
         root = Path(__file__).resolve().parents[1]
         gradle = (root / 'app/build.gradle.kts').read_text(encoding='utf-8')
-        self.assertIn('versionCode = 45', gradle)
-        self.assertIn('versionName = "2.7.14.2"', gradle)
+        self.assertIn('versionCode = 47', gradle)
+        self.assertIn('versionName = "2.7.16"', gradle)
 
 
 if __name__ == '__main__':

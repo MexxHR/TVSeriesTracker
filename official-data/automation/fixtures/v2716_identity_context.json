@@ -1,0 +1,180 @@
+{
+  "schemaVersion": 1,
+  "scope": "LOCAL_FIDELITY_MODEL_ONLY",
+  "notice": "Identity shapes and prior captured aliases only; synthetic HTTP/index containers are not a fresh runner result. No credentials, parser-derived gold changes or runtime corpus seeds.",
+  "priorHboFixtureSha256": "435da654e6d12734414af2e9804d62937411c15a609992360f1689aac5214dbf",
+  "records": [
+    {
+      "tmdbId": 100088,
+      "enUS": {
+        "id": 100088,
+        "name": "The Last of Us",
+        "original_name": "The Last of Us",
+        "networks": [
+          {
+            "name": "HBO"
+          }
+        ]
+      },
+      "provenance": {
+        "method": "bounded production metadata-shape reconstruction from recorded runner identity; not raw HTTP capture",
+        "baseline": "V2.7.15_FORENSICS.md",
+        "baselineSha256": "e2d08504ac9e2e0996d7c02e76024bd67a93a6bc054419815baa277ca585eca8",
+        "localizedIdentitySource": "v279_hbo_production_evidence.json captured aliases"
+      },
+      "esES": {
+        "id": 100088,
+        "name": "The Last of Us"
+      }
+    },
+    {
+      "tmdbId": 254953,
+      "enUS": {
+        "id": 254953,
+        "name": "Rooster",
+        "original_name": "Rooster",
+        "networks": [
+          {
+            "name": "HBO"
+          }
+        ]
+      },
+      "provenance": {
+        "method": "bounded production metadata-shape reconstruction from recorded runner identity; not raw HTTP capture",
+        "baseline": "V2.7.15_FORENSICS.md",
+        "baselineSha256": "e2d08504ac9e2e0996d7c02e76024bd67a93a6bc054419815baa277ca585eca8",
+        "localizedIdentitySource": "v279_hbo_production_evidence.json captured aliases"
+      },
+      "esES": {
+        "id": 254953,
+        "name": "Rooster"
+      }
+    },
+    {
+      "tmdbId": 200875,
+      "enUS": {
+        "id": 200875,
+        "name": "IT: Welcome to Derry",
+        "original_name": "IT: Welcome to Derry",
+        "networks": [
+          {
+            "name": "HBO"
+          }
+        ]
+      },
+      "provenance": {
+        "method": "bounded production metadata-shape reconstruction from recorded runner identity; not raw HTTP capture",
+        "baseline": "V2.7.15_FORENSICS.md",
+        "baselineSha256": "e2d08504ac9e2e0996d7c02e76024bd67a93a6bc054419815baa277ca585eca8",
+        "localizedIdentitySource": "v279_hbo_production_evidence.json captured aliases"
+      },
+      "esES": {
+        "id": 200875,
+        "name": "IT: Bienvenidos a Derry"
+      }
+    },
+    {
+      "tmdbId": 1999,
+      "enUS": {
+        "id": 1999,
+        "name": "The Comeback",
+        "original_name": "The Comeback",
+        "networks": [
+          {
+            "name": "HBO"
+          }
+        ]
+      },
+      "provenance": {
+        "method": "bounded production metadata-shape reconstruction from recorded runner identity; not raw HTTP capture",
+        "baseline": "V2.7.15_FORENSICS.md",
+        "baselineSha256": "e2d08504ac9e2e0996d7c02e76024bd67a93a6bc054419815baa277ca585eca8",
+        "localizedIdentitySource": "v279_hbo_production_evidence.json captured aliases"
+      },
+      "esES": {
+        "id": 1999,
+        "name": "The Comeback"
+      }
+    },
+    {
+      "tmdbId": 90296,
+      "enUS": {
+        "id": 90296,
+        "name": "Tokyo Vice",
+        "original_name": "Tokyo Vice",
+        "networks": [
+          {
+            "name": "Max"
+          }
+        ]
+      },
+      "provenance": {
+        "method": "bounded production metadata-shape reconstruction from recorded runner identity; not raw HTTP capture",
+        "baseline": "V2.7.15_FORENSICS.md",
+        "baselineSha256": "e2d08504ac9e2e0996d7c02e76024bd67a93a6bc054419815baa277ca585eca8"
+      }
+    },
+    {
+      "tmdbId": 116450,
+      "enUS": {
+        "id": 116450,
+        "name": "And Just Like That…",
+        "original_name": "And Just Like That…",
+        "networks": [
+          {
+            "name": "Max"
+          }
+        ]
+      },
+      "provenance": {
+        "method": "bounded production metadata-shape reconstruction from recorded runner identity; not raw HTTP capture",
+        "baseline": "V2.7.15_FORENSICS.md",
+        "baselineSha256": "e2d08504ac9e2e0996d7c02e76024bd67a93a6bc054419815baa277ca585eca8"
+      }
+    },
+    {
+      "tmdbId": 124101,
+      "enUS": {
+        "id": 124101,
+        "name": "Hacks",
+        "original_name": "Hacks",
+        "networks": [
+          {
+            "name": "Max"
+          }
+        ]
+      },
+      "provenance": {
+        "method": "bounded production metadata-shape reconstruction from recorded runner identity; not raw HTTP capture",
+        "baseline": "V2.7.15_FORENSICS.md",
+        "baselineSha256": "e2d08504ac9e2e0996d7c02e76024bd67a93a6bc054419815baa277ca585eca8"
+      }
+    }
+  ],
+  "forensicCases": [
+    {
+      "caseId": "hbo-it-welcome-to-derry-2-3",
+      "includeGoldInIndex": true,
+      "includeNewerInIndex": false,
+      "expectedFinding": "IDENTITY_CONTEXT_MISMATCH"
+    },
+    {
+      "caseId": "hbo-the-comeback-3-4",
+      "includeGoldInIndex": true,
+      "includeNewerInIndex": true,
+      "expectedFinding": "EQUIVALENT_EVIDENCE"
+    },
+    {
+      "caseId": "max-and-just-like-that-2-2",
+      "includeGoldInIndex": false,
+      "includeNewerInIndex": false,
+      "expectedFinding": "REAL_DISCOVERY_FAILURE"
+    },
+    {
+      "caseId": "max-hacks-4-6",
+      "includeGoldInIndex": true,
+      "includeNewerInIndex": true,
+      "expectedFinding": "HISTORICAL_GOLD_SUPERSEDED"
+    }
+  ]
+}
