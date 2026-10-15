@@ -20,7 +20,7 @@ class AndroidDebugWorkflowTest(unittest.TestCase):
                          'test -s app/build/outputs/apk/debug/app-debug.apk',
                          'python backend/check_debug_metadata.py', 'python backend/package_release.py',
                          'certificate_digest(', 'if-no-files-found: error',
-                         'TV-Series-Tracker-V2.7.14-debug.apk'):
+                         'TV-Series-Tracker-V2.7.14.1-debug.apk'):
             self.assertIn(fragment, source)
         for fragment in ('  push:', '  schedule:', '  pull_request:', 'contents: write',
                          'TMDB_API_TOKEN', 'git push', '--promote-monitored', 'continue-on-error'):
@@ -29,9 +29,9 @@ class AndroidDebugWorkflowTest(unittest.TestCase):
 
     def _fixture(self, root):
         gradle = root / 'build.gradle.kts'
-        gradle.write_text('applicationId = "com.example.tvseriestracker"\nversionCode = 43\nversionName = "2.7.14"')
+        gradle.write_text('applicationId = "com.example.tvseriestracker"\nversionCode = 44\nversionName = "2.7.14.1"')
         metadata = {'applicationId': 'com.example.tvseriestracker', 'variantName': 'debug',
-                    'elements': [{'versionCode': 43, 'versionName': '2.7.14', 'outputFile': 'app-debug.apk'}]}
+                    'elements': [{'versionCode': 44, 'versionName': '2.7.14.1', 'outputFile': 'app-debug.apk'}]}
         path = root / 'output-metadata.json'
         (root / 'app-debug.apk').write_bytes(b'isolated test fixture, not an installable APK')
         return gradle, path, metadata
@@ -40,7 +40,7 @@ class AndroidDebugWorkflowTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             gradle, path, metadata = self._fixture(Path(directory))
             path.write_text(json.dumps(metadata))
-            self.assertEqual(check(path, gradle)['versionCode'], 43)
+            self.assertEqual(check(path, gradle)['versionCode'], 44)
 
     def test_stale_wrong_application_or_variant_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
