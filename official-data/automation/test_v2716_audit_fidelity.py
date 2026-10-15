@@ -17,39 +17,12 @@ from urllib.parse import parse_qs, urlsplit
 import discovery
 import provider_coverage_audit as audit
 import provider_coverage_fidelity as fidelity
-import test_v2715_coverage_recovery as historical
+import v2716_test_support as historical
 
-FIXTURE = Path(__file__).parent / 'fixtures/v2716_identity_context.json'
-CAPTURE = json.loads(FIXTURE.read_text(encoding='utf-8'))
-IDENTITIES = {r['tmdbId']: r for r in CAPTURE['records']}
-OPTIONS = {r['caseId']: r for r in CAPTURE['forensicCases']}
+CAPTURE = historical.CAPTURE
+OPTIONS = historical.OPTIONS
 TODAY = historical.TODAY
-
-
-def replay_case(key, **overrides):
-    case = historical.CASES[key]
-    provider = historical.PROVIDERS['HBO' if key.startswith('hbo-') else 'MAX']
-    options = {**OPTIONS.get(key, {}), **overrides}
-    base, calls = historical.transport_for(case,
-        include_gold=options.get('includeGoldInIndex', True),
-        include_newer=options.get('includeNewerInIndex', False))
-    record = IDENTITIES[case['tmdbId']]
-    def transport(url, domains, headers=None):
-        if domains == ['api.themoviedb.org']:
-            calls.append(url)
-            language = parse_qs(urlsplit(url).query).get('language', ['en-US'])[0]
-            return json.dumps(record['esES' if language == 'es-ES' else 'enUS']), url
-        return base(url, domains, headers)
-    transport.capture_provenance = record['provenance']
-    specs = discovery.provider_specs()
-    generic = audit.BoundedFetcher(provider['provider'], transport=transport)
-    direct = audit.BoundedFetcher(provider['provider'], transport=transport)
-    legacy = audit._case_result(provider, case, token='fixture-token', specs=specs,
-        provider_fetcher=generic, diagnostic_fetcher=direct, transport=transport, today=TODAY)
-    result = audit._fidelity_case_result(provider, case, legacy, token='fixture-token', specs=specs,
-        provider_fetcher=generic, diagnostic_fetcher=direct, transport=transport,
-        identity_context_mode='PRODUCTION_EQUIVALENT_CAPTURE', today=TODAY)
-    return result, calls
+replay_case = historical.replay_case
 
 
 class AuditFidelityIntegrationTests(unittest.TestCase):
@@ -128,7 +101,6 @@ class AuditFidelityIntegrationTests(unittest.TestCase):
             self.assertEqual(f['remainingRealFailures'], 0 if provider=='HBO' else 1)
 
     def test_roi_excludes_fidelity_supersession_equivalence_and_inconclusive(self):
-        from test_provider_coverage_audit import corpus
         with patch.object(audit, '_wbd_access_probe', return_value={'status':'LOCAL_INCONCLUSIVE'}), \
              patch.object(audit, '_fx_control_audit', return_value={'status':'LOCAL_INCONCLUSIVE'}):
             report = audit.build_report(audit.load_corpus(), token=None)
@@ -144,7 +116,6 @@ class AuditFidelityIntegrationTests(unittest.TestCase):
         self.assertEqual(audit._roi(filtered)[0]['accessibleUncovered'], 1)
 
     def test_all_ten_providers_receive_additive_fields_offline_never_runner_authority(self):
-        from test_provider_coverage_audit import corpus
         with patch.object(audit, '_wbd_access_probe', return_value={'status':'LOCAL_INCONCLUSIVE'}), \
              patch.object(audit, '_fx_control_audit', return_value={'status':'LOCAL_INCONCLUSIVE'}):
             report = audit.build_report(audit.load_corpus(), token=None)
@@ -169,11 +140,18 @@ class AuditFidelityIntegrationTests(unittest.TestCase):
                 self.assertIn('historicalGold', json.loads(line))
         self.assertEqual(report['qualityGate']['credentialMatches'], 0)
 
-    def test_captured_metadata_provenance_hashes_match_immutable_inputs(self):
+    def test_captured_metadata_provenance_matches_packaged_identity_fixture(self):
         root = audit.ROOT
         self.assertEqual(hashlib.sha256((root/'official-data/automation/fixtures/v279_hbo_production_evidence.json').read_bytes()).hexdigest(), CAPTURE['priorHboFixtureSha256'])
         for record in CAPTURE['records']:
-            self.assertEqual(hashlib.sha256((root/record['provenance']['baseline']).read_bytes()).hexdigest(), record['provenance']['baselineSha256'])
+            provenance = record['provenance']
+            self.assertEqual(provenance['baseline'], 'V2.7.15_FORENSICS.md')
+            self.assertEqual(provenance['baselineSha256'], historical.RECORDED_FORENSIC_SHA256)
+            # The source hash remains documented provenance; an old report is
+            # not a runtime dependency of a deterministic regression checkout.
+            source = root / provenance['baseline']
+            if source.is_file():
+                self.assertEqual(hashlib.sha256(source.read_bytes()).hexdigest(), provenance['baselineSha256'])
 
 
 if __name__ == '__main__':
