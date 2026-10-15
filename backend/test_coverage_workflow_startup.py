@@ -75,6 +75,16 @@ class CoverageWorkflowStartupTests(unittest.TestCase):
             self.assertIn('output_dir / "' + name + '"', harness)
         self.assertIn('name: provider-coverage-audit', upload)
 
+    def test_runner_authority_is_requested_only_by_actual_audit_step(self):
+        self.assertEqual(self.source.count('--execution-mode runner-confirmation'), 1)
+        audit = self.source.split('- name: Audit frozen provider coverage', 1)[1].split('- name:', 1)[0]
+        self.assertIn('--execution-mode runner-confirmation', audit)
+        regression = self.source.split('- name: Official Data regression tests', 1)[1].split('- name:', 1)[0]
+        self.assertNotIn('--execution-mode', regression)
+        self.assertNotIn('continue-on-error', self.source)
+        self.assertLess(self.source.index('Official Data regression tests'), self.source.index('Validate independent audit corpus'))
+        self.assertLess(self.source.index('Validate independent audit corpus'), self.source.index('Audit frozen provider coverage'))
+
     def test_manual_read_only_and_protected_guards_preserved(self):
         triggers = self.source.split('on:\n', 1)[1].split('\npermissions:', 1)[0]
         self.assertEqual(triggers.strip(), 'workflow_dispatch:')

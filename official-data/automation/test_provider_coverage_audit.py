@@ -347,6 +347,108 @@ class DiscoveryBoundaryTests(unittest.TestCase):
 
 
 class ReportContractTests(unittest.TestCase):
+    def _authority_report(self, *, actions, mode="local", token=None, measured=False):
+        def case_result(provider, case, **kwargs):
+            return audit._case_aliases({
+                "caseId": case["caseId"], "provider": provider["provider"],
+                "kind": case["kind"], "goldReviewStatus": case["goldReviewStatus"],
+                "expectedFacts": case.get("expectedFacts"),
+                "expectedFactKnownFields": case.get("expectedFactKnownFields"),
+                "denominatorEligible": measured and case["kind"] == "positive" and provider["productionEnabled"],
+                "freshMetadataFetched": measured and provider["productionEnabled"],
+                "routeValid": measured, "sourceAccessible": measured,
+                "genericDiscovery": False, "identityAccepted": False,
+                "lifecycleParsed": False, "reconstructionPassed": False, "covered": False,
+                "primaryFailure": "DISCOVERY_MISSED" if measured else "LOCAL_INCONCLUSIVE",
+                "manuallySeeded": False, "secondaryFailures": [],
+            }, case)
+        with mock.patch.dict(audit.os.environ, {"GITHUB_ACTIONS": actions}), \
+             mock.patch.object(audit, "_wbd_access_probe", return_value={"status": "TEST_FIXTURE"}), \
+             mock.patch.object(audit, "_fx_control_audit", return_value={"status": "TEST_FIXTURE"}), \
+             mock.patch.object(audit, "_case_result", side_effect=case_result):
+            return audit.build_report(audit.load_corpus(), token=token, execution_mode=mode)
+
+    def test_actions_environment_alone_does_not_authorize_offline_report(self):
+        report = self._authority_report(actions="true")
+        self.assertEqual(report["finalCoverageStatus"], "AWAITING_GITHUB_RUNNER_CONFIRMATION")
+        self.assertEqual(report["diagnosticStatus"], "INCONCLUSIVE")
+        self.assertEqual(report["resultScope"], "LOCAL_DIAGNOSTIC_ONLY")
+        self.assertFalse(report["runnerAuthorityConfirmed"])
+        self.assertTrue(report["readOnly"])
+        self.assertFalse(report["productionMutation"])
+
+    def test_measured_local_diagnostic_still_requires_runner_confirmation(self):
+        for actions in ("true", "false"):
+            with self.subTest(actions=actions):
+                report = self._authority_report(actions=actions, token="fixture-token", measured=True)
+                self.assertEqual(report["diagnosticStatus"], "MEASURED")
+                self.assertEqual(report["finalCoverageStatus"], "AWAITING_GITHUB_RUNNER_CONFIRMATION")
+                self.assertEqual(report["resultScope"], "LOCAL_DIAGNOSTIC_ONLY")
+
+    def test_explicit_runner_execution_can_confirm_measured_valid_report(self):
+        report = self._authority_report(actions="true", mode="runner-confirmation", token="fixture-token", measured=True)
+        self.assertEqual(report["resultScope"], "RUNNER_CONFIRMATION")
+        self.assertEqual(report["finalCoverageStatus"], "GITHUB_RUNNER_CONFIRMATION")
+        self.assertTrue(report["runnerAuthorityConfirmed"])
+        self.assertTrue(report["qualityGate"]["valid"])
+
+    def test_requested_runner_without_measurement_remains_pending(self):
+        report = self._authority_report(actions="true", mode="runner-confirmation")
+        self.assertEqual(report["diagnosticStatus"], "INCONCLUSIVE")
+        self.assertEqual(report["finalCoverageStatus"], "AWAITING_GITHUB_RUNNER_CONFIRMATION")
+        self.assertEqual(report["resultScope"], "RUNNER_INCONCLUSIVE")
+        self.assertFalse(report["runnerAuthorityConfirmed"])
+
+    def test_invalid_runner_report_is_not_a_success_artifact(self):
+        with mock.patch.object(audit, "credential_scan", return_value=1):
+            report = self._authority_report(actions="true", mode="runner-confirmation", token="fixture-token", measured=True)
+        self.assertEqual(report["finalCoverageStatus"], "AUDIT_INVALID")
+        self.assertFalse(report["runnerAuthorityConfirmed"])
+        self.assertNotEqual(report["resultScope"], "RUNNER_CONFIRMATION")
+        self.assertFalse(report["qualityGate"]["valid"])
+        self.assertEqual(report["recommendations"], [])
+        with tempfile.TemporaryDirectory() as directory:
+            paths = audit.write_report(report, audit.Path(directory))
+            self.assertIn('"finalCoverageStatus": "AUDIT_INVALID"', paths[0].read_text())
+
+    def test_runner_mode_requires_actions_environment_before_any_fetch(self):
+        with mock.patch.dict(audit.os.environ, {"GITHUB_ACTIONS": "false"}), \
+             mock.patch.object(audit, "_wbd_access_probe") as probe:
+            with self.assertRaisesRegex(ValueError, "GitHub Actions"):
+                audit.build_report(audit.load_corpus(), execution_mode="runner-confirmation")
+        probe.assert_not_called()
+
+    def test_final_safety_or_output_scan_failure_revokes_runner_authority(self):
+        for output_failure in (False, True):
+            with self.subTest(output_scan=output_failure):
+                report = self._authority_report(actions="true", mode="runner-confirmation", token="fixture-token", measured=True)
+                if not output_failure:
+                    report["qualityGate"]["valid"] = False
+                    report["finalCoverageStatus"] = report["status"] = "AUDIT_INVALID"
+                with tempfile.TemporaryDirectory() as directory, \
+                     mock.patch.object(audit, "credential_scan_texts", return_value=int(output_failure)):
+                    paths = audit.write_report(report, audit.Path(directory))
+                    self.assertFalse(report["runnerAuthorityConfirmed"])
+                    self.assertEqual(report["resultScope"], "RUNNER_INCONCLUSIVE")
+                    self.assertIn('"finalCoverageStatus": "AUDIT_INVALID"', paths[0].read_text())
+
+    def test_cli_validation_failure_creates_no_fake_artifact(self):
+        with tempfile.TemporaryDirectory() as directory, \
+             mock.patch.object(audit, "load_corpus", side_effect=audit.CorpusError("invalid fixture")):
+            self.assertEqual(audit.main(["--output-dir", directory]), 2)
+            self.assertEqual(list(audit.Path(directory).iterdir()), [])
+
+    def test_cli_defaults_local_and_passes_explicit_runner_mode(self):
+        for args, expected in (([], "local"), (["--execution-mode", "runner-confirmation"], "runner-confirmation")):
+            with self.subTest(mode=expected), tempfile.TemporaryDirectory() as directory, \
+                 mock.patch.object(audit, "load_corpus", return_value={}), \
+                 mock.patch.object(audit.discovery, "local_tmdb_token", return_value=None), \
+                 mock.patch.object(audit, "build_report", return_value={"auditQuality": {"valid": True}}) as build, \
+                 mock.patch.object(audit, "write_report"), \
+                 mock.patch.object(audit, "render_markdown", return_value=""):
+                self.assertEqual(audit.main(["--output-dir", directory] + args), 0)
+                self.assertEqual(build.call_args.kwargs["execution_mode"], expected)
+
     def test_offline_report_has_runner_gate_and_three_artifact_contract(self):
         data = corpus()
         negative = {**positive_case("NETFLIX", "n-neg"), "kind": "negative", "expectedFacts": None,

@@ -789,7 +789,14 @@ def _fx_control_audit() -> dict:
 
 
 def build_report(corpus: dict, *, token: str | None = None, transport=None,
-                 now: dt.datetime | None = None) -> dict:
+                 now: dt.datetime | None = None, execution_mode: str = "local") -> dict:
+    # Unit-test host environment is not evidence that a coverage audit was run.
+    if execution_mode not in ("local", "runner-confirmation"):
+        raise ValueError("unsupported audit execution mode")
+    is_actions = os.environ.get("GITHUB_ACTIONS", "").casefold() == "true"
+    runner_execution = execution_mode == "runner-confirmation"
+    if runner_execution and not is_actions:
+        raise ValueError("runner-confirmation requires a GitHub Actions execution environment")
     validate_corpus(corpus)
     start = now or dt.datetime.now(dt.timezone.utc)
     protected_before = protected_hashes()
@@ -880,12 +887,12 @@ def build_report(corpus: dict, *, token: str | None = None, transport=None,
             "maximumPotentialGainCases": item["accessibleUncovered"],
             "recommendedAction": "Review false-positive evidence and parser binding before any production change" if failure == "FALSE_POSITIVE" else
                                 "Review bounded source availability evidence" if failure == "SOURCE_INACCESSIBLE" else "Investigate the measured failing stage before changing production behavior"})
-    is_runner = os.environ.get("GITHUB_ACTIONS", "").casefold() == "true"
+    diagnostic_status = "INCONCLUSIVE" if not token or not runner_metadata_measured else "MEASURED"
+    authority_confirmed = bool(runner_execution and is_actions and quality_valid
+                               and token and runner_metadata_measured)
     if not quality_valid:
         final_status = "AUDIT_INVALID"
-    elif is_runner and (not token or not runner_metadata_measured):
-        final_status = "INCONCLUSIVE"
-    elif is_runner:
+    elif authority_confirmed:
         final_status = "GITHUB_RUNNER_CONFIRMATION"
     else:
         final_status = "AWAITING_GITHUB_RUNNER_CONFIRMATION"
@@ -899,8 +906,10 @@ def build_report(corpus: dict, *, token: str | None = None, transport=None,
             "productionMutation": bool(mutation), "protectedFilesUnchanged": not mutation,
             "protectedChangedFiles": mutation, "frozenModulesUnchanged": not frozen_changed,
             "frozenChangedModules": frozen_changed, "localResultScope": "LOCAL_DIAGNOSTIC_ONLY",
-            "resultScope": ("RUNNER_CONFIRMATION" if is_runner and quality_valid and token and runner_metadata_measured
-                            else "RUNNER_INCONCLUSIVE" if is_runner else "LOCAL_DIAGNOSTIC_ONLY"),
+            "resultScope": ("RUNNER_CONFIRMATION" if authority_confirmed else
+                            "RUNNER_INCONCLUSIVE" if runner_execution else "LOCAL_DIAGNOSTIC_ONLY"),
+            "executionMode": execution_mode, "diagnosticStatus": diagnostic_status,
+            "runnerAuthorityConfirmed": authority_confirmed,
             "finalCoverageStatus": final_status, "status": final_status,
             "generatedAt": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
             "environment": {"python": sys.version, "pythonVersion": platform.python_version(),
@@ -945,6 +954,7 @@ def render_markdown(report: dict) -> str:
     ranking = report.get("rankings", {})
     name = lambda row: row.get("provider") if isinstance(row, dict) else "N/A"
     lines = ["# Provider Coverage Audit", "", f"**Final coverage status:** `{report['finalCoverageStatus']}`",
+             "", f"Diagnostic status: `{report.get('diagnosticStatus', 'N/A')}`; execution mode: `{report.get('executionMode', 'local')}`; result scope: `{report.get('resultScope', 'LOCAL_DIAGNOSTIC_ONLY')}`.",
              "", "## Provider overview", "", "| Provider | Corpus | Accessible | Discovered | Covered | Discovery % | Raw E2E % | Accessible E2E % | Direct URL % | False positives | Confidence | Rating |",
              "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|"]
     fmt = lambda x: "N/A" if x is None else f"{x:.2f}%"
@@ -962,9 +972,9 @@ def render_markdown(report: dict) -> str:
               f"BEST V2.7.15 QUICK WIN: {name(ranking.get('bestV2715QuickWin'))}",
               "", "## Provider funnels", ""]
     for r in rows:
-        lines.append(f"**{r['provider']}**: " + " → ".join(str(n) for n in r["funnel"]) + f"  ")
+        lines.append(f"**{r['provider']}**: " + " â†’ ".join(str(n) for n in r["funnel"]) + f"  ")
         lines.append("Failures: " + (", ".join(f"{k}={v}" for k, v in sorted(r["failureBreakdown"].items())) or "none measured") + ".")
-    lines += ["", "## ROI ranking", "", "Safety priority: any observed false positive ranks first for high-severity safety review. Other providers rank by accessible uncovered cases × dominant positive-failure share among measured positive failures.", ""]
+    lines += ["", "## ROI ranking", "", "Safety priority: any observed false positive ranks first for high-severity safety review. Other providers rank by accessible uncovered cases Ã— dominant positive-failure share among measured positive failures.", ""]
     ranking = report["roiRanking"]
     if ranking:
         lines.extend(f"{i}. {r['provider']}: score {r['score']} ({r['dominantFailure']}, {r['accessibleUncovered']} accessible uncovered)" for i, r in enumerate(ranking[:3], 1))
@@ -973,7 +983,7 @@ def render_markdown(report: dict) -> str:
     lines += ["", "## Recommended V2.7.15 investigation targets", ""]
     if report.get("recommendations"):
         for i, rec in enumerate(report["recommendations"], 1):
-            lines += [f"{i}. **{rec['provider']} — {rec['targetType']}**",
+            lines += [f"{i}. **{rec['provider']} â€” {rec['targetType']}**",
                       f"   Problem: {rec['problem']}. Measured impact: {rec['measuredImpact']}.",
                       f"   Risk: {rec['risk']}. Maximum possible gain: {rec['maximumPotentialGainCases']} cases.",
                       f"   Next action: {rec['recommendedAction']}."]
@@ -984,6 +994,11 @@ def render_markdown(report: dict) -> str:
 
 
 def write_report(report: dict, output_dir: Path) -> tuple[Path, Path, Path]:
+    # Final workflow safety checks can invalidate a previously measured report.
+    if not report.get("qualityGate", report.get("auditQuality", {})).get("valid", False):
+        report["runnerAuthorityConfirmed"] = False
+        if report.get("resultScope") == "RUNNER_CONFIRMATION":
+            report["resultScope"] = "RUNNER_INCONCLUSIVE"
     output_dir.mkdir(parents=True, exist_ok=True)
     json_path = output_dir / "provider-coverage-audit.json"
     md_path = output_dir / "provider-coverage-audit.md"
@@ -1000,6 +1015,9 @@ def write_report(report: dict, output_dir: Path) -> tuple[Path, Path, Path]:
         gate["valid"] = False
         report["auditQuality"] = report["qualityGate"] = gate
         report["finalCoverageStatus"] = report["status"] = "AUDIT_INVALID"
+        report["runnerAuthorityConfirmed"] = False
+        if report.get("resultScope") == "RUNNER_CONFIRMATION":
+            report["resultScope"] = "RUNNER_INCONCLUSIVE"
         report["rankings"] = {key: None for key in report.get("rankings", {})}
         report["roiRanking"] = []
         report["recommendations"] = []
@@ -1025,6 +1043,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--corpus", type=Path, default=CORPUS)
     parser.add_argument("--validate-corpus", action="store_true")
     parser.add_argument("--output-dir", type=Path)
+    parser.add_argument("--execution-mode", choices=("local", "runner-confirmation"), default="local",
+                        help="Explicit audit authority mode; tests and local calls default to local")
     args = parser.parse_args(argv)
     try:
         corpus = load_corpus(args.corpus)
@@ -1036,7 +1056,7 @@ def main(argv: list[str] | None = None) -> int:
         if output_dir is None:
             raise ValueError("--output-dir is required for an audit run")
         token = discovery.local_tmdb_token()
-        report = build_report(corpus, token=token)
+        report = build_report(corpus, token=token, execution_mode=args.execution_mode)
         write_report(report, output_dir)
         print(render_markdown(report), end="")
         return 0 if report["auditQuality"]["valid"] else 2
