@@ -12,6 +12,48 @@
       "lastChecked": "2026-10-09"
     },
     {
+      "tmdbId": 88324,
+      "title": "Virgin River",
+      "provider": "NETFLIX",
+      "discoveryState": "VERIFIED_FACTS",
+      "candidateUrls": [
+        "https://www.netflix.com/tudum/articles/virgin-river-season-7-cast-release-date-news",
+        "https://www.netflix.com/tudum/articles/virgin-river-season-7-ending-explained",
+        "https://www.netflix.com/tudum/virgin-river"
+      ],
+      "verifiedFacts": {
+        "status": "RENEWED",
+        "nextSeasonNumber": 7,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Netflix Tudum",
+        "sourceUrl": "https://www.netflix.com/tudum/articles/virgin-river-season-7-cast-release-date-news",
+        "announcementDate": null
+      },
+      "sourceEvidence": [
+        {
+          "status": "RENEWED",
+          "nextSeasonNumber": 7,
+          "releaseDate": null,
+          "releaseYear": null,
+          "sourceName": "Netflix Tudum",
+          "sourceUrl": "https://www.netflix.com/tudum/articles/virgin-river-season-7-cast-release-date-news",
+          "announcementDate": null,
+          "rule": "explicit-renewal",
+          "factType": "LIFECYCLE",
+          "evidenceText": "Virgin River Renewed for Season 7",
+          "publicationDateSource": "none"
+        }
+      ],
+      "parserResult": "facts",
+      "validationResult": "passed",
+      "eligibleSourceUrls": [
+        "https://www.netflix.com/tudum/articles/virgin-river-season-7-cast-release-date-news",
+        "https://www.netflix.com/tudum/virgin-river"
+      ],
+      "lastChecked": "2026-10-15"
+    },
+    {
       "tmdbId": 90296,
       "title": "Tokyo Vice",
       "provider": "MAX",
