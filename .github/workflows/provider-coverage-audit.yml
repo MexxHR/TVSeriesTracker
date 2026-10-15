@@ -12,9 +12,12 @@ jobs:
     timeout-minutes: 60
     env:
       PYTHONDONTWRITEBYTECODE: '1'
-      TEMP: ${{ runner.temp }}/coverage-tmp
-      TMP: ${{ runner.temp }}/coverage-tmp
     steps:
+      - name: Initialize runner temporary paths
+        run: |
+          mkdir -p "$RUNNER_TEMP/coverage-tmp"
+          printf 'TEMP=%s/coverage-tmp\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'TMP=%s/coverage-tmp\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
