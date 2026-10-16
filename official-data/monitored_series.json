@@ -405,6 +405,49 @@
       "lastChecked": "2026-10-11"
     },
     {
+      "tmdbId": 250988,
+      "title": "House of Guinness",
+      "provider": "NETFLIX",
+      "discoveryState": "VERIFIED_FACTS",
+      "candidateUrls": [
+        "https://www.netflix.com/tudum/articles/house-of-guinness-photos-release-date-news",
+        "https://www.netflix.com/tudum/articles/house-of-guinness-season-2-plot-release-date-news",
+        "https://www.netflix.com/tudum/house-of-guinness"
+      ],
+      "verifiedFacts": {
+        "status": "RENEWED",
+        "nextSeasonNumber": 2,
+        "releaseDate": null,
+        "releaseYear": null,
+        "sourceName": "Netflix Tudum",
+        "sourceUrl": "https://www.netflix.com/tudum/articles/house-of-guinness-season-2-plot-release-date-news",
+        "announcementDate": null
+      },
+      "sourceEvidence": [
+        {
+          "status": "RENEWED",
+          "nextSeasonNumber": 2,
+          "releaseDate": null,
+          "releaseYear": null,
+          "sourceName": "Netflix Tudum",
+          "sourceUrl": "https://www.netflix.com/tudum/articles/house-of-guinness-season-2-plot-release-date-news",
+          "announcementDate": null,
+          "rule": "explicit-renewal",
+          "factType": "LIFECYCLE",
+          "evidenceText": "The Guinness family is heading back to the tap — House of Guinness has been renewed for Season 2",
+          "publicationDateSource": "none"
+        }
+      ],
+      "parserResult": "facts",
+      "validationResult": "passed",
+      "eligibleSourceUrls": [
+        "https://www.netflix.com/tudum/articles/house-of-guinness-photos-release-date-news",
+        "https://www.netflix.com/tudum/articles/house-of-guinness-season-2-plot-release-date-news",
+        "https://www.netflix.com/tudum/house-of-guinness"
+      ],
+      "lastChecked": "2026-10-16"
+    },
+    {
       "tmdbId": 254953,
       "title": "Rooster",
       "provider": "HBO",
