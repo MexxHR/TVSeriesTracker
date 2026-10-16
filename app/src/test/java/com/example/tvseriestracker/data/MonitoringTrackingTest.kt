@@ -7,6 +7,9 @@ import com.example.tvseriestracker.data.remote.monitoringWorkName
 import com.example.tvseriestracker.data.remote.shouldRetry
 import com.example.tvseriestracker.data.remote.monitoringWorkRequest
 import com.example.tvseriestracker.data.remote.monitoringExistingWorkPolicy
+import com.example.tvseriestracker.data.remote.monitoringNeedsWork
+import com.example.tvseriestracker.data.remote.deferredMonitoringProtocol
+import androidx.work.WorkInfo
 import androidx.work.BackoffPolicy
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
@@ -19,6 +22,19 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class MonitoringTrackingTest {
+    @Test fun invalidTransportConfigDoesNotCrashDependencyConstruction() = runBlocking {
+        val protocol = deferredMonitoringProtocol("http://invalid.example")
+        var failed = false
+        try { protocol.submit(1) } catch (_: Exception) { failed = true }
+        assertTrue(failed)
+    }
+    @Test fun missingOrTerminalWorkRepairsButActiveUniqueWorkIsKept() {
+        assertTrue(monitoringNeedsWork(emptyList()))
+        for (state in listOf(WorkInfo.State.SUCCEEDED, WorkInfo.State.FAILED, WorkInfo.State.CANCELLED))
+            assertTrue(monitoringNeedsWork(listOf(state)))
+        for (state in listOf(WorkInfo.State.ENQUEUED, WorkInfo.State.RUNNING, WorkInfo.State.BLOCKED))
+            assertFalse(monitoringNeedsWork(listOf(state, WorkInfo.State.FAILED)))
+    }
     private class FakeSeriesRepository : SeriesRepository {
         var added = false
         override val tracked: Flow<List<Series>> = flowOf(emptyList())

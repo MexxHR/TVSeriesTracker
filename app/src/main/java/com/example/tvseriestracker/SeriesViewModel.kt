@@ -6,19 +6,21 @@ import androidx.lifecycle.viewModelScope
 import com.example.tvseriestracker.data.AppLanguage
 import com.example.tvseriestracker.data.AppTheme
 import com.example.tvseriestracker.data.OfficialDataRepository
-import com.example.tvseriestracker.data.RequestedOfficialRefresh
+import com.example.tvseriestracker.data.MonitoringObligations
+import com.example.tvseriestracker.data.MonitoringReconciler
+import com.example.tvseriestracker.data.remote.MonitoringProtocol
 import com.example.tvseriestracker.data.Series
 import com.example.tvseriestracker.data.SeriesRepository
 import com.example.tvseriestracker.data.SettingsRepository
 import com.example.tvseriestracker.data.trackAndQueueMonitoring
 import com.example.tvseriestracker.data.remote.MissingTmdbServiceException
 import com.example.tvseriestracker.data.remote.MonitoringRequestQueue
-import com.example.tvseriestracker.data.remote.MonitoringRequestAcceptedEvents
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
@@ -33,25 +35,25 @@ internal fun searchFailurePhase(exception: Exception): SearchPhase = when {
 }
 
 class SeriesViewModel(val series: SeriesRepository, val preferences: SettingsRepository,
-    val official: OfficialDataRepository, private val monitoringQueue: MonitoringRequestQueue) : ViewModel() {
+    val official: OfficialDataRepository, private val monitoringQueue: MonitoringRequestQueue,
+    private val monitoring: MonitoringObligations, protocol: MonitoringProtocol) : ViewModel() {
     private val _officialRefresh = MutableStateFlow(OfficialRefreshPhase.IDLE)
     val officialRefresh = _officialRefresh.asStateFlow()
     val officialCache = official.cache
-    private val requestedRefresh = RequestedOfficialRefresh(viewModelScope, official,
-        onFailure = { exception ->
-            if (BuildConfig.DEBUG) android.util.Log.d("OfficialData", "Requested follow-up refresh failed: ${exception.javaClass.simpleName}")
-        },
-        onDiagnostic = { message ->
-            if (BuildConfig.DEBUG) android.util.Log.d("OfficialData", message)
-        })
-    fun setOfficialRefreshLifecycleActive(active: Boolean) = requestedRefresh.setActive(active)
+    private val requestedRefresh = MonitoringReconciler(viewModelScope, monitoring, protocol,
+        ensureSubmission = { monitoringQueue.ensure(it) }, refreshCanonical = { official.refresh("durable-monitoring") })
+    fun setOfficialRefreshLifecycleActive(active: Boolean) {
+        if (active) viewModelScope.launch {
+            try { monitoring.repairPrepared { series.tracked.first().map { it.id }.toSet() } }
+            catch (cancel: CancellationException) { throw cancel }
+            catch (_: Exception) { /* Keep durable intent; next activation can retry. */ }
+        }
+        requestedRefresh.setActive(active)
+    }
     init { viewModelScope.launch {
         try { official.bootstrap(); official.refreshIfStale() }
         catch (exception: CancellationException) { throw exception }
         catch (_: Exception) { _officialRefresh.value = OfficialRefreshPhase.ERROR }
-    } }
-    init { viewModelScope.launch {
-        MonitoringRequestAcceptedEvents.events.collect { requestedRefresh.requested(it) }
     } }
     private val _searchState = MutableStateFlow(SearchUiState())
     val searchState = _searchState.asStateFlow()
@@ -99,7 +101,7 @@ class SeriesViewModel(val series: SeriesRepository, val preferences: SettingsRep
         _addErrorId.value = null
         viewModelScope.launch {
             try {
-                trackAndQueueMonitoring(series, monitoringQueue, item, language)
+                trackAndQueueMonitoring(series, monitoringQueue, item, language, monitoring)
                 _searchState.value = _searchState.value.copy(results = _searchState.value.results.map {
                     if (it.id == item.id) it.copy(isTracked = true) else it
                 })
@@ -113,7 +115,7 @@ class SeriesViewModel(val series: SeriesRepository, val preferences: SettingsRep
         }
     }
 
-    fun untrack(id: String) { viewModelScope.launch { series.untrack(id) } }
+    fun untrack(id: String) { viewModelScope.launch { monitoring.addBoundary { series.untrack(id); monitoring.removeSeries(id) } } }
     fun refreshMetadata(id: String, language: AppLanguage) { viewModelScope.launch {
         try { series.refreshMetadata(id, language) }
         catch (exception: CancellationException) { throw exception }
@@ -130,7 +132,8 @@ class SeriesViewModel(val series: SeriesRepository, val preferences: SettingsRep
 }
 
 class SeriesViewModelFactory(private val series: SeriesRepository, private val preferences: SettingsRepository,
-    private val official: OfficialDataRepository, private val monitoringQueue: MonitoringRequestQueue) : ViewModelProvider.Factory {
+    private val official: OfficialDataRepository, private val monitoringQueue: MonitoringRequestQueue,
+    private val monitoring: MonitoringObligations, private val protocol: MonitoringProtocol) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T = SeriesViewModel(series, preferences, official, monitoringQueue) as T
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = SeriesViewModel(series, preferences, official, monitoringQueue, monitoring, protocol) as T
 }

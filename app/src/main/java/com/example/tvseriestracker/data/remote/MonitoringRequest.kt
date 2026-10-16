@@ -9,23 +9,19 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkerParameters
 import androidx.work.WorkManager
+import androidx.work.WorkInfo
 import androidx.work.workDataOf
 import com.example.tvseriestracker.BuildConfig
+import com.example.tvseriestracker.data.DataStoreMonitoringIntentStore
+import com.example.tvseriestracker.data.MonitoringObligations
+import com.example.tvseriestracker.data.MonitoringSubmission
 import com.google.gson.JsonParser
-import java.net.HttpURLConnection
-import java.net.URL
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.withContext
 
 enum class MonitoringRequestResult { QUEUED, ALREADY_QUEUED, TEMPORARY_FAILURE, PERMANENT_FAILURE, UNAVAILABLE }
-
-interface SeriesMonitoringRequestService {
-    suspend fun requestMonitoring(tmdbId: Int): MonitoringRequestResult
-}
 
 internal fun classifyResponse(status: Int, body: String): MonitoringRequestResult {
     if (status == 202) {
@@ -42,6 +38,13 @@ internal fun classifyResponse(status: Int, body: String): MonitoringRequestResul
 
 internal fun monitoringWorkName(tmdbId: Int) = "official-monitoring-$tmdbId"
 internal val monitoringExistingWorkPolicy = ExistingWorkPolicy.KEEP
+internal fun monitoringNeedsWork(states: List<WorkInfo.State>) = states.none { !it.isFinished }
+/** Invalid optional transport configuration must not prevent local app startup. */
+fun deferredMonitoringProtocol(baseUrl: String): MonitoringProtocol = object : MonitoringProtocol {
+    private val delegate by lazy { HttpMonitoringProtocol(baseUrl) }
+    override suspend fun submit(tmdbId: Int) = delegate.submit(tmdbId)
+    override suspend fun status(tmdbId: Int, receipt: String) = delegate.status(tmdbId, receipt)
+}
 internal fun monitoringWorkRequest(tmdbId: Int) = OneTimeWorkRequestBuilder<MonitoringRequestWorker>()
     .setInputData(workDataOf("tmdbId" to tmdbId))
     .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
@@ -50,47 +53,9 @@ internal fun monitoringWorkRequest(tmdbId: Int) = OneTimeWorkRequestBuilder<Moni
 internal fun shouldRetry(result: MonitoringRequestResult, attempts: Int) =
     result == MonitoringRequestResult.TEMPORARY_FAILURE && attempts < 5
 
-class HttpSeriesMonitoringRequestService(
-    private val baseUrl: String = BuildConfig.SERIES_REQUEST_API_BASE_URL
-) : SeriesMonitoringRequestService {
-    override suspend fun requestMonitoring(tmdbId: Int): MonitoringRequestResult = withContext(Dispatchers.IO) {
-        if (tmdbId <= 0) return@withContext MonitoringRequestResult.PERMANENT_FAILURE
-        if (baseUrl.isBlank()) return@withContext MonitoringRequestResult.UNAVAILABLE
-        val base = runCatching { URL(baseUrl.trimEnd('/') + "/") }.getOrNull()
-            ?: return@withContext MonitoringRequestResult.UNAVAILABLE
-        if (base.protocol != "https") return@withContext MonitoringRequestResult.UNAVAILABLE
-        try {
-            val connection = URL(base, "v1/series-requests").openConnection() as HttpURLConnection
-            try {
-                connection.requestMethod = "POST"
-                connection.connectTimeout = 8000
-                connection.readTimeout = 8000
-                connection.doOutput = true
-                connection.setRequestProperty("Content-Type", "application/json")
-                val payload = "{\"tmdbId\":$tmdbId}".toByteArray(Charsets.UTF_8)
-                connection.setFixedLengthStreamingMode(payload.size)
-                connection.outputStream.use { it.write(payload) }
-                val status = connection.responseCode
-                val response = if (status == 202) connection.inputStream.bufferedReader().use { it.readText() } else ""
-                classifyResponse(status, response)
-            } finally {
-                connection.disconnect()
-            }
-        } catch (exception: CancellationException) {
-            throw exception
-        } catch (_: Exception) {
-            MonitoringRequestResult.TEMPORARY_FAILURE
-        }
-    }
-}
-
 interface MonitoringRequestQueue {
     fun enqueue(tmdbId: Int)
-}
-
-/** Process-local signal emitted only after the backend confirms queue acceptance. */
-object MonitoringRequestAcceptedEvents {
-    val events = MutableSharedFlow<Int>(extraBufferCapacity = 16, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    suspend fun ensure(tmdbId: Int) { enqueue(tmdbId) }
 }
 
 class WorkManagerMonitoringRequestQueue(private val context: Context) : MonitoringRequestQueue {
@@ -99,19 +64,27 @@ class WorkManagerMonitoringRequestQueue(private val context: Context) : Monitori
         WorkManager.getInstance(context).enqueueUniqueWork(monitoringWorkName(tmdbId), monitoringExistingWorkPolicy,
             monitoringWorkRequest(tmdbId))
     }
+    override suspend fun ensure(tmdbId: Int) = withContext(Dispatchers.IO) {
+        val manager = WorkManager.getInstance(context)
+        val existing = manager.getWorkInfosForUniqueWork(monitoringWorkName(tmdbId)).get(10, TimeUnit.SECONDS)
+        if (monitoringNeedsWork(existing.map { it.state })) {
+            manager.enqueueUniqueWork(monitoringWorkName(tmdbId), monitoringExistingWorkPolicy,
+                monitoringWorkRequest(tmdbId)).result.get(10, TimeUnit.SECONDS)
+        }
+        Unit
+    }
 }
 
 class MonitoringRequestWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
         val tmdbId = inputData.getInt("tmdbId", 0)
         if (tmdbId <= 0) return Result.failure()
-        return when (HttpSeriesMonitoringRequestService().requestMonitoring(tmdbId)) {
-            MonitoringRequestResult.QUEUED, MonitoringRequestResult.ALREADY_QUEUED -> {
-                MonitoringRequestAcceptedEvents.events.tryEmit(tmdbId)
-                Result.success()
-            }
-            MonitoringRequestResult.TEMPORARY_FAILURE -> if (shouldRetry(MonitoringRequestResult.TEMPORARY_FAILURE, runAttemptCount)) Result.retry() else Result.failure()
-            MonitoringRequestResult.PERMANENT_FAILURE, MonitoringRequestResult.UNAVAILABLE -> Result.failure()
-        }
+        return try {
+            val obligations = MonitoringObligations(DataStoreMonitoringIntentStore(applicationContext))
+            val sent = MonitoringSubmission(obligations,
+                HttpMonitoringProtocol(BuildConfig.SERIES_REQUEST_API_BASE_URL)).submit(tmdbId)
+            if (sent) Result.success() else if (runAttemptCount < 5) Result.retry() else Result.failure()
+        } catch (cancel: CancellationException) { throw cancel }
+        catch (_: Exception) { if (runAttemptCount < 5) Result.retry() else Result.failure() }
     }
 }

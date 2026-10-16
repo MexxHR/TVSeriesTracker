@@ -58,7 +58,9 @@ class MainActivity : AppCompatActivity() {
         val official = OfficialDataRepository(RoomOfficialDataStore(database.trackingDao()),
             HttpOfficialRemoteSource(), bundledOfficialData(applicationContext))
         val factory = SeriesViewModelFactory(DefaultSeriesRepository(database.trackingDao(), TmdbRemoteDataSource(), official),
-            SettingsRepository(applicationContext), official, WorkManagerMonitoringRequestQueue(applicationContext))
+            SettingsRepository(applicationContext), official, WorkManagerMonitoringRequestQueue(applicationContext),
+            com.example.tvseriestracker.data.MonitoringObligations(com.example.tvseriestracker.data.DataStoreMonitoringIntentStore(applicationContext)),
+            com.example.tvseriestracker.data.remote.deferredMonitoringProtocol(BuildConfig.SERIES_REQUEST_API_BASE_URL))
         setContent {
             val model: SeriesViewModel = viewModel(factory = factory)
             // Wait for DataStore before applying a locale. A temporary HR default here
