@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-15T17:20:45Z",
+  "generatedAt": "2026-10-16T10:05:18Z",
   "series": [
     {
       "tmdbId": 88324,
@@ -205,6 +205,18 @@
       "sourceUrl": "https://www.paramountpressexpress.com/paramount-television-studios/shows/mobland/releases/?view=113212-the-harrigans-arent-going-anywhere-mobland-renewed-for-season-three-on-paramount",
       "announcementDate": "2026-09-03",
       "lastChecked": "2026-09-26"
+    },
+    {
+      "tmdbId": 250988,
+      "title": "House of Guinness",
+      "nextSeasonNumber": 2,
+      "sourceName": "Netflix Tudum",
+      "sourceUrl": "https://www.netflix.com/tudum/articles/house-of-guinness-season-2-plot-release-date-news",
+      "announcementDate": null,
+      "status": "RENEWED",
+      "releaseDate": null,
+      "releaseYear": null,
+      "lastChecked": "2026-10-16"
     },
     {
       "tmdbId": 254953,
