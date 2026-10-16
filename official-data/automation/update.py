@@ -1015,7 +1015,8 @@ def publish(proposed: dict, registry: dict, changes: list[dict], original_data: 
                 staged.unlink(missing_ok=True)
 
 
-def run(dry_run: bool, collector=collect, today: dt.date | None = None) -> dict:
+def run(dry_run: bool, collector=collect, today: dt.date | None = None, *,
+        selected_tmdb_id: int | None = None) -> dict:
     today = today or dt.datetime.now(dt.timezone.utc).date()
     try:
         registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
@@ -1034,7 +1035,14 @@ def run(dry_run: bool, collector=collect, today: dt.date | None = None) -> dict:
     failures = []
     warnings = []
     reports = []
-    for entry in registry["series"]:
+    entries = registry["series"]
+    if selected_tmdb_id is not None:
+        if type(selected_tmdb_id) is not int or selected_tmdb_id <= 0:
+            raise ValueError("Selected trusted ID must be a positive integer")
+        entries = [entry for entry in entries if entry["tmdbId"] == selected_tmdb_id]
+        if not entries:
+            raise ValueError("Selected ID is not in the trusted registry")
+    for entry in entries:
         old = current.get(entry["tmdbId"])
         try:
             facts, count = collector(entry, old, today)

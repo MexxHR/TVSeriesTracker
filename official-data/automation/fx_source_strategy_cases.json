@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "notice": "Read-only research probes, not production title exceptions or configured qualification cases. Probe fetch does not establish generic discovery. Expectations are not injected into parser output.",
+  "cases": [
+    {"caseId":"fx-lowdown-s2","series":"The Lowdown","aliases":["The Lowdown"],"articleUrl":"https://www.fxnetworks.com/shows/the-lowdown/season-two-renewal","researchGoal":"renewal"},
+    {"caseId":"fx-snowfall-final-s6","series":"Snowfall","aliases":["Snowfall"],"articleUrl":"https://www.fxnetworks.com/shows/snowfall","researchGoal":"final_season"},
+    {"caseId":"fx-mayans-final-s5","series":"Mayans M.C.","aliases":["Mayans M.C.","Mayans MC"],"articleUrl":"https://www.fxnetworks.com/shows/mayans-mc","researchGoal":"final_season_diagnostic"},
+    {"caseId":"fx-far-cry-cast-negative","kind":"negative","series":"Far Cry","aliases":["Far Cry"],"articleUrl":"https://www.fxnetworks.com/news/new-cast-additions-to-far-cry","researchGoal":"negative_identity"},
+    {"caseId":"fx-sons-final","series":"Sons of Anarchy","aliases":["Sons of Anarchy"],"articleUrl":"https://www.fxnetworks.com/shows/sons-of-anarchy","researchGoal":"final_season"},
+    {"caseId":"fx-lowdown-date","series":"The Lowdown","aliases":["The Lowdown"],"articleUrl":"https://www.fxnetworks.com/shows/the-lowdown","researchGoal":"release_date_year_ambiguity"},
+    {"caseId":"fx-nyc-renewal-candidate","series":"American Horror Story","aliases":["American Horror Story"],"articleUrl":"https://www.fxnetworks.com/shows/american-horror-story/ahs-nyc","researchGoal":"unconfirmed_search_candidate"},
+    {"caseId":"fx-adults-biography-candidate","series":"Adults","aliases":["Adults"],"articleUrl":"https://www.fxnetworks.com/shows/adults/cast/amita-rao-issa","researchGoal":"unconfirmed_biography_not_announcement"},
+    {"caseId":"fx-wrexham-biography-candidate","series":"Welcome to Wrexham","aliases":["Welcome to Wrexham"],"articleUrl":"https://www.fxnetworks.com/shows/necaxa/crew/nicholas-frenkel-executive-producer","researchGoal":"cross_title_biography_negative"}
+  ]
+}
