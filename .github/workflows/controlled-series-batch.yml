@@ -1,0 +1,57 @@
+name: Controlled series batch (staged)
+
+# Phase 1: manual only. Future Phase 3 cron: '3,13,23,33,43,53 * * * *'.
+# Do not add schedule until backend cutover and readiness review are complete.
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Read-only local readiness validation; no API/provider calls'
+        type: boolean
+        required: true
+        default: true
+
+concurrency:
+  group: official-data-writes
+  queue: max
+  cancel-in-progress: false
+
+jobs:
+  batch:
+    if: ${{ inputs.dry_run || vars.SERIES_BATCH_PROCESSING_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      SERIES_BATCH_PROCESSING_ENABLED: ${{ vars.SERIES_BATCH_PROCESSING_ENABLED }}
+      OFFICIAL_DATA_PROMOTION_ENABLED: ${{ vars.OFFICIAL_DATA_PROMOTION_ENABLED }}
+      SERIES_BATCH_API_URL: ${{ vars.SERIES_BATCH_API_URL }}
+      SERIES_BATCH_API_HOST: ${{ vars.SERIES_BATCH_API_HOST }}
+      SERIES_BATCH_API_SECRET: ${{ secrets.SERIES_BATCH_API_SECRET }}
+      TMDB_API_TOKEN: ${{ secrets.TMDB_API_TOKEN }}
+      DRY_RUN: ${{ inputs.dry_run }}
+    steps:
+      - name: Require main branch
+        env:
+          REF: ${{ github.ref }}
+        run: test "$REF" = refs/heads/main
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/heads/main
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Official Data regression gates
+        run: python -m unittest discover -s official-data/automation -p 'test_*.py' -q
+      - name: Backend and workflow regression gates
+        run: python -m unittest discover -s backend -p 'test_*.py' -q
+      - name: Run bounded serialized consumer
+        run: |
+          set -euo pipefail
+          if [ "$DRY_RUN" = true ]; then
+            python official-data/automation/controlled_batch.py --kind requests
+          else
+            python official-data/automation/controlled_batch.py --kind requests --execute
+          fi

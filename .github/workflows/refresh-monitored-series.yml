@@ -1,0 +1,54 @@
+name: Low-frequency monitored refresh (staged)
+
+# Phase 1: manual only. Future Phase 3 daily cron: '43 7 * * *'.
+# Three rotating monitored IDs per daily invocation; no backend watch queue.
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Read-only local readiness validation; no provider calls'
+        type: boolean
+        required: true
+        default: true
+
+concurrency:
+  group: official-data-writes
+  queue: max
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    if: ${{ inputs.dry_run || vars.SERIES_MONITORED_REFRESH_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      SERIES_MONITORED_REFRESH_ENABLED: ${{ vars.SERIES_MONITORED_REFRESH_ENABLED }}
+      OFFICIAL_DATA_PROMOTION_ENABLED: ${{ vars.OFFICIAL_DATA_PROMOTION_ENABLED }}
+      TMDB_API_TOKEN: ${{ secrets.TMDB_API_TOKEN }}
+      DRY_RUN: ${{ inputs.dry_run }}
+    steps:
+      - name: Require main branch
+        env:
+          REF: ${{ github.ref }}
+        run: test "$REF" = refs/heads/main
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/heads/main
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Official Data regression gates
+        run: python -m unittest discover -s official-data/automation -p 'test_*.py' -q
+      - name: Backend and workflow regression gates
+        run: python -m unittest discover -s backend -p 'test_*.py' -q
+      - name: Run low-frequency monitored consumer
+        run: |
+          set -euo pipefail
+          if [ "$DRY_RUN" = true ]; then
+            python official-data/automation/controlled_batch.py --kind monitored
+          else
+            python official-data/automation/controlled_batch.py --kind monitored --execute
+          fi

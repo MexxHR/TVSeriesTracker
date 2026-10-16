@@ -1,0 +1,43 @@
+name: FX Source Strategy Audit
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      # Standard library only; no dependencies, credentials or service calls.
+      - name: Snapshot protected files
+        run: |
+          set -euo pipefail
+          sha256sum official-data/official_series_data.json official-data/history/changes.jsonl official-data/sources.json official-data/monitored_series.json official-data/history/monitored_changes.jsonl > "$RUNNER_TEMP/fx-audit-before.sha256"
+      - name: Audit infrastructure tests
+        run: python -m unittest discover -s official-data/automation -p 'test_fx_source_strategy_audit.py' -q
+      - name: FX Source Strategy Audit
+        run: python official-data/automation/fx_source_strategy_audit.py --output "$RUNNER_TEMP/fx-source-strategy-audit.json"
+      - name: Verify protected integrity and clean checkout
+        if: always()
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/fx-audit-before.sha256"
+          git diff --exit-code HEAD
+          test -z "$(git ls-files --others --exclude-standard)"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fx-source-strategy-audit
+          path: ${{ runner.temp }}/fx-source-strategy-audit.json
+          if-no-files-found: error
