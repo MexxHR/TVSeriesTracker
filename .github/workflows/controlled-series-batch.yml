@@ -1,8 +1,10 @@
 name: Controlled series batch (staged)
 
-# Phase 1: manual only. Future Phase 3 cron: '3,13,23,33,43,53 * * * *'.
-# Do not add schedule until backend cutover and readiness review are complete.
+# Phase 3 request cadence, following verified backend/auth/no-change canary.
+# Scheduled execution still requires SERIES_BATCH_PROCESSING_ENABLED=true.
 on:
+  schedule:
+    - cron: '3,13,23,33,43,53 * * * *'
   workflow_dispatch:
     inputs:
       dry_run:
@@ -18,7 +20,7 @@ concurrency:
 
 jobs:
   batch:
-    if: ${{ inputs.dry_run || vars.SERIES_BATCH_PROCESSING_ENABLED == 'true' }}
+    if: ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) || vars.SERIES_BATCH_PROCESSING_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -30,7 +32,7 @@ jobs:
       SERIES_BATCH_API_HOST: ${{ vars.SERIES_BATCH_API_HOST }}
       SERIES_BATCH_API_SECRET: ${{ secrets.SERIES_BATCH_API_SECRET }}
       TMDB_API_TOKEN: ${{ secrets.TMDB_API_TOKEN }}
-      DRY_RUN: ${{ inputs.dry_run }}
+      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run && 'true' || 'false' }}
     steps:
       - name: Require main branch
         env:
