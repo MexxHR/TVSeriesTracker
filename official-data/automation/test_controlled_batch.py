@@ -355,13 +355,13 @@ class BatchClientSecurityTests(unittest.TestCase):
             batch.execute([{'tmdbId': 1}], processor, client)
         self.assertNotIn('sensitive', str(exc.exception) + output.getvalue())
 
-    def test_request_schedule_and_staged_monitored_workflow_keep_writer_guards(self):
+    def test_request_and_monitored_schedules_keep_writer_guards(self):
         for name in ('controlled-series-batch.yml', 'refresh-monitored-series.yml'):
             text = (ROOT / '.github/workflows' / name).read_text()
             if name == 'controlled-series-batch.yml':
                 self.assertIn("cron: '3,13,23,33,43,53 * * * *'", text)
             else:
-                self.assertNotIn('\n  schedule:', text)
+                self.assertIn("cron: '43 7 * * *'", text)
             self.assertIn('default: true', text)
             self.assertIn('group: official-data-writes', text)
             self.assertIn('queue: max', text)
@@ -373,7 +373,8 @@ class BatchClientSecurityTests(unittest.TestCase):
         # Evaluate the actual workflow's limited Boolean syntax, not a copied policy.
         expression = expression.strip()[3:-2].strip()
         for original, name in [('github.event_name', 'event'), ('inputs.dry_run', 'dry_run'),
-                               ('vars.SERIES_BATCH_PROCESSING_ENABLED', 'gate')]:
+                               ('vars.SERIES_BATCH_PROCESSING_ENABLED', 'gate'),
+                               ('vars.SERIES_MONITORED_REFRESH_ENABLED', 'gate')]:
             expression = expression.replace(original, name)
         tree = ast.parse(expression.replace('&&', ' and ').replace('||', ' or '), mode='eval')
         allowed = (ast.Expression, ast.BoolOp, ast.And, ast.Or, ast.Compare, ast.Eq,
@@ -384,7 +385,13 @@ class BatchClientSecurityTests(unittest.TestCase):
                     {'event': event, 'dry_run': dry_run, 'gate': gate})
 
     def test_actual_request_schedule_gate_and_manual_dry_run_event_matrix(self):
-        text = (ROOT / '.github/workflows/controlled-series-batch.yml').read_text()
+        self.check_schedule_event_matrix('controlled-series-batch.yml')
+
+    def test_actual_monitored_schedule_gate_and_manual_dry_run_event_matrix(self):
+        self.check_schedule_event_matrix('refresh-monitored-series.yml')
+
+    def check_schedule_event_matrix(self, workflow):
+        text = (ROOT / '.github/workflows' / workflow).read_text()
         gate_expr = next(line.strip().split(':', 1)[1].strip() for line in text.splitlines()
                          if line.strip().startswith('if:'))
         dry_expr = next(line.strip().split(':', 1)[1].strip() for line in text.splitlines()
@@ -402,7 +409,13 @@ class BatchClientSecurityTests(unittest.TestCase):
                             self.assertEqual(readiness, 'true')
 
     def test_actual_consumer_shell_selects_dry_or_live_command_without_running_it(self):
-        text = (ROOT / '.github/workflows/controlled-series-batch.yml').read_text()
+        self.check_consumer_shell('controlled-series-batch.yml', 'requests')
+
+    def test_actual_monitored_shell_selects_dry_or_live_command_without_running_it(self):
+        self.check_consumer_shell('refresh-monitored-series.yml', 'monitored')
+
+    def check_consumer_shell(self, workflow, kind):
+        text = (ROOT / '.github/workflows' / workflow).read_text()
         script = textwrap.dedent(text.rsplit('        run: |\n', 1)[1])
         bash = str(Path(os.environ.get('ProgramFiles', r'C:\Program Files')) / 'Git/bin/bash.exe') \
             if os.name == 'nt' else shutil.which('bash')
@@ -414,7 +427,7 @@ class BatchClientSecurityTests(unittest.TestCase):
                 result = subprocess.run([bash, '-c', script], check=True, capture_output=True,
                                         text=True, env=dict(os.environ, DRY_RUN=dry_value))
                 self.assertEqual(result.stdout.strip(),
-                                 'official-data/automation/controlled_batch.py --kind requests' + suffix)
+                                 'official-data/automation/controlled_batch.py --kind ' + kind + suffix)
 
 
 if __name__ == '__main__': unittest.main()
