@@ -1,14 +1,18 @@
 """Production batch code with offline providers/API and temporary git remotes."""
 import contextlib
+import ast
 import copy
 import datetime as dt
 from email.message import Message
 import io
 import json
+import os
 from pathlib import Path
 import subprocess
+import shutil
 import sys
 import tempfile
+import textwrap
 import unittest
 from unittest.mock import Mock, patch
 
@@ -351,14 +355,66 @@ class BatchClientSecurityTests(unittest.TestCase):
             batch.execute([{'tmdbId': 1}], processor, client)
         self.assertNotIn('sensitive', str(exc.exception) + output.getvalue())
 
-    def test_manual_workflows_have_no_schedule_and_have_shared_writer_guards(self):
+    def test_request_schedule_and_staged_monitored_workflow_keep_writer_guards(self):
         for name in ('controlled-series-batch.yml', 'refresh-monitored-series.yml'):
             text = (ROOT / '.github/workflows' / name).read_text()
-            self.assertNotIn('\n  schedule:', text)
+            if name == 'controlled-series-batch.yml':
+                self.assertIn("cron: '3,13,23,33,43,53 * * * *'", text)
+            else:
+                self.assertNotIn('\n  schedule:', text)
             self.assertIn('default: true', text)
             self.assertIn('group: official-data-writes', text)
+            self.assertIn('queue: max', text)
             self.assertIn('cancel-in-progress: false', text)
             self.assertIn('Regression', text.replace('regression', 'Regression'))
+
+    @staticmethod
+    def workflow_expression(expression, event, dry_run, gate):
+        # Evaluate the actual workflow's limited Boolean syntax, not a copied policy.
+        expression = expression.strip()[3:-2].strip()
+        for original, name in [('github.event_name', 'event'), ('inputs.dry_run', 'dry_run'),
+                               ('vars.SERIES_BATCH_PROCESSING_ENABLED', 'gate')]:
+            expression = expression.replace(original, name)
+        tree = ast.parse(expression.replace('&&', ' and ').replace('||', ' or '), mode='eval')
+        allowed = (ast.Expression, ast.BoolOp, ast.And, ast.Or, ast.Compare, ast.Eq,
+                   ast.Name, ast.Constant, ast.Load)
+        if any(not isinstance(node, allowed) for node in ast.walk(tree)):
+            raise AssertionError('Unsupported workflow gate syntax')
+        return eval(compile(tree, '<workflow-gate>', 'eval'), {'__builtins__': {}},
+                    {'event': event, 'dry_run': dry_run, 'gate': gate})
+
+    def test_actual_request_schedule_gate_and_manual_dry_run_event_matrix(self):
+        text = (ROOT / '.github/workflows/controlled-series-batch.yml').read_text()
+        gate_expr = next(line.strip().split(':', 1)[1].strip() for line in text.splitlines()
+                         if line.strip().startswith('if:'))
+        dry_expr = next(line.strip().split(':', 1)[1].strip() for line in text.splitlines()
+                        if line.strip().startswith('DRY_RUN:'))
+        for event in ('schedule', 'workflow_dispatch'):
+            for dry_run in (True, False):
+                for readiness in ('true', 'false', '', 'TRUE', ' true '):
+                    with self.subTest(event=event, dry_run=dry_run, readiness=readiness):
+                        admitted = self.workflow_expression(gate_expr, event, dry_run, readiness)
+                        dry_value = self.workflow_expression(dry_expr, event, dry_run, readiness)
+                        manual_dry = event == 'workflow_dispatch' and dry_run
+                        self.assertEqual(bool(admitted), manual_dry or readiness == 'true')
+                        self.assertEqual(dry_value, 'true' if manual_dry else 'false')
+                        if admitted and dry_value == 'false':
+                            self.assertEqual(readiness, 'true')
+
+    def test_actual_consumer_shell_selects_dry_or_live_command_without_running_it(self):
+        text = (ROOT / '.github/workflows/controlled-series-batch.yml').read_text()
+        script = textwrap.dedent(text.rsplit('        run: |\n', 1)[1])
+        bash = str(Path(os.environ.get('ProgramFiles', r'C:\Program Files')) / 'Git/bin/bash.exe') \
+            if os.name == 'nt' else shutil.which('bash')
+        self.assertTrue(bash and Path(bash).is_file(), 'Existing Bash toolchain is required')
+        # Intercept the actual shell invocation; no provider/backend command executes.
+        script = 'python() { printf "%s\\n" "$*"; }\n' + script
+        for dry_value, suffix in [('true', ''), ('false', ' --execute')]:
+            with self.subTest(dry_value=dry_value):
+                result = subprocess.run([bash, '-c', script], check=True, capture_output=True,
+                                        text=True, env=dict(os.environ, DRY_RUN=dry_value))
+                self.assertEqual(result.stdout.strip(),
+                                 'official-data/automation/controlled_batch.py --kind requests' + suffix)
 
 
 if __name__ == '__main__': unittest.main()
