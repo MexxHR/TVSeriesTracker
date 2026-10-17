@@ -1,8 +1,10 @@
 name: Low-frequency monitored refresh (staged)
 
-# Phase 1: manual only. Future Phase 3 daily cron: '43 7 * * *'.
+# Phase 3: daily cadence after the verified request-schedule gate.
 # Three rotating monitored IDs per daily invocation; no backend watch queue.
 on:
+  schedule:
+    - cron: '43 7 * * *'
   workflow_dispatch:
     inputs:
       dry_run:
@@ -18,7 +20,7 @@ concurrency:
 
 jobs:
   refresh:
-    if: ${{ inputs.dry_run || vars.SERIES_MONITORED_REFRESH_ENABLED == 'true' }}
+    if: ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) || vars.SERIES_MONITORED_REFRESH_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -27,7 +29,7 @@ jobs:
       SERIES_MONITORED_REFRESH_ENABLED: ${{ vars.SERIES_MONITORED_REFRESH_ENABLED }}
       OFFICIAL_DATA_PROMOTION_ENABLED: ${{ vars.OFFICIAL_DATA_PROMOTION_ENABLED }}
       TMDB_API_TOKEN: ${{ secrets.TMDB_API_TOKEN }}
-      DRY_RUN: ${{ inputs.dry_run }}
+      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run && 'true' || 'false' }}
     steps:
       - name: Require main branch
         env:
